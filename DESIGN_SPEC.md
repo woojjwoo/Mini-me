@@ -6,6 +6,20 @@ A pixel-art iOS app where you design your ideal daily schedule, complete it to e
 
 ---
 
+## Decisions Log (Finalized)
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Target audience | Students & young adults (16-27): high school, college, young professionals | Pixel aesthetic resonates, routine-forming life stage, social sharing culture |
+| Room perspective | Isometric (lo-fi cozy aesthetic) | Gives that lo-fi album cover warmth; top-down feels like a game, isometric feels like a vibe |
+| Furniture placement | Pre-set slots (not free grid) | Kills 80% of isometric rendering complexity; no z-sorting, collision, or free grid math needed |
+| Art pipeline | AI-generated pixel art (v1), custom art later | Fast iteration, low cost; clean up and curate AI output |
+| Architecture | Option C: solo-first, social-ready | Ship local-only v1 but structure data models for future server sync (rooms, avatars, social visits) |
+| Social vision (v2+) | Rooms are visitable, avatars mirror real life (sick/happy/tired), gift dropping | This is the real retention loop — pixel art social space where your avatar reflects your real life |
+| Item count (v1) | 20-25 well-crafted items (reduced from 40-50) | Realistic scope for AI art pipeline; quality over quantity |
+
+---
+
 ## Core Philosophy
 
 **"Design the life you want, then live it."**
@@ -163,12 +177,27 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 **Room spec (v1):**
 
 - Single room, isometric perspective
-- Grid-based placement (8×8 grid)
-- Tap item to place → drag to position → tap to confirm
-- Rotate items (4 orientations)
-- Items snap to grid
+- **Pre-set furniture slots** (not free grid) — each slot has a fixed position in the room
+- Tap a slot → choose which item goes there from your owned items
 - Room has walls (back, left) and floor
 - Wall and floor themes are purchasable
+
+**Pre-set slots (v1 room layout):**
+
+| Slot | Position | Item types that fit |
+|------|----------|-------------------|
+| Bed area | Back-right corner | Beds, futons |
+| Desk area | Back-left wall | Desks, tables |
+| Desk chair | In front of desk | Chairs, stools |
+| Shelf/bookcase | Left wall | Bookshelves, cabinets |
+| Floor center | Room center | Rugs, floor cushions |
+| Wall decor 1 | Back wall left | Posters, clocks, art |
+| Wall decor 2 | Back wall right | Posters, shelves, art |
+| Cozy corner | Front-left | Bean bags, plants, lamps |
+| Side table | Near bed | Nightstands, small tables |
+| Window area | Back wall center | Curtains, blinds (cosmetic) |
+| Pet bed | Floor near furniture | Pet beds, cushions, boxes |
+| Accent item | Floor front-right | Electronics, instruments, fun items |
 
 **Art style:**
 
@@ -178,7 +207,7 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 - Lighting: soft ambient + optional desk lamp glow
 - The pet wanders the room when you view it
 
-**V1 item count target:** 40-50 unique items across categories:
+**V1 item count target:** 20-25 unique items across categories (quality over quantity, AI-generated):
 
 - Furniture (bed, desk, chair, couch, bookshelf, table)
 - Decor (plants, posters, rugs, curtains, clock)
