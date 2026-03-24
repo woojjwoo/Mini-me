@@ -282,7 +282,7 @@ Shows: Pet, date, progress bar, next upcoming block, coins.
 - Pet with basic customization
 - Widget (small only)
 
-**Pixel Pals Pro — $2.99/month or $19.99/year:**
+**Pixel Pals Pro — $1.99/month or $14.99/year:**
 - Medium widget
 - Exclusive room items (~40% of catalog)
 - Exclusive pet accessories
@@ -293,16 +293,19 @@ Shows: Pet, date, progress bar, next upcoming block, coins.
 - No feature removed from free tier (free users keep everything they had)
 
 **Why this pricing:**
-- Lower than Finch ($70/year) — undercut aggressively to build user base
-- Higher than Pixel Pals ($9.99/year) — you offer far more utility
-- $19.99/year is impulse-buy territory for students (primary audience)
+- $1.99/month is impulse-buy territory — less than a coffee, users don't hesitate
+- ~3.5x cheaper than Finch ($70/year) — obvious value pick when users compare
+- Higher conversion rate at $1.99 outearns $2.99 at sub-100K user scale
+- Annual discount ($14.99 vs $23.88 monthly) incentivizes yearly commitment
+- Can raise prices later once content library and social proof grow
 
 **Revenue target math:**
 - 10K downloads/month (achievable with good ASO + TikTok/IG content)
-- 5% conversion to Pro = 500 subscribers/month
-- At $19.99/year avg = ~$833/month per cohort
-- After 12 months = ~$10K MRR
-- Conservative but realistic for a solo/small team
+- 7% conversion to Pro at $1.99 = 700 subscribers/month
+- Blended avg ~$1.66/month (mix of monthly + annual)
+- ~$1,162/month per cohort
+- After 12 months = ~$14K MRR
+- Lower price, higher volume — better growth flywheel for a solo/small team
 
 ---
 
