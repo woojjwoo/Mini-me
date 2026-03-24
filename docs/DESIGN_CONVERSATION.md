@@ -314,6 +314,28 @@ Calendar/schedule integration has **ZERO competitors**. Not a single habit app s
 
 ---
 
+## Phase 12: Aesthetic Identity Lock-In
+
+**User's directive**: "Do not forget my key design is pixel art with lofi vibe."
+
+This is the **non-negotiable soul of the product**. Every design and development decision must pass through this filter:
+
+### The Vibe Test
+> *"Does this feel like it belongs on a lo-fi YouTube stream thumbnail?"* If no, it doesn't belong in this app.
+
+### What This Means in Practice
+- **UI elements**: Pixel-art borders, retro accents, warm backgrounds — not flat Material/iOS defaults
+- **Animations**: Subtle, cozy — idle bobs, soft glows, pixel sparkles. Not slick iOS transitions.
+- **Room lighting**: Time-of-day ambient glow. Sunrise warmth → sunset orange → warm lamp light at night.
+- **Typography**: SF Pro for readability, but framed by pixel-art containers and warm backgrounds.
+- **Colors**: Always warm muted tones. Cream, sage, terracotta, gold. Never harsh neons or corporate blues.
+- **Sound design (future)**: Lo-fi clicks, soft chimes, warm tones. Not system defaults.
+- **The room IS the product showcase**: When users screenshot their room, it should look like art. Something they'd pin on Pinterest or set as their wallpaper.
+
+This aesthetic is the moat. Other habit apps look like productivity tools. Mini Me looks like a cozy world you want to live in.
+
+---
+
 ## Conversation Metadata
 
 - **Date**: March 2026
@@ -321,3 +343,4 @@ Calendar/schedule integration has **ZERO competitors**. Not a single habit app s
 - **Outcome**: Full design spec + 25-file Swift codebase scaffolded and pushed
 - **Branch**: `claude/study-pixel-pals-design-Z7965`
 - **Key pivot**: Pet → Mini Me avatar, Calendar sync → Ideal Day Builder
+- **Core aesthetic**: Pixel art + lo-fi cozy vibe (NON-NEGOTIABLE)

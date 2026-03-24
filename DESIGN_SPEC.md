@@ -32,6 +32,33 @@ The app builds a personalized daily schedule from that answer. Every completed b
 
 ---
 
+## Art & Aesthetic Identity — THE SOUL OF THE APP
+
+> **Pixel art + lo-fi cozy vibe.** This is not a stylistic choice — it IS the product. Every screen, every animation, every asset must feel like it belongs on a lo-fi album cover or a cozy pixel diorama Pinterest board.
+
+### Visual Pillars
+1. **Isometric pixel rooms** — warm, miniature worlds viewed from a cozy diagonal angle. Dark backgrounds, glowing lamps, soft ambient light.
+2. **Warm muted palette** — cream, sage green, warm orange, soft gold. No harsh neons, no corporate blues. Everything feels like a warm blanket.
+3. **Handcrafted feel** — 32×32 sprites with 8-12 color palettes. Crisp pixels, no anti-aliasing, nearest-neighbor scaling. Each item should look like a pixel artist lovingly placed every dot.
+4. **Lo-fi over polish** — pixel-art UI borders, retro accents, subtle scan-line or dither effects where appropriate. The app should feel warm and nostalgic, not clinical or modern-corporate.
+5. **Ambient life** — soft glow from lamps, time-of-day lighting (sunrise warmth → sunset orange → night with warm interior light), subtle idle animations.
+
+### The Vibe Test
+Before adding any visual element, ask: *"Does this feel like it belongs in a lo-fi YouTube stream thumbnail?"* If no, rethink it.
+
+### Color Palette
+```
+Background:  #F5E6D3 (warm cream)
+Primary:     #5B8C5A (sage green)
+Accent:      #E8985E (warm orange)
+Text:        #3D3D3D (soft black)
+Completed:   #7CB342 (fresh green)
+Pending:     #BDBDBD (light grey)
+Coin:        #FFD54F (gold)
+```
+
+---
+
 ## V1 MVP Scope (8-10 week target)
 
 ### What's IN v1
@@ -351,27 +378,6 @@ Shows: Avatar, date, progress bar, next upcoming block, coins.
 - Data models structured for future server sync (DTOs exist for all models)
 
 ---
-
-## Art Direction
-
-### Pixel Art Style Guide
-- **Tile size:** 32×32 pixels for items, 16×16 for small props
-- **Palette:** Limited (8-12 colors max per item). Warm, muted tones.
-- **Inspiration:** Stardew Valley interiors, lo-fi album covers, cozy pixel dioramas
-- **Isometric angle:** Standard 2:1 (26.57°)
-- **Avatar:** 24×24 pixel sprites, idle animations
-- **UI:** Pixel-art borders where appropriate, SF Pro for readable text
-
-### Color Palette
-```
-Background:  #F5E6D3 (warm cream)
-Primary:     #5B8C5A (sage green)
-Accent:      #E8985E (warm orange)
-Text:        #3D3D3D (soft black)
-Completed:   #7CB342 (fresh green)
-Pending:     #BDBDBD (light grey)
-Coin:        #FFD54F (gold)
-```
 
 ---
 

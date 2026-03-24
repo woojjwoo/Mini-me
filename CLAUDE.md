@@ -6,6 +6,18 @@ Mini Me is a **virtual avatar / Tamagotchi-style iOS app** that gamifies daily r
 ## Core Concept
 The character is the user's **Mini Me** — a pixel avatar that represents them. It lives in their room, reacts to their daily habits, and celebrates their wins. Think of it as a digital twin that thrives when you follow your routine.
 
+## Art & Aesthetic Identity — NON-NEGOTIABLE
+The entire app identity is **pixel art with a lo-fi cozy vibe**. This is the soul of the product, not a skin.
+- **Isometric pixel art rooms** — the lo-fi album cover / cozy diorama aesthetic. Warm, miniature worlds.
+- **Warm muted color palette**: cream (#F5E6D3), sage green (#5B8C5A), warm orange (#E8985E), gold (#FFD54F)
+- **32×32 pixel sprites** for items, 24×24 for avatar. Crisp nearest-neighbor scaling, NO anti-aliasing.
+- **Limited palette per asset** (8-12 colors max). Every item should feel handcrafted.
+- **Light source from top-left** across all assets for consistency.
+- **Lo-fi warmth over clinical polish** — pixel borders, retro UI elements, soft ambient glow.
+- Think: lo-fi YouTube stream rooms, Stardew Valley interiors, cozy pixel diorama Pinterest boards.
+- UI uses pixel-art borders/accents where appropriate, but SF Pro for readable text (schedules, data).
+- **Every design decision must reinforce the cozy pixel aesthetic.** If it doesn't feel like it belongs on a lo-fi album cover, it doesn't belong in this app.
+
 ## Tech Stack
 - **SwiftUI** + **SwiftData** (persistence)
 - **SpriteKit** for isometric room rendering
