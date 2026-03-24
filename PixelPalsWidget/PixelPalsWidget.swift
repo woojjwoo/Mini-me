@@ -172,6 +172,68 @@ struct MediumWidgetView: View {
 
 // MARK: - Widget Configuration
 
+// MARK: - Lock Screen Widgets (v2)
+
+struct LockScreenCircularView: View {
+    let entry: PixelPalsEntry
+
+    var body: some View {
+        ZStack {
+            AccessoryWidgetBackground()
+            VStack(spacing: 1) {
+                Text(entry.mood.displayEmoji)
+                    .font(.system(size: 18))
+                Text("\(entry.completedBlocks)/\(entry.totalBlocks)")
+                    .font(.system(size: 10, weight: .bold))
+                    .widgetAccentable()
+            }
+        }
+    }
+}
+
+struct LockScreenRectangularView: View {
+    let entry: PixelPalsEntry
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text(entry.mood.displayEmoji)
+                .font(.system(size: 22))
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.petName)
+                    .font(.system(size: 12, weight: .semibold))
+                    .widgetAccentable()
+
+                // Progress bar
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(.secondary.opacity(0.3))
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(.primary)
+                            .frame(width: geo.size.width * entry.completionRate)
+                    }
+                }
+                .frame(height: 4)
+
+                Text("\(entry.completedBlocks)/\(entry.totalBlocks) done")
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}
+
+struct LockScreenInlineView: View {
+    let entry: PixelPalsEntry
+
+    var body: some View {
+        Text("\(entry.mood.displayEmoji) \(entry.completedBlocks)/\(entry.totalBlocks) blocks · \(entry.coinsToday) coins")
+    }
+}
+
+// MARK: - Widget Configuration
+
 struct PixelPalsWidget: Widget {
     let kind: String = "PixelPalsWidget"
 
@@ -181,7 +243,13 @@ struct PixelPalsWidget: Widget {
         }
         .configurationDisplayName("Mini Me")
         .description("See your Mini Me and daily progress")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .accessoryCircular,
+            .accessoryRectangular,
+            .accessoryInline,
+        ])
     }
 }
 
@@ -195,6 +263,12 @@ struct PixelPalsWidgetEntryView: View {
             SmallWidgetView(entry: entry)
         case .systemMedium:
             MediumWidgetView(entry: entry)
+        case .accessoryCircular:
+            LockScreenCircularView(entry: entry)
+        case .accessoryRectangular:
+            LockScreenRectangularView(entry: entry)
+        case .accessoryInline:
+            LockScreenInlineView(entry: entry)
         default:
             SmallWidgetView(entry: entry)
         }

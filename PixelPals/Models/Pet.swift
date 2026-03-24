@@ -67,12 +67,14 @@ final class Pet {
         id: UUID = UUID(),
         name: String = "Pixel",
         color: PetColor = .orangeTabby,
-        accessoryIDs: [String] = []
+        accessoryIDs: [String] = [],
+        equippedOutfitIDs: [String] = []
     ) {
         self.id = id
         self.name = name
         self.colorRaw = color.rawValue
         self.accessoryIDs = accessoryIDs
+        self.equippedOutfitIDs = equippedOutfitIDs
     }
 
     var color: PetColor {
@@ -80,8 +82,38 @@ final class Pet {
         set { colorRaw = newValue.rawValue }
     }
 
+    // v2: Equipped outfit per slot
+    var equippedOutfitIDs: [String] // OutfitItem IDs currently worn
+
     var spriteName: String {
         color.spritePrefix
+    }
+
+    func isWearing(_ outfitID: String) -> Bool {
+        equippedOutfitIDs.contains(outfitID)
+    }
+
+    func equip(_ outfitID: String) {
+        guard let outfit = OutfitCatalog.outfit(byID: outfitID) else { return }
+        // Remove any existing outfit in the same slot
+        equippedOutfitIDs.removeAll { id in
+            guard let existing = OutfitCatalog.outfit(byID: id) else { return false }
+            return existing.outfitSlot == outfit.outfitSlot
+        }
+        equippedOutfitIDs.append(outfitID)
+    }
+
+    func unequip(_ outfitID: String) {
+        equippedOutfitIDs.removeAll { $0 == outfitID }
+    }
+
+    func equippedOutfit(for slot: OutfitSlot) -> OutfitItem? {
+        for id in equippedOutfitIDs {
+            if let outfit = OutfitCatalog.outfit(byID: id), outfit.outfitSlot == slot {
+                return outfit
+            }
+        }
+        return nil
     }
 }
 
@@ -91,4 +123,5 @@ struct PetDTO: Codable {
     let color: String
     let mood: String
     let accessoryIDs: [String]
+    let equippedOutfitIDs: [String]
 }

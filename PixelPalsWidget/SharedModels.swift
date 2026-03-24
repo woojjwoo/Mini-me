@@ -29,6 +29,7 @@ struct PetDTO: Codable {
     let color: String
     let mood: String
     let accessoryIDs: [String]
+    let equippedOutfitIDs: [String]
 }
 
 struct WidgetDayProgress: Codable {

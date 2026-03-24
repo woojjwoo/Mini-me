@@ -196,7 +196,8 @@ struct DailyScheduleView: View {
             completedBlocks: todayLog.completedBlockIDs.count,
             totalBlocks: schedule.blocks.count,
             wakeUpHour: schedule.sortedBlocks.first?.startHour ?? 7,
-            lastCompletionDate: .now
+            lastCompletionDate: .now,
+            manualStatus: player?.manualStatus
         )
         WidgetDataService.shared.updateWidgetData(
             pet: pet,

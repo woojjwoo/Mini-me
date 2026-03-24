@@ -6,17 +6,37 @@ struct ShopView: View {
     @Query private var players: [Player]
     @Query private var rooms: [Room]
 
-    @State private var selectedCategory: ItemCategory?
-    @State private var purchaseAnimation: String? // itemID being animated
+    @State private var selectedCategory: ShopTab = .furniture
+    @State private var purchaseAnimation: String?
 
     private var player: Player? { players.first }
     private var room: Room? { rooms.first }
 
-    private var displayedItems: [ShopItem] {
-        if let category = selectedCategory {
-            return ItemCatalog.items(in: category)
+    enum ShopTab: String, CaseIterable, Identifiable {
+        case furniture
+        case outfits
+        case seasonal
+        case rooms
+
+        var id: String { rawValue }
+
+        var displayName: String {
+            switch self {
+            case .furniture: "Room Items"
+            case .outfits: "Outfits"
+            case .seasonal: "Seasonal"
+            case .rooms: "Rooms"
+            }
         }
-        return ItemCatalog.allItems
+
+        var icon: String {
+            switch self {
+            case .furniture: "square.grid.2x2.fill"
+            case .outfits: "tshirt.fill"
+            case .seasonal: "leaf.fill"
+            case .rooms: "house.fill"
+            }
+        }
     }
 
     var body: some View {
@@ -44,18 +64,12 @@ struct ShopView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                    // Category filter
+                    // Tab selector
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            CategoryPill(name: "All", isSelected: selectedCategory == nil) {
-                                selectedCategory = nil
-                            }
-                            ForEach(ItemCategory.allCases) { category in
-                                CategoryPill(
-                                    name: category.displayName,
-                                    isSelected: selectedCategory == category
-                                ) {
-                                    selectedCategory = category
+                            ForEach(ShopTab.allCases) { tab in
+                                CategoryPill(name: tab.displayName, isSelected: selectedCategory == tab) {
+                                    selectedCategory = tab
                                 }
                             }
                         }
@@ -63,24 +77,18 @@ struct ShopView: View {
                         .padding(.vertical, 12)
                     }
 
-                    // Items grid
+                    // Content
                     ScrollView {
-                        LazyVGrid(columns: [
-                            GridItem(.flexible()),
-                            GridItem(.flexible()),
-                        ], spacing: 12) {
-                            ForEach(displayedItems) { item in
-                                ShopItemCard(
-                                    item: item,
-                                    isOwned: player?.ownsItem(item.id) ?? false,
-                                    canAfford: player?.canAfford(item.price) ?? false,
-                                    isPurchasing: purchaseAnimation == item.id,
-                                    onPurchase: { purchaseItem(item) }
-                                )
-                            }
+                        switch selectedCategory {
+                        case .furniture:
+                            furnitureGrid
+                        case .outfits:
+                            outfitGrid
+                        case .seasonal:
+                            seasonalGrid
+                        case .rooms:
+                            roomShop
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 20)
                     }
                 }
             }
@@ -89,13 +97,318 @@ struct ShopView: View {
         }
     }
 
-    private func purchaseItem(_ item: ShopItem) {
+    // MARK: - Furniture Grid
+
+    @State private var furnitureFilter: ItemCategory?
+
+    private var filteredItems: [ShopItem] {
+        if let category = furnitureFilter {
+            return ItemCatalog.items(in: category)
+        }
+        return ItemCatalog.allItems
+    }
+
+    private var furnitureGrid: some View {
+        VStack(spacing: 0) {
+            // Sub-category filter
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    categoryFilterPill("All", isSelected: furnitureFilter == nil) {
+                        furnitureFilter = nil
+                    }
+                    ForEach(ItemCategory.allCases.filter { $0 != .outfits }) { category in
+                        categoryFilterPill(category.displayName, isSelected: furnitureFilter == category) {
+                            furnitureFilter = category
+                        }
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(filteredItems) { item in
+                    ShopItemCard(
+                        item: item,
+                        isOwned: player?.ownsItem(item.id) ?? false,
+                        canAfford: player?.canAfford(item.price) ?? false,
+                        isPurchasing: purchaseAnimation == item.id,
+                        onPurchase: { purchaseItem(item.id, item.price) }
+                    )
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 20)
+        }
+    }
+
+    // MARK: - Outfit Grid
+
+    private var outfitGrid: some View {
+        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+            ForEach(OutfitCatalog.allOutfits) { outfit in
+                outfitCard(outfit)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 20)
+    }
+
+    private func outfitCard(_ outfit: OutfitItem) -> some View {
+        let isOwned = player?.ownsItem(outfit.id) ?? false
+        let canAfford = player?.canAfford(outfit.price) ?? false
+
+        return VStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : Color.gray.opacity(0.1))
+                .frame(height: 100)
+                .overlay {
+                    VStack(spacing: 4) {
+                        Image(systemName: outfit.outfitSlot.icon)
+                            .font(.title2)
+                            .foregroundColor(isOwned ? PixelTheme.primary : PixelTheme.text.opacity(0.3))
+                        Text(outfit.outfitSlot.displayName)
+                            .font(.system(size: 9))
+                            .foregroundColor(PixelTheme.text.opacity(0.4))
+                    }
+                }
+                .overlay(alignment: .topTrailing) {
+                    if outfit.isPremium {
+                        Text("PRO")
+                            .font(.system(size: 8, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(PixelTheme.accent)
+                            .cornerRadius(4)
+                            .padding(6)
+                    }
+                }
+                .overlay(alignment: .topLeading) {
+                    if outfit.scheduleTrigger != nil {
+                        Image(systemName: "bolt.fill")
+                            .font(.system(size: 8))
+                            .foregroundColor(.white)
+                            .padding(4)
+                            .background(PixelTheme.primary)
+                            .clipShape(Circle())
+                            .padding(6)
+                    }
+                }
+                .scaleEffect(purchaseAnimation == outfit.id ? 1.05 : 1.0)
+                .animation(.spring(response: 0.3), value: purchaseAnimation)
+
+            Text(outfit.name)
+                .font(PixelTheme.captionFont)
+                .foregroundColor(PixelTheme.text)
+                .lineLimit(1)
+
+            if isOwned {
+                Text("Owned")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundColor(PixelTheme.completed)
+            } else {
+                Button { purchaseItem(outfit.id, outfit.price) } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 8))
+                            .foregroundColor(PixelTheme.coin)
+                        Text("\(outfit.price)")
+                            .font(PixelTheme.captionFont)
+                    }
+                    .foregroundColor(canAfford ? PixelTheme.text : PixelTheme.pending)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(canAfford ? PixelTheme.coin.opacity(0.2) : PixelTheme.pending.opacity(0.1))
+                    .cornerRadius(10)
+                }
+                .disabled(!canAfford)
+            }
+        }
+        .padding(10)
+        .background(PixelTheme.cardBackground)
+        .cornerRadius(14)
+        .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+    }
+
+    // MARK: - Seasonal Grid
+
+    private var seasonalGrid: some View {
+        let available = SeasonalCatalog.currentlyAvailable
+
+        return VStack(spacing: 12) {
+            if available.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 40))
+                        .foregroundColor(PixelTheme.pending)
+                    Text("No seasonal items right now")
+                        .font(PixelTheme.bodyFont)
+                        .foregroundColor(PixelTheme.text.opacity(0.5))
+                    Text("Check back next season!")
+                        .font(PixelTheme.captionFont)
+                        .foregroundColor(PixelTheme.text.opacity(0.3))
+                }
+                .padding(.top, 60)
+            } else {
+                // Season header
+                if let season = available.first?.season {
+                    HStack {
+                        Image(systemName: season.icon)
+                            .foregroundColor(PixelTheme.accent)
+                        Text("\(season.displayName) Collection")
+                            .font(PixelTheme.headlineFont)
+                            .foregroundColor(PixelTheme.text)
+                        Spacer()
+                        Text("Limited Time")
+                            .font(PixelTheme.captionFont)
+                            .foregroundColor(PixelTheme.accent)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(PixelTheme.accent.opacity(0.1))
+                            .cornerRadius(8)
+                    }
+                    .padding(.horizontal, 16)
+                }
+
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(available) { item in
+                        seasonalCard(item)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 20)
+            }
+        }
+    }
+
+    private func seasonalCard(_ item: SeasonalItem) -> some View {
+        let isOwned = player?.ownsItem(item.id) ?? false
+        let canAfford = player?.canAfford(item.price) ?? false
+
+        return VStack(spacing: 8) {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.accent.opacity(0.08))
+                .frame(height: 100)
+                .overlay {
+                    VStack {
+                        Image(systemName: item.season.icon)
+                            .font(.title)
+                            .foregroundColor(PixelTheme.accent.opacity(0.5))
+                    }
+                }
+
+            Text(item.name)
+                .font(PixelTheme.captionFont)
+                .foregroundColor(PixelTheme.text)
+                .lineLimit(1)
+
+            if isOwned {
+                Text("Owned")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundColor(PixelTheme.completed)
+            } else {
+                Button { purchaseItem(item.id, item.price) } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 8))
+                            .foregroundColor(PixelTheme.coin)
+                        Text("\(item.price)")
+                            .font(PixelTheme.captionFont)
+                    }
+                    .foregroundColor(canAfford ? PixelTheme.text : PixelTheme.pending)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(canAfford ? PixelTheme.coin.opacity(0.2) : PixelTheme.pending.opacity(0.1))
+                    .cornerRadius(10)
+                }
+                .disabled(!canAfford)
+            }
+        }
+        .padding(10)
+        .background(PixelTheme.cardBackground)
+        .cornerRadius(14)
+        .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+    }
+
+    // MARK: - Room Shop
+
+    private var ownedRoomTypes: Set<String> {
+        Set(rooms.map { $0.roomTypeRaw })
+    }
+
+    private var roomShop: some View {
+        VStack(spacing: 12) {
+            ForEach(RoomType.allCases) { roomType in
+                let isOwned = ownedRoomTypes.contains(roomType.rawValue)
+                let canAfford = player?.canAfford(roomType.unlockPrice) ?? false
+
+                HStack(spacing: 14) {
+                    Image(systemName: roomType.icon)
+                        .font(.title2)
+                        .foregroundColor(isOwned ? PixelTheme.primary : PixelTheme.text.opacity(0.4))
+                        .frame(width: 44, height: 44)
+                        .background(isOwned ? PixelTheme.primary.opacity(0.1) : Color.gray.opacity(0.08))
+                        .cornerRadius(12)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(roomType.displayName)
+                            .font(PixelTheme.bodyFont)
+                            .foregroundColor(PixelTheme.text)
+                        Text(roomType.description)
+                            .font(PixelTheme.captionFont)
+                            .foregroundColor(PixelTheme.text.opacity(0.5))
+                    }
+
+                    Spacer()
+
+                    if isOwned {
+                        Text("Owned")
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundColor(PixelTheme.completed)
+                    } else if roomType.unlockPrice == 0 {
+                        Text("Free")
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundColor(PixelTheme.primary)
+                    } else {
+                        Button {
+                            purchaseRoom(roomType)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Image(systemName: "circle.fill")
+                                    .font(.system(size: 8))
+                                    .foregroundColor(PixelTheme.coin)
+                                Text("\(roomType.unlockPrice)")
+                                    .font(PixelTheme.captionFont)
+                            }
+                            .foregroundColor(canAfford ? PixelTheme.text : PixelTheme.pending)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(canAfford ? PixelTheme.coin.opacity(0.2) : PixelTheme.pending.opacity(0.1))
+                            .cornerRadius(10)
+                        }
+                        .disabled(!canAfford)
+                    }
+                }
+                .padding(14)
+                .background(PixelTheme.cardBackground)
+                .cornerRadius(14)
+                .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 20)
+    }
+
+    // MARK: - Purchase Actions
+
+    private func purchaseItem(_ itemID: String, _ price: Int) {
         guard let player = player else { return }
         let coinService = CoinService(modelContext: modelContext)
-        if coinService.purchaseItem(itemID: item.id, player: player) {
+        if coinService.purchaseItem(itemID: itemID, player: player) {
             HapticService.success()
             SoundService.playPurchaseSound()
-            purchaseAnimation = item.id
+            purchaseAnimation = itemID
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 purchaseAnimation = nil
             }
@@ -103,6 +416,35 @@ struct ShopView: View {
         } else {
             HapticService.error()
             SoundService.playErrorSound()
+        }
+    }
+
+    private func purchaseRoom(_ roomType: RoomType) {
+        guard let player = player else { return }
+        let coinService = CoinService(modelContext: modelContext)
+        if coinService.purchaseRoom(roomType: roomType, player: player) {
+            let newRoom = Room(roomType: roomType, isActive: false)
+            modelContext.insert(newRoom)
+            HapticService.success()
+            SoundService.playPurchaseSound()
+            try? modelContext.save()
+        } else {
+            HapticService.error()
+            SoundService.playErrorSound()
+        }
+    }
+
+    // MARK: - Sub-filter pill
+
+    private func categoryFilterPill(_ name: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(name)
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundColor(isSelected ? .white : PixelTheme.text.opacity(0.6))
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(isSelected ? PixelTheme.primary.opacity(0.8) : PixelTheme.cardBackground.opacity(0.6))
+                .cornerRadius(12)
         }
     }
 }
@@ -139,7 +481,6 @@ struct ShopItemCard: View {
 
     var body: some View {
         VStack(spacing: 8) {
-            // Item preview (placeholder)
             RoundedRectangle(cornerRadius: 10)
                 .fill(isOwned ? PixelTheme.completed.opacity(0.15) : Color.gray.opacity(0.1))
                 .frame(height: 100)

@@ -21,9 +21,11 @@ The entire app identity is **pixel art with a lo-fi cozy vibe**. This is the sou
 ## Tech Stack
 - **SwiftUI** + **SwiftData** (persistence)
 - **SpriteKit** for isometric room rendering
-- iOS Widget via **WidgetKit** (small + medium sizes)
+- **WidgetKit** (small, medium, lock screen: circular, rectangular, inline)
+- **UserNotifications** for block reminders, streak warnings
+- **EventKit** for optional calendar sync
 - Minimum iOS 17+ (SwiftData requirement)
-- No backend — fully local/offline
+- No backend — fully local/offline (data models structured for future server sync)
 
 ## Architecture
 ```
@@ -33,56 +35,107 @@ PixelPals/
 │   ├── Onboarding/   # 6-step onboarding flow (welcome, wake-up, 3x block pickers, avatar setup)
 │   ├── Schedule/     # DailyScheduleView + TimeBlockRow (Today tab)
 │   ├── Room/         # IsometricRoomView + RoomScene (SpriteKit) + slot picker
-│   ├── Shop/         # ShopView with category filters, purchase flow
-│   ├── Settings/     # SettingsView (schedule editing, avatar customization, data reset)
-│   └── Stats/        # StatsView (streaks, weekly heatmap, lifetime stats)
-├── Models/           # SwiftData models: Player, Pet (avatar), Room, RoomSlotAssignment, DailySchedule, TimeBlock, DayLog
-│                     # Note: "Pet" model name is legacy — it represents the Mini Me avatar
-│                     # Also: BlockCategory enum, ShopItem + ItemCatalog, SlotType enum, PetMood/PetColor enums
-├── Services/         # CoinService (rewards + purchases), PetMoodService, StreakService,
-│                     # WidgetDataService, HapticService, SoundService
+│   ├── Shop/         # ShopView (4 tabs: Room Items, Outfits, Seasonal, Rooms)
+│   ├── Outfits/      # OutfitView (equip/unequip per slot, auto-equip triggers)
+│   ├── Insights/     # InsightsView (2-week trend, category breakdown, time-of-day, streaks, fun stats)
+│   ├── Settings/     # SettingsView (pet editor, outfits, status, weekday/weekend schedule,
+│   │                 #   notifications, calendar sync, pro upgrade, data reset)
+│   │                 # + WeekendScheduleSetupSheet, StatusPickerSheet, CalendarSyncSheet
+│   └── Stats/        # StatsView (streaks, weekly heatmap, lifetime stats) — legacy, replaced by Insights tab
+├── Models/           # SwiftData models: Player, Pet, Room, RoomSlotAssignment, DailySchedule, TimeBlock, DayLog
+│                     # Enums: BlockCategory, PetMood, PetColor, SlotType, RoomType, ManualStatus
+│                     # Static catalogs: ShopItem + ItemCatalog, OutfitItem + OutfitCatalog, SeasonalItem + SeasonalCatalog
+│                     # OutfitSlot enum (head, face, neck, top, hand, shoes)
+│                     # Season enum (spring, summer, fall, winter, holiday)
+├── Services/         # CoinService, PetMoodService, StreakService, WidgetDataService,
+│                     # HapticService, SoundService, NotificationService, CalendarSyncService
 └── Shared/           # PixelTheme (colors, typography, Color hex init)
 
-PixelPalsWidget/      # Widget extension (TimelineProvider, small/medium widget views)
+PixelPalsWidget/      # Widget extension (small, medium, lock screen circular/rectangular/inline)
 ```
 
 ## Key Models
-- **Player**: coins, ownedItemIDs, streaks, hasCompletedOnboarding, isPremium
-- **Pet** (= Mini Me avatar): name, color/skin tone (warm/dark/light), accessoryIDs (outfits)
-- **DailySchedule**: isWeekday flag, contains TimeBlocks. Only weekday created in onboarding currently.
+- **Player**: coins, ownedItemIDs, streaks, hasCompletedOnboarding, isPremium, manualStatusRaw, manualStatusExpiresAt
+- **Pet** (= Mini Me avatar): name, color/skin tone, accessoryIDs, equippedOutfitIDs
+- **DailySchedule**: isWeekday flag, name ("Weekday"/"Weekend"), contains TimeBlocks
 - **TimeBlock**: category, label, startHour/startMinute, durationMinutes, sortOrder
-- **DayLog**: date, completedBlockIDs, coinsEarned. One per day.
-- **Room**: wallTheme, floorTheme, 12 RoomSlotAssignment slots
-- **ShopItem**: static catalog (ItemCatalog) with 22 items, 6 categories, slot-based placement
+- **DayLog**: date, completedBlockIDs, coinsEarned, bonusCoinsEarned. One per day.
+- **Room**: wallTheme, floorTheme, roomTypeRaw (RoomType), isActive, 12 RoomSlotAssignment slots
+- **ShopItem**: static catalog (ItemCatalog) — 22 room items, 6 categories
+- **OutfitItem**: 20 avatar outfits across 6 slots (head/face/neck/top/hand/shoes), with schedule auto-equip triggers
+- **SeasonalItem**: 12 limited-time items across 5 seasons (spring/summer/fall/winter/holiday)
+
+## Room Types (v2)
+- Bedroom (free starter), Study (500), Kitchen (600), Gym (750), Coffee Shop (1000), Rooftop (1500)
+- Each room has independent 12-slot decoration
+- Widget shows the active room
+
+## Outfit System (v2)
+- 6 slots: Head, Face, Neck, Top, Hand, Shoes
+- 20 outfits total with prices 60-250 coins
+- Some outfits auto-equip based on current schedule category (e.g., "Workout Headband" during Exercise blocks)
+- Outfits purchased in Shop → equipped in Outfits view
+
+## Manual Status / Sick Day (v2)
+- ManualStatus enum: sick, vacation, mentalHealthDay, traveling
+- Overrides avatar mood (e.g., sick → sleeping, vacation → happy)
+- Auto-expires at end of day
+- Set via Settings > Status picker
+
+## Seasonal Items (v2)
+- 12 items across spring, summer, fall, winter, holiday seasons
+- Only available during their season (e.g., holiday items in December only)
+- Special "Limited Time" badge in Shop
 
 ## Coin Economy
 - 10 coins per block completed
 - 15 coins for completing all morning/afternoon/evening blocks
 - 50 coins for perfect day
 - Streak bonuses: 25 (3-day), 75 (7-day), 300 (30-day)
-- Items cost 30-800 coins
+- Room items: 30-800 coins
+- Outfits: 60-250 coins
+- Seasonal items: 60-300 coins
+- New rooms: 500-1500 coins
 
 ## Avatar Mood Logic (PetMoodService)
 Mood determined by: time of day, completion rate, hours since last completion, streak
+**Manual status override**: sick/vacation/rest day/traveling overrides automatic mood
 States: sleeping, happy, neutral, bored, sad, celebrating
 The Mini Me's mood reflects how well the user is following their routine.
 
-## Current Status
-- All core game systems: COMPLETE
-- Settings screen: COMPLETE (schedule editing, avatar customization, data reset)
-- Haptic feedback + sound effects: COMPLETE (services in place)
-- Avatar sprites / furniture art: MISSING (using emoji + colored placeholder boxes)
-- Notifications: NOT IMPLEMENTED
-- Unit tests: NOT WRITTEN
+## Current Status (v2)
+### COMPLETE
+- All v1 core game systems (schedule, coins, streaks, room, shop, widget)
+- Settings screen (avatar, schedule editing, data reset)
+- Haptic feedback + sound effects
+- **v2: Outfit system** — 20 outfits, 6 slots, equip/unequip, auto-equip triggers
+- **v2: Multiple rooms** — 6 room types, room shop, per-room decoration
+- **v2: Notifications** — block reminders, streak warnings, morning greeting, mid-day nudge
+- **v2: Weekend schedule** — separate weekend schedule creation and editing
+- **v2: Habit insights** — 2-week trend, category breakdown, time-of-day analysis, streak history, fun stats
+- **v2: Lock screen widget** — circular, rectangular, and inline widget families
+- **v2: Sick day / manual status** — 4 statuses with mood override and auto-expiry
+- **v2: Seasonal items** — 12 items across 5 seasons, availability logic
+- **v2: Calendar sync** — EventKit integration, import calendar events as blocks
+- **v2: Premium/Pro gating** — upgrade flow in settings (StoreKit integration placeholder)
+
+### MISSING
+- Avatar sprites / furniture art (using emoji + colored placeholder boxes)
+- StoreKit purchase flow (Pro upgrade button exists but uses placeholder logic)
+- Unit tests
+- Room switcher UI in IsometricRoomView (Room model supports it, needs view update)
 
 ## Important Notes
 - SwiftData can't store enums directly — models use raw String values
-- Widget shares data via App Groups (UserDefaults suiteName)
+- Widget shares data via App Groups (UserDefaults suiteName: `group.com.pixelpals.shared`)
 - Room uses 12 fixed SlotType positions with hardcoded isometric coordinates
-- Onboarding creates weekday schedule only; weekend schedule support exists in model but needs UI
 - Player.hasCompletedOnboarding gates the entire app (ContentView checks this)
-- The `Pet` model is named "Pet" internally but represents the user's Mini Me avatar — do NOT refer to it as a pet in UI
+- The `Pet` model is named "Pet" internally but represents the Mini Me avatar — do NOT refer to it as a pet in UI
 - PetColor cases are skin tones: .orangeTabby = "Warm Tone", .black = "Dark Tone", .white = "Light Tone"
+- ManualStatus auto-expires at end of day (manualStatusExpiresAt)
+- Seasonal items use Season.isCurrentlyAvailable computed property based on current month
+- OutfitItem.scheduleTrigger links outfits to BlockCategory rawValues for auto-equip
+- CalendarSyncService.guessCategory does best-effort category mapping from event titles
 
 ## Project Documents
 - `DESIGN_SPEC.md` — Full design specification (features, monetization, architecture, art direction)

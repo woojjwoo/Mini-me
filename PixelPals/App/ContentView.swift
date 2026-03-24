@@ -40,10 +40,10 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
-            StatsView()
+            InsightsView()
                 .tabItem {
                     Image(systemName: "chart.bar.fill")
-                    Text("Stats")
+                    Text("Insights")
                 }
                 .tag(3)
 

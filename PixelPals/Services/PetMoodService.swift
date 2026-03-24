@@ -4,13 +4,19 @@ import Foundation
 final class PetMoodService {
     private let calendar = Calendar.current
 
-    /// Determine pet mood based on current state
+    /// Determine pet mood, respecting manual status overrides
     func currentMood(
         completedBlocks: Int,
         totalBlocks: Int,
         wakeUpHour: Int,
-        lastCompletionDate: Date?
+        lastCompletionDate: Date?,
+        manualStatus: ManualStatus? = nil
     ) -> PetMood {
+        // Manual status overrides all mood logic
+        if let status = manualStatus {
+            return status.moodOverride
+        }
+
         let now = Date.now
         let hour = calendar.component(.hour, from: now)
 

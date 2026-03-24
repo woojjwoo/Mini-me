@@ -36,7 +36,8 @@ final class WidgetDataService {
             name: pet.name,
             color: pet.colorRaw,
             mood: mood.rawValue,
-            accessoryIDs: pet.accessoryIDs
+            accessoryIDs: pet.accessoryIDs,
+            equippedOutfitIDs: pet.equippedOutfitIDs
         )
 
         let dayProgress = WidgetDayProgress(

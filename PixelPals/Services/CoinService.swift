@@ -41,12 +41,47 @@ final class CoinService {
     }
 
     func purchaseItem(itemID: String, player: Player) -> Bool {
-        guard let item = ItemCatalog.item(byID: itemID) else { return false }
-        guard player.canAfford(item.price) else { return false }
-        guard !player.ownsItem(itemID) else { return false }
+        // Check room items first
+        if let item = ItemCatalog.item(byID: itemID) {
+            guard player.canAfford(item.price) else { return false }
+            guard !player.ownsItem(itemID) else { return false }
+            player.coins -= item.price
+            player.ownedItemIDs.append(itemID)
+            return true
+        }
 
-        player.coins -= item.price
-        player.ownedItemIDs.append(itemID)
+        // Check outfit items
+        if let outfit = OutfitCatalog.outfit(byID: itemID) {
+            guard player.canAfford(outfit.price) else { return false }
+            guard !player.ownsItem(itemID) else { return false }
+            player.coins -= outfit.price
+            player.ownedItemIDs.append(itemID)
+            return true
+        }
+
+        // Check seasonal items
+        if let seasonal = SeasonalCatalog.item(byID: itemID) {
+            guard player.canAfford(seasonal.price) else { return false }
+            guard !player.ownsItem(itemID) else { return false }
+            player.coins -= seasonal.price
+            player.ownedItemIDs.append(itemID)
+            return true
+        }
+
+        return false
+    }
+
+    func priceForItem(_ itemID: String) -> Int? {
+        if let item = ItemCatalog.item(byID: itemID) { return item.price }
+        if let outfit = OutfitCatalog.outfit(byID: itemID) { return outfit.price }
+        if let seasonal = SeasonalCatalog.item(byID: itemID) { return seasonal.price }
+        return nil
+    }
+
+    // v2: Room unlock purchase
+    func purchaseRoom(roomType: RoomType, player: Player) -> Bool {
+        guard player.canAfford(roomType.unlockPrice) else { return false }
+        player.coins -= roomType.unlockPrice
         return true
     }
 
