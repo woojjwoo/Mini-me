@@ -153,7 +153,11 @@ class RoomScene: SKScene {
 
     private func loadTexture(named name: String) -> SKTexture? {
         // Check if the asset exists in the bundle
+        #if canImport(UIKit)
         guard let _ = UIImage(named: name) else { return nil }
+        #elseif canImport(AppKit)
+        guard let _ = NSImage(named: name) else { return nil }
+        #endif
         let texture = SKTexture(imageNamed: name)
         texture.filteringMode = .nearest // Crisp pixel art rendering
         return texture
@@ -170,11 +174,22 @@ class RoomScene: SKScene {
         }
     }
 
-    // MARK: - Touch (tap to select slot)
+    // MARK: - Touch / Click (tap to select slot)
 
+    #if os(iOS)
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+        handleTap(at: location)
+    }
+    #elseif os(macOS)
+    override func mouseDown(with event: NSEvent) {
+        let location = event.location(in: self)
+        handleTap(at: location)
+    }
+    #endif
+
+    private func handleTap(at location: CGPoint) {
         let tappedNodes = nodes(at: location)
 
         for node in tappedNodes {
