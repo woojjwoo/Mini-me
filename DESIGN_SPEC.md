@@ -1,8 +1,8 @@
-# Pixel Pals — Design Specification
+# Mini Me — Design Specification
 
 ## One-Liner
 
-A pixel-art iOS app where you design your ideal daily schedule, complete it to earn coins, and spend coins decorating an isometric pixel room — with your pet living on your home screen widget.
+A pixel-art iOS app where you design your ideal daily schedule, complete it to earn coins, and spend coins decorating an isometric pixel room — with your Mini Me avatar living on your home screen widget.
 
 ---
 
@@ -10,6 +10,7 @@ A pixel-art iOS app where you design your ideal daily schedule, complete it to e
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
+| Character concept | **Mini Me** — a pixel avatar of YOU, not a pet | Deeper emotional connection; mirrors your real life |
 | Target audience | Students & young adults (16-27): high school, college, young professionals | Pixel aesthetic resonates, routine-forming life stage, social sharing culture |
 | Room perspective | Isometric (lo-fi cozy aesthetic) | Gives that lo-fi album cover warmth; top-down feels like a game, isometric feels like a vibe |
 | Furniture placement | Pre-set slots (not free grid) | Kills 80% of isometric rendering complexity; no z-sorting, collision, or free grid math needed |
@@ -25,7 +26,9 @@ A pixel-art iOS app where you design your ideal daily schedule, complete it to e
 **"Design the life you want, then live it."**
 
 Users don't sync their messy calendar. They answer: *"What does your ideal day look like?"*
-The app builds a personalized daily schedule from that answer. Every completed block earns coins. Coins buy room items and pet cosmetics. The pet on your widget reflects how your day is going.
+The app builds a personalized daily schedule from that answer. Every completed block earns coins. Coins buy room items and avatar outfits. Your Mini Me on the widget reflects how your day is going.
+
+**The character is YOU.** Not a pet. Not a Tamagotchi. A pixel version of yourself that thrives when you follow your routine.
 
 ---
 
@@ -37,18 +40,21 @@ The app builds a personalized daily schedule from that answer. Every completed b
 2. Daily schedule view with tap-to-complete
 3. Coin economy (earn from completing blocks)
 4. One isometric pixel room with purchasable furniture
-5. One pet type with basic mood states on iOS widget
-6. Home screen widget showing pet + today's progress
+5. Mini Me avatar with basic mood states on iOS widget
+6. Home screen widget showing avatar + today's progress
+7. Settings screen (edit schedule, customize avatar, reset data)
+8. Haptic feedback + sound effects
 
 ### What's OUT of v1 (future versions)
 
 - Multiple rooms / room themes
-- Multiple pet types
-- Social features / friend visits
+- Avatar outfit shop (framework exists, UI not built yet)
+- Social features / friend visits / gift dropping
 - Apple Watch support
 - Advanced stats / analytics
-- Streak rewards beyond basic
+- Calendar sync (optional add-on later)
 - Mini-games
+- Notifications
 
 ---
 
@@ -61,36 +67,33 @@ The app builds a personalized daily schedule from that answer. Every completed b
 ```
 Screen 1: "Let's design your ideal day."
 Screen 2: "What time do you wake up?" → time picker
-Screen 3: "What does your morning look like?" → pick from blocks:
-          [Morning Routine] [Exercise] [Meditation] [Journaling]
-          [Breakfast] [Study] [Creative Time] [Free Time]
+Screen 3: "What does your morning look like?" → pick from blocks
 Screen 4: "What about your afternoon?" → same block picker
 Screen 5: "And your evening?" → same block picker
-Screen 6: "Here's your ideal day!" → timeline preview → confirm
+Screen 6: "Create your Mini Me!" → name + skin tone picker
 ```
 
 **How it works:**
 
 - Users build a daily schedule from **time blocks** (30-min or 1-hr increments)
 - Each block has a category, custom label, and time slot
-- Pre-built templates available: "Student", "Remote Worker", "Fitness Focus", "Creative", "Balanced"
-- Schedule is fully editable after onboarding (Settings > My Ideal Day)
-- Weekend schedule can differ from weekday schedule
+- Schedule is fully editable after onboarding (Settings > Edit Schedule)
+- Weekend schedule can differ from weekday (model supports it, weekend UI is v1.5)
 
 **Block Categories (v1):**
 
 | Category | Icon | Examples |
 |----------|------|----------|
-| Wellness | 🧘 | Meditation, Skincare, Journaling |
-| Exercise | 💪 | Gym, Walk, Yoga, Stretching |
-| Nutrition | 🍳 | Breakfast, Lunch, Dinner, Meal Prep |
-| Learning | 📚 | Study, Reading, Language Practice |
-| Creative | 🎨 | Drawing, Music, Writing, Coding |
-| Work | 💼 | Deep Work, Meetings, Email |
-| Social | 👋 | Family Time, Call Friend, Date Night |
-| Rest | 😴 | Nap, Sleep, Wind Down |
-| Routine | ✨ | Morning Routine, Evening Routine, Chores |
-| Custom | ⭐ | User-defined |
+| Wellness | sparkles | Meditation, Skincare, Journaling |
+| Exercise | figure.run | Gym, Walk, Yoga, Stretching |
+| Nutrition | fork.knife | Breakfast, Lunch, Dinner, Meal Prep |
+| Learning | book.fill | Study, Reading, Language Practice |
+| Creative | paintbrush.fill | Drawing, Music, Writing, Coding |
+| Work | briefcase.fill | Deep Work, Meetings, Email |
+| Social | person.2.fill | Family Time, Call Friend, Date Night |
+| Rest | moon.fill | Nap, Sleep, Wind Down |
+| Routine | arrow.triangle.2.circlepath | Morning Routine, Evening Routine, Chores |
+| Custom | star.fill | User-defined |
 
 ---
 
@@ -100,7 +103,7 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 
 ```
 ┌─────────────────────────────┐
-│  [Pet Avatar]  Tue, Mar 24  │
+│  [Avatar]  Tue, Mar 24      │
 │  ██████░░░░  60% done       │
 ├─────────────────────────────┤
 │  ✅ 6:30  Morning Routine   │
@@ -116,25 +119,18 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 │  ○ 21:00 Evening Routine    │
 │  ○ 22:00 Wind Down          │
 ├─────────────────────────────┤
-│  [🏠 Room]  [📊 Stats]     │
-│  [🛍 Shop]  [⚙️ Settings]  │
+│  [📅Today] [🏠Room] [🛍Shop]│
+│  [📊Stats] [⚙️Settings]    │
 └─────────────────────────────┘
 ```
 
 **Mechanics:**
 
-- Tap a block to mark it complete → earns coins + satisfying pixel animation
+- Tap a block to mark it complete → earns coins + haptic feedback + sound effect
 - Current time block is highlighted with a subtle glow
 - Blocks can be completed out of order (no rigid enforcement)
 - Skipped blocks grey out after their time passes (no penalty in v1, just visual)
-- Optional: "I did something else" → log a custom activity for partial credit
-
-**Completion feels good:**
-
-- Tap to complete → pixel sparkle animation + coin sound
-- Coin counter increments with a bounce
-- Pet on the widget updates mood (happy face, hearts)
-- Progress bar fills visually
+- Perfect day triggers celebration haptic + sound
 
 ---
 
@@ -159,27 +155,24 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 
 | Item Type | Price Range |
 |-----------|-------------|
-| Small room items (books, plants, mugs) | 50-100 coins |
-| Medium room items (desk, chair, lamp) | 150-300 coins |
-| Large room items (bed, couch, bookshelf) | 400-800 coins |
-| Special/rare items (arcade machine, aquarium) | 1000-2000 coins |
-| Pet accessories (hats, scarves, glasses) | 100-300 coins |
-| Wall/floor themes | 500-1000 coins |
-
-**Balance target:** A casual user (completing ~60% of blocks) should unlock a small item daily and a medium item every 2-3 days. A perfect-day user should feel meaningfully rewarded but never run out of things to buy within the first 2 months.
+| Small room items (plants, rugs, posters) | 30-150 coins |
+| Medium room items (desk, chair, lamp) | 150-350 coins |
+| Large room items (bed, bookshelf, gaming desk) | 400-800 coins |
+| Avatar outfits (v2) | 100-300 coins |
+| New environments (v2) | 500-1500 coins |
 
 ---
 
 ### 4. Isometric Pixel Room
 
-**The core reward loop.** You earn coins → you buy items → you place them in your room → you see your room grow alongside your habits.
+**The core reward loop.** Earn coins → buy items → place them in your room → see your room grow alongside your habits.
 
 **Room spec (v1):**
 
 - Single room, isometric perspective
-- **Pre-set furniture slots** (not free grid) — each slot has a fixed position in the room
-- Tap a slot → choose which item goes there from your owned items
-- Room has walls (back, left) and floor
+- **Pre-set furniture slots** (12 fixed positions) — not free grid
+- Tap a slot → choose which item goes there from owned items
+- Room has walls (back left, back right) and floor
 - Wall and floor themes are purchasable
 
 **Pre-set slots (v1 room layout):**
@@ -195,62 +188,52 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 | Wall decor 2 | Back wall right | Posters, shelves, art |
 | Cozy corner | Front-left | Bean bags, plants, lamps |
 | Side table | Near bed | Nightstands, small tables |
-| Window area | Back wall center | Curtains, blinds (cosmetic) |
-| Pet bed | Floor near furniture | Pet beds, cushions, boxes |
-| Accent item | Floor front-right | Electronics, instruments, fun items |
+| Window area | Back wall center | Curtains, blinds |
+| Chill spot | Floor near furniture | Cushions, boxes |
+| Accent item | Floor front-right | Electronics, instruments |
 
-**Art style:**
-
-- 32×32 pixel base tiles
-- Warm, cozy color palette (think: lo-fi study room aesthetic)
-- Items should feel handcrafted and charming
-- Lighting: soft ambient + optional desk lamp glow
-- The pet wanders the room when you view it
-
-**V1 item count target:** 20-25 unique items across categories (quality over quantity, AI-generated):
-
-- Furniture (bed, desk, chair, couch, bookshelf, table)
-- Decor (plants, posters, rugs, curtains, clock)
-- Electronics (laptop, monitor, game console, speakers)
-- Cozy (candles, fairy lights, pillows, blankets)
-- Fun (guitar, skateboard, telescope, globe)
-- Food/Drink (coffee maker, ramen bowl, pizza box)
-
-**Room interaction:**
-
-- View room any time from bottom nav
-- Pet walks around, sits on furniture, sleeps on bed
-- Room reflects time of day (daylight through window → sunset → night with lights on)
-- Screenshot/share button for social media
+**Room progression (v2+):**
+- Start: Studio apartment. Bed, no frame. Bare walls.
+- Earn coins → fill the room → unlock bigger house
+- Studio → 1BR → 2BR
+- Each environment can be upgraded independently
+- Love the gym? Deck it out. Homebody? Kitchen island.
 
 ---
 
-### 5. Pet System
+### 5. Mini Me Avatar System
 
-**V1: One pet type** — A pixel cat (most universally appealing, lowest controversy).
+**The character is YOU.** Not a pet. A pixel version of yourself.
 
-**Pet states (reflected in widget and in-room):**
+**Avatar states (reflected in widget and in-room):**
 
 | State | Trigger | Visual |
 |-------|---------|--------|
-| Sleeping | Before wake-up time | Zzz animation |
-| Happy | Completed recent blocks | Smiling, hearts |
-| Neutral | Normal state | Idle animation |
-| Bored | No blocks completed in 3+ hours | Yawning, looking around |
-| Sad | Less than 30% of day completed near evening | Droopy ears, rain cloud |
-| Celebrating | Perfect day achieved | Party hat, confetti |
+| Sleeping | Before wake-up time or after 11pm | Zzz animation, 😴 |
+| Happy | Completed recent blocks, >50% rate | Smiling, 😊 |
+| Neutral | Normal state | Idle animation, 🙂 |
+| Bored | No blocks completed in 3+ hours | Yawning, 🥱 |
+| Sad | <30% of day completed near evening | Droopy, 😢 |
+| Celebrating | Perfect day achieved | Party mode, 🥳 |
 
-**Pet customization (v1):**
+**Avatar customization (v1):**
 
-- 3 base colors (orange tabby, black, white)
-- Accessories purchasable with coins: hats (5), scarves (4), glasses (3), collars (4)
-- Name your pet
+- 3 skin tones: Warm Tone, Dark Tone, Light Tone
+- Name your Mini Me
+- Outfits/accessories (v2): headphones, phones, hats, jackets, gym fits, work outfits
 
-**Pet in room:**
+**Avatar in room:**
 
-- Pet wanders between furniture items
-- Sits on chairs, sleeps on beds, plays with certain items
-- Idle animations cycle every 10-15 seconds
+- Wanders between furniture items
+- Occasionally stretches (squash & stretch animation)
+- Flips direction when walking
+- Tap to interact (jumps + spins)
+- Idle bobbing animation
+
+**Future (v2+):**
+- Sick day mode: cold towel, thermometer, red face
+- Outfits auto-swap based on schedule (gym clothes at gym, PJs at night)
+- Friends can visit your room and see your avatar
 
 ---
 
@@ -261,41 +244,59 @@ Screen 6: "Here's your ideal day!" → timeline preview → confirm
 **Small widget (2×2):**
 ```
 ┌──────────┐
-│  [Cat]   │
+│  [Avatar]│
 │  ██░░ 4/8│
 │  60 🪙   │
 └──────────┘
 ```
-Shows: Pet with current mood, progress fraction, coins earned today.
+Shows: Avatar with current mood, progress fraction, coins earned today.
 
 **Medium widget (4×2):**
 ```
 ┌──────────────────────┐
-│ [Cat]  Tue, Mar 24   │
+│ [Avatar] Tue, Mar 24 │
 │ ████░░░░  5/10 done  │
 │ Next: Deep Work 2:00 │
 │ 🪙 145 today         │
 └──────────────────────┘
 ```
-Shows: Pet, date, progress bar, next upcoming block, coins.
+Shows: Avatar, date, progress bar, next upcoming block, coins.
 
 **Widget behavior:**
-
 - Updates every 15 minutes (iOS limitation)
 - Tapping widget opens app to daily schedule
-- Pet mood reflects current completion status
-- Pet has subtle idle animation frame changes on refresh
+- Avatar mood reflects current completion status
 
 ---
 
-### 7. Notifications
+### 7. Settings Screen
 
-**V1 notifications (all optional, off by default):**
+**Implemented features:**
+- **Edit Mini Me**: Change name and skin tone
+- **Edit Schedule**: View/add/delete time blocks, category picker, time picker, duration picker
+- **App info**: Version display
+- **Reset All Data**: Destructive action with confirmation, returns to onboarding
 
-- Block reminder: "Time for [Exercise]! Your cat is cheering you on." (5 min before block start)
-- Mid-day nudge: "You've completed 4/10 blocks today. Keep going!" (1x, configurable time)
-- Streak at risk: "Don't break your 7-day streak! Complete one more block." (evening)
-- Never more than 3 notifications per day
+---
+
+### 8. Haptic & Sound Feedback
+
+**Haptics (HapticService):**
+- Light: toggling, selecting items
+- Medium: completing a block, purchasing
+- Heavy: major milestones (perfect day, streak)
+- Success: block completed, purchase confirmed
+- Warning: streak at risk
+- Error: can't afford, invalid action
+- Selection: picker wheels, tab switching
+
+**Sounds (SoundService via AudioToolbox):**
+- Coin collection (system sound 1057)
+- Block completed (system sound 1025)
+- Purchase confirmed (system sound 1052)
+- Celebration / perfect day (system sound 1026)
+- Error / can't afford (system sound 1053)
+- Navigation tap (system sound 1104)
 
 ---
 
@@ -308,184 +309,60 @@ Shows: Pet, date, progress bar, next upcoming block, coins.
 - Full daily tracking
 - Coin earning (no cap)
 - Room decoration (access to ~60% of items)
-- Pet with basic customization
+- Avatar with basic customization
 - Widget (small only)
 
-**Pixel Pals Pro — $1.99/month or $14.99/year:**
+**Mini Me Pro — $1.99/month or $14.99/year:**
 - Medium widget
 - Exclusive room items (~40% of catalog)
-- Exclusive pet accessories
+- Exclusive avatar outfits (v2)
 - Weekend schedule (separate from weekday)
-- Multiple room themes (when added in v2)
+- Multiple room themes (v2)
 - Custom block categories
 - Advanced stats
-- No feature removed from free tier (free users keep everything they had)
+- No feature removed from free tier
 
-**Why this pricing:**
-- $1.99/month is impulse-buy territory — less than a coffee, users don't hesitate
-- ~3.5x cheaper than Finch ($70/year) — obvious value pick when users compare
-- Higher conversion rate at $1.99 outearns $2.99 at sub-100K user scale
-- Annual discount ($14.99 vs $23.88 monthly) incentivizes yearly commitment
-- Can raise prices later once content library and social proof grow
-
-**Revenue target math:**
-- 10K downloads/month (achievable with good ASO + TikTok/IG content)
-- 7% conversion to Pro at $1.99 = 700 subscribers/month
-- Blended avg ~$1.66/month (mix of monthly + annual)
-- ~$1,162/month per cohort
-- After 12 months = ~$14K MRR
-- Lower price, higher volume — better growth flywheel for a solo/small team
+**Why $1.99/month:**
+- Impulse-buy territory — less than a coffee
+- ~3.5x cheaper than Finch ($70/year) — obvious value pick
+- Higher conversion rate at lower price outearns higher price at sub-100K scale
+- Can raise prices later once content and social proof grow
 
 ---
 
-## Technical Architecture (iOS, Swift)
+## Technical Architecture
 
 ### Stack
-
 - **Language:** Swift 5.9+
-- **UI:** SwiftUI (entire app)
-- **Data:** SwiftData (local persistence, no server needed for v1)
+- **UI:** SwiftUI
+- **Data:** SwiftData (local persistence, no server for v1)
 - **Widget:** WidgetKit + SwiftUI
-- **Architecture:** MVVM
-- **Pixel rendering:** SpriteKit for isometric room (embedded in SwiftUI view)
-- **Notifications:** UserNotifications framework
+- **Room rendering:** SpriteKit (isometric, embedded in SwiftUI)
+- **Haptics:** UIKit feedback generators
+- **Sounds:** AudioToolbox system sounds
 - **Minimum target:** iOS 17.0
 
-### Data Model (Core)
-
-```swift
-// User's ideal schedule
-struct DailySchedule {
-    let id: UUID
-    var isWeekday: Bool
-    var blocks: [TimeBlock]
-}
-
-struct TimeBlock {
-    let id: UUID
-    var category: BlockCategory
-    var label: String
-    var startTime: DateComponents  // hour + minute
-    var durationMinutes: Int       // 30 or 60
-}
-
-enum BlockCategory: String, Codable {
-    case wellness, exercise, nutrition, learning
-    case creative, work, social, rest, routine, custom
-}
-
-// Daily tracking
-struct DayLog {
-    let id: UUID
-    var date: Date
-    var completedBlockIDs: [UUID]
-    var coinsEarned: Int
-}
-
-// Room & items
-struct Room {
-    let id: UUID
-    var wallTheme: String
-    var floorTheme: String
-    var placedItems: [PlacedItem]
-}
-
-struct PlacedItem {
-    let id: UUID
-    var itemID: String
-    var gridX: Int
-    var gridY: Int
-    var rotation: Int  // 0, 90, 180, 270
-}
-
-// Pet
-struct Pet {
-    let id: UUID
-    var name: String
-    var baseColor: PetColor
-    var accessories: [String]  // accessory item IDs
-}
-
-// Player
-struct Player {
-    var coins: Int
-    var ownedItemIDs: [String]
-    var currentStreak: Int
-    var longestStreak: Int
-    var totalDaysCompleted: Int
-}
-```
-
-### Widget Data Sharing
-
-- Use App Groups (`group.com.pixelpals.shared`) to share data between main app and widget extension
-- Widget reads from shared `UserDefaults` or shared SwiftData store
-- Main app writes completion status; widget reads on refresh
-
-### File Structure
-
-```
-PixelPals/
-├── App/
-│   ├── PixelPalsApp.swift
-│   └── ContentView.swift
-├── Features/
-│   ├── Onboarding/
-│   │   ├── IdealDayBuilderView.swift
-│   │   ├── TimePickerView.swift
-│   │   └── BlockPickerView.swift
-│   ├── Schedule/
-│   │   ├── DailyScheduleView.swift
-│   │   ├── TimeBlockRow.swift
-│   │   └── CompletionAnimation.swift
-│   ├── Room/
-│   │   ├── IsometricRoomView.swift
-│   │   ├── RoomScene.swift (SpriteKit)
-│   │   ├── ItemPlacementView.swift
-│   │   └── Assets/ (pixel art sprites)
-│   ├── Shop/
-│   │   ├── ShopView.swift
-│   │   └── ItemDetailView.swift
-│   ├── Pet/
-│   │   ├── PetView.swift
-│   │   └── PetCustomizationView.swift
-│   └── Stats/
-│       └── StatsView.swift
-├── Models/
-│   ├── DailySchedule.swift
-│   ├── TimeBlock.swift
-│   ├── Room.swift
-│   ├── Pet.swift
-│   └── Player.swift
-├── Services/
-│   ├── CoinService.swift
-│   ├── StreakService.swift
-│   ├── NotificationService.swift
-│   └── WidgetDataService.swift
-├── Shared/
-│   ├── PixelArtComponents.swift
-│   └── Theme.swift
-└── Widget/
-    ├── PixelPalsWidget.swift
-    ├── SmallWidgetView.swift
-    └── MediumWidgetView.swift
-```
+### Key Architecture Notes
+- SwiftData can't store enums directly — models use raw String values
+- Widget shares data via App Groups (UserDefaults suiteName: `group.com.pixelpals.shared`)
+- Room uses 12 fixed SlotType positions with hardcoded isometric coordinates
+- `Pet` model is named "Pet" internally but represents the Mini Me avatar — never called "pet" in UI
+- PetColor cases map to skin tones: `.orangeTabby` = Warm, `.black` = Dark, `.white` = Light
+- Data models structured for future server sync (DTOs exist for all models)
 
 ---
 
 ## Art Direction
 
 ### Pixel Art Style Guide
-
 - **Tile size:** 32×32 pixels for items, 16×16 for small props
-- **Palette:** Limited palette per item (8-12 colors max). Warm, muted tones.
-- **Inspiration:** Stardew Valley's cozy interiors, Unpacking's item variety, Neko Atsume's charm
-- **Isometric angle:** Standard 2:1 isometric (26.57°)
-- **Character:** 24×24 pixel pet sprites, 4-frame idle animations
-- **UI elements:** Pixel-art borders and buttons where appropriate, but readable modern text (SF Pro) for schedules and data
+- **Palette:** Limited (8-12 colors max per item). Warm, muted tones.
+- **Inspiration:** Stardew Valley interiors, lo-fi album covers, cozy pixel dioramas
+- **Isometric angle:** Standard 2:1 (26.57°)
+- **Avatar:** 24×24 pixel sprites, idle animations
+- **UI:** Pixel-art borders where appropriate, SF Pro for readable text
 
-### Color Palette (Base)
-
+### Color Palette
 ```
 Background:  #F5E6D3 (warm cream)
 Primary:     #5B8C5A (sage green)
@@ -501,70 +378,48 @@ Coin:        #FFD54F (gold)
 ## User Journey (First 7 Days)
 
 **Day 1:**
-- Download → Onboarding → Design ideal day (5 screens, ~2 min)
-- Name your cat → Choose color
+- Download → Onboarding → Design ideal day (~2 min)
+- Create your Mini Me → Choose skin tone + name
 - See your schedule → Complete 2-3 blocks → Earn first coins
-- Buy first small item (plant or book) → Place in room
+- Buy first small item (plant or rug) → Place in room
 - "Come back tomorrow to keep building your room!"
 
 **Day 2-3:**
-- Morning notification (if opted in): "[Cat name] is waiting for you!"
 - Complete more blocks → Buy another item
 - Room starts to feel like "yours"
 - 3-day streak bonus feels rewarding
 
 **Day 4-5:**
 - Unlock a medium item → Room transformation is visible
-- Pet has interacted with placed furniture (sits on chair, sleeps on bed)
-- User screenshots room → shares on social
+- Avatar reacts to furniture (wanders around, interacts)
+- User screenshots room → shares
 
 **Day 7:**
-- 7-day streak bonus (75 coins) → Buy something special
+- 7-day streak bonus (75 coins)
 - Room looks noticeably furnished
 - Stats show weekly completion rate
 - User thinks: "This is actually helping me stick to my routine"
 
 ---
 
-## Success Metrics (V1)
+## V2+ Roadmap
 
-| Metric | Target | Why |
-|--------|--------|-----|
-| Day 1 retention | >40% | Onboarding must be fast and delightful |
-| Day 7 retention | >20% | Core loop must be sticky |
-| Day 30 retention | >10% | Room decoration must provide ongoing motivation |
-| Avg blocks completed/day | >5 | Schedule must feel achievable |
-| Avg session length | 2-4 min | Short, daily check-ins (not time sinks) |
-| Free → Pro conversion | >5% | Pro must feel like a clear upgrade |
-| App Store rating | >4.5 | Quality bar |
-
----
-
-## Risks and Mitigations
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|-----------|--------|------------|
-| Room decoration novelty wears off | High | High | Seasonal items, rotating shop, room themes in v2 |
-| Schedule feels too rigid | Medium | High | Allow out-of-order completion, "flex blocks", skip without penalty |
-| Not enough items at launch | Medium | Medium | Target 40-50 items; prioritize variety over quantity |
-| Widget feels static | Medium | Medium | Pet mood changes + progress updates give reason to glance |
-| Users don't return after Day 3 | High | Critical | Day 2-3 rewards are front-loaded; push notification strategy |
-| Pixel art production bottleneck | Medium | Medium | Use consistent style guide; consider AI-assisted pixel art for speed |
-| iOS widget limitations frustrate | Low | Medium | Set expectations in onboarding; widget is a companion, not the app |
+1. **Avatar outfits & outfit shop** (headphones, gym fits, work clothes)
+2. **Multiple rooms** (bedroom, kitchen, study, gym, coffee shop)
+3. **Social: visit friends' rooms**, leave gifts
+4. **Sick day / status modes** (avatar mirrors real-life state)
+5. **Seasonal events** (holiday items, limited-time furniture)
+6. **Notifications** (block reminders, streak warnings)
+7. **Weekend schedule UI**
+8. **Apple Watch complication**
+9. **Habit insights** (which blocks you skip most, trends)
+10. **Lock Screen widget**
+11. **Optional calendar sync** (for users who want it)
+12. **Android version**
 
 ---
 
-## V2+ Roadmap (Post-Launch)
+## Related Documents
 
-Priority order based on expected retention/revenue impact:
-
-1. **Multiple rooms** (bedroom, kitchen, study, balcony)
-2. **More pet types** (dog, bunny, hamster, bird)
-3. **Social: visit friends' rooms**
-4. **Seasonal events** (Halloween room items, holiday pets)
-5. **Apple Watch complication** (quick block completion)
-6. **Habit insights** (which blocks you skip most, trends)
-7. **Lock Screen widget**
-8. **iPad support**
-9. **Real calendar sync** (optional, for users who want it)
-10. **Android version**
+- `docs/DESIGN_CONVERSATION.md` — Full design conversation log with all critiques, pivots, and reasoning
+- `CLAUDE.md` — Technical project memory for development context

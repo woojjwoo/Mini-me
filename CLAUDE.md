@@ -71,3 +71,8 @@ The Mini Me's mood reflects how well the user is following their routine.
 - Player.hasCompletedOnboarding gates the entire app (ContentView checks this)
 - The `Pet` model is named "Pet" internally but represents the user's Mini Me avatar — do NOT refer to it as a pet in UI
 - PetColor cases are skin tones: .orangeTabby = "Warm Tone", .black = "Dark Tone", .white = "Light Tone"
+
+## Project Documents
+- `DESIGN_SPEC.md` — Full design specification (features, monetization, architecture, art direction)
+- `docs/DESIGN_CONVERSATION.md` — Complete design conversation log (every critique, pivot, decision, and rationale)
+- `docs/REFERENCES.md` — Art style references, competitor links, inspiration sources
