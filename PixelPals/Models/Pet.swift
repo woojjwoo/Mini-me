@@ -24,10 +24,10 @@ enum PetMood: String, Codable {
         switch self {
         case .sleeping: "😴"
         case .happy: "😊"
-        case .neutral: "😐"
+        case .neutral: "🙂"
         case .bored: "🥱"
         case .sad: "😢"
-        case .celebrating: "🎉"
+        case .celebrating: "🥳"
         }
     }
 }
@@ -41,17 +41,17 @@ enum PetColor: String, Codable, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .orangeTabby: "Orange Tabby"
-        case .black: "Black Cat"
-        case .white: "White Cat"
+        case .orangeTabby: "Warm Tone"
+        case .black: "Dark Tone"
+        case .white: "Light Tone"
         }
     }
 
     var spritePrefix: String {
         switch self {
-        case .orangeTabby: "cat_orange"
-        case .black: "cat_black"
-        case .white: "cat_white"
+        case .orangeTabby: "avatar_warm"
+        case .black: "avatar_dark"
+        case .white: "avatar_light"
         }
     }
 }

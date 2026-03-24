@@ -23,7 +23,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     // Pet section
-                    settingsSection(title: "Your Pixel Pal") {
+                    settingsSection(title: "Your Mini Me") {
                         if let pet = pet {
                             petRow(pet)
                         }
@@ -64,7 +64,7 @@ struct SettingsView: View {
                 resetAllData()
             }
         } message: {
-            Text("This will delete your pet, schedule, coins, and all progress. This cannot be undone.")
+            Text("This will delete your Mini Me, schedule, coins, and all progress. This cannot be undone.")
         }
     }
 
@@ -97,7 +97,7 @@ struct SettingsView: View {
                     .fill(petBackgroundColor(pet.color))
                     .frame(width: 44, height: 44)
                     .overlay {
-                        Text("🐱")
+                        Text("🧑")
                             .font(.system(size: 24))
                     }
 
@@ -252,7 +252,7 @@ struct PetEditorSheet: View {
                         .fill(previewColor)
                         .frame(width: 100, height: 100)
                         .overlay {
-                            Text("🐱")
+                            Text("🧑")
                                 .font(.system(size: 50))
                         }
                         .padding(.top, 20)
@@ -282,7 +282,7 @@ struct PetEditorSheet: View {
                     }
 
                     // Name field
-                    TextField("Pet name", text: $editedName)
+                    TextField("Name your Mini Me", text: $editedName)
                         .font(PixelTheme.bodyFont)
                         .padding(14)
                         .background(PixelTheme.cardBackground)
@@ -293,7 +293,7 @@ struct PetEditorSheet: View {
                     Spacer()
                 }
             }
-            .navigationTitle("Edit Pet")
+            .navigationTitle("Edit Mini Me")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

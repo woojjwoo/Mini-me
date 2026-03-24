@@ -30,7 +30,7 @@ enum SlotType: String, Codable, CaseIterable, Identifiable {
         case .cozyCorner: "Cozy Corner"
         case .sideTable: "Side Table"
         case .windowArea: "Window Area"
-        case .petBed: "Pet Bed"
+        case .petBed: "Chill Spot"
         case .accentItem: "Accent Item"
         }
     }

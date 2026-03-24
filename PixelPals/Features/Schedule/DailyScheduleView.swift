@@ -78,7 +78,7 @@ struct DailyScheduleView: View {
             HStack {
                 // Pet mood placeholder
                 VStack {
-                    Text("🐱")
+                    Text("🧑")
                         .font(.system(size: 40))
                     if let pet = pet {
                         Text(pet.name)

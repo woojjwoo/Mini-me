@@ -135,7 +135,7 @@ class RoomScene: SKScene {
     }
 
     private func addPetNode(at origin: CGPoint) {
-        // Placeholder pet — will be replaced with actual sprite
+        // Placeholder avatar — will be replaced with actual sprite
         let petNode = SKSpriteNode(color: SKColor(red: 1.0, green: 0.72, blue: 0.3, alpha: 1.0), size: CGSize(width: 24, height: 24))
         petNode.position = CGPoint(x: origin.x + 30, y: origin.y - 20)
         petNode.zPosition = 10
@@ -240,7 +240,7 @@ class RoomScene: SKScene {
                 ])
                 node.run(scale)
             } else if node.name == "pet" {
-                // Pet interaction — tap the cat!
+                // Avatar interaction — tap your Mini Me!
                 HapticService.medium()
 
                 let jump = SKAction.sequence([

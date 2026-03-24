@@ -14,7 +14,7 @@ struct WelcomeStep: View {
                 .fill(PixelTheme.primary.opacity(0.15))
                 .frame(width: 160, height: 160)
                 .overlay {
-                    Text("🐱")
+                    Text("🧑")
                         .font(.system(size: 80))
                 }
 
@@ -23,7 +23,7 @@ struct WelcomeStep: View {
                 .foregroundColor(PixelTheme.text)
                 .multilineTextAlignment(.center)
 
-            Text("Build the daily routine you actually want to follow — then watch your pixel room grow as you stick to it.")
+            Text("Build the daily routine you actually want to follow — your Mini Me lives in a pixel room that grows as you stick to it.")
                 .font(PixelTheme.bodyFont)
                 .foregroundColor(PixelTheme.text.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -224,7 +224,7 @@ struct PetSetupStep: View {
         VStack(spacing: 24) {
             Spacer()
 
-            Text("Meet your pixel pal!")
+            Text("Create your Mini Me!")
                 .font(PixelTheme.titleFont)
                 .foregroundColor(PixelTheme.text)
 
@@ -235,7 +235,7 @@ struct PetSetupStep: View {
                       Color(hex: "F5F5F5"))
                 .frame(width: 120, height: 120)
                 .overlay {
-                    Text("🐱")
+                    Text("🧑")
                         .font(.system(size: 60))
                 }
 
@@ -263,7 +263,7 @@ struct PetSetupStep: View {
             }
 
             // Name field
-            TextField("Name your cat...", text: $petName)
+            TextField("Name your Mini Me...", text: $petName)
                 .font(PixelTheme.bodyFont)
                 .padding(14)
                 .background(PixelTheme.cardBackground)

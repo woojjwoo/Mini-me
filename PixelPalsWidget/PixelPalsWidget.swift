@@ -76,7 +76,7 @@ struct SmallWidgetView: View {
     var body: some View {
         VStack(spacing: 6) {
             // Pet
-            Text("🐱")
+            Text("🧑")
                 .font(.system(size: 36))
 
             // Progress
@@ -110,7 +110,7 @@ struct MediumWidgetView: View {
         HStack(spacing: 16) {
             // Pet side
             VStack(spacing: 4) {
-                Text("🐱")
+                Text("🧑")
                     .font(.system(size: 40))
                 Text(entry.petName)
                     .font(.system(size: 11, weight: .medium, design: .rounded))
@@ -179,8 +179,8 @@ struct PixelPalsWidget: Widget {
         StaticConfiguration(kind: kind, provider: PixelPalsProvider()) { entry in
             PixelPalsWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Pixel Pals")
-        .description("See your pet and daily progress")
+        .configurationDisplayName("Mini Me")
+        .description("See your Mini Me and daily progress")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

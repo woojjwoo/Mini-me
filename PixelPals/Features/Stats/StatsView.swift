@@ -51,7 +51,7 @@ struct StatsView: View {
                 .fill(PixelTheme.primary.opacity(0.15))
                 .frame(width: 80, height: 80)
                 .overlay {
-                    Text("🐱")
+                    Text("🧑")
                         .font(.system(size: 40))
                 }
 
@@ -62,7 +62,7 @@ struct StatsView: View {
                 Text(pet.color.displayName)
                     .font(PixelTheme.captionFont)
                     .foregroundColor(PixelTheme.text.opacity(0.6))
-                Text("Accessories: \(pet.accessoryIDs.count)")
+                Text("Outfits: \(pet.accessoryIDs.count)")
                     .font(PixelTheme.captionFont)
                     .foregroundColor(PixelTheme.text.opacity(0.6))
             }

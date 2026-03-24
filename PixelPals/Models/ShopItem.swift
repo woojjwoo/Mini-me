@@ -63,7 +63,7 @@ enum ItemCatalog {
 
         // Wall decor
         ShopItem(id: "poster_sunset", name: "Sunset Poster", category: .decor, slotType: "wallDecor1", price: 80, spriteName: "poster_sunset", isPremium: false),
-        ShopItem(id: "poster_cat", name: "Cat Poster", category: .decor, slotType: "wallDecor2", price: 80, spriteName: "poster_cat", isPremium: false),
+        ShopItem(id: "poster_cat", name: "Selfie Poster", category: .decor, slotType: "wallDecor2", price: 80, spriteName: "poster_cat", isPremium: false),
         ShopItem(id: "clock_pixel", name: "Pixel Clock", category: .decor, slotType: "wallDecor1", price: 120, spriteName: "clock_pixel", isPremium: false),
 
         // Cozy corner
@@ -78,7 +78,7 @@ enum ItemCatalog {
         ShopItem(id: "curtain_white", name: "White Curtains", category: .decor, slotType: "windowArea", price: 100, spriteName: "curtain_white", isPremium: false),
 
         // Pet bed
-        ShopItem(id: "petbed_cushion", name: "Cat Cushion", category: .cozy, slotType: "petBed", price: 80, spriteName: "petbed_cushion", isPremium: false),
+        ShopItem(id: "petbed_cushion", name: "Floor Cushion", category: .cozy, slotType: "petBed", price: 80, spriteName: "petbed_cushion", isPremium: false),
         ShopItem(id: "petbed_box", name: "Cardboard Box", category: .fun, slotType: "petBed", price: 30, spriteName: "petbed_box", isPremium: false),
 
         // Accent items
