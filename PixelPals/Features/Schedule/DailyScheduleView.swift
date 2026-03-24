@@ -157,6 +157,16 @@ struct DailyScheduleView: View {
             schedule: schedule
         )
 
+        // Feedback
+        HapticService.success()
+        SoundService.playCompleteSound()
+
+        // Check for perfect day celebration
+        if todayLog.completedBlockIDs.count == schedule.blocks.count {
+            HapticService.heavy()
+            SoundService.playCelebrationSound()
+        }
+
         // Trigger animation
         animatingBlockID = block.id
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {

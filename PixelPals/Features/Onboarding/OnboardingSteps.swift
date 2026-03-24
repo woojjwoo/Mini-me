@@ -287,7 +287,10 @@ struct OnboardingButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button {
+            HapticService.medium()
+            action()
+        } label: {
             Text(title)
                 .font(PixelTheme.headlineFont)
                 .foregroundColor(.white)

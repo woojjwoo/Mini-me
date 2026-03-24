@@ -141,12 +141,48 @@ class RoomScene: SKScene {
         petNode.zPosition = 10
         petNode.name = "pet"
 
-        // Simple idle animation: bob up and down
-        let moveUp = SKAction.moveBy(x: 0, y: 4, duration: 1.0)
-        let moveDown = SKAction.moveBy(x: 0, y: -4, duration: 1.0)
-        moveUp.timingMode = .easeInEaseOut
-        moveDown.timingMode = .easeInEaseOut
-        petNode.run(SKAction.repeatForever(SKAction.sequence([moveUp, moveDown])))
+        // Idle animation: bob up and down
+        let bobUp = SKAction.moveBy(x: 0, y: 4, duration: 1.0)
+        let bobDown = SKAction.moveBy(x: 0, y: -4, duration: 1.0)
+        bobUp.timingMode = .easeInEaseOut
+        bobDown.timingMode = .easeInEaseOut
+        let bob = SKAction.repeatForever(SKAction.sequence([bobUp, bobDown]))
+
+        // Occasional wander: move to a random nearby spot, pause, return
+        let wander = SKAction.repeatForever(SKAction.sequence([
+            SKAction.wait(forDuration: 5.0, withRange: 4.0),
+            SKAction.run { [weak petNode] in
+                guard let petNode = petNode else { return }
+                let dx = CGFloat.random(in: -40...40)
+                let dy = CGFloat.random(in: -20...20)
+                let target = CGPoint(x: origin.x + 30 + dx, y: origin.y - 20 + dy)
+
+                // Flip direction based on movement
+                let scaleX: CGFloat = dx < 0 ? -1.0 : 1.0
+                let flip = SKAction.scaleX(to: scaleX, duration: 0.1)
+
+                let walk = SKAction.move(to: target, duration: 1.2)
+                walk.timingMode = .easeInEaseOut
+                let pause = SKAction.wait(forDuration: 2.0, withRange: 1.5)
+                let returnHome = SKAction.move(to: CGPoint(x: origin.x + 30, y: origin.y - 20), duration: 1.2)
+                returnHome.timingMode = .easeInEaseOut
+                let flipBack = SKAction.scaleX(to: 1.0, duration: 0.1)
+
+                petNode.run(SKAction.sequence([flip, walk, pause, flipBack, returnHome]))
+            }
+        ]))
+
+        // Occasional stretch: squash and stretch
+        let stretch = SKAction.repeatForever(SKAction.sequence([
+            SKAction.wait(forDuration: 8.0, withRange: 5.0),
+            SKAction.scaleY(to: 0.7, duration: 0.15),
+            SKAction.scaleY(to: 1.2, duration: 0.2),
+            SKAction.scaleY(to: 1.0, duration: 0.15),
+        ]))
+
+        petNode.run(bob, withKey: "bob")
+        petNode.run(wander, withKey: "wander")
+        petNode.run(stretch, withKey: "stretch")
 
         addChild(petNode)
     }
@@ -194,12 +230,26 @@ class RoomScene: SKScene {
 
         for node in tappedNodes {
             if let name = node.name, SlotType(rawValue: name) != nil {
+                HapticService.light()
+                SoundService.playTapSound()
+
                 // Pulse animation on tap
                 let scale = SKAction.sequence([
                     SKAction.scale(to: 2.3, duration: 0.1),
                     SKAction.scale(to: 2.0, duration: 0.1),
                 ])
                 node.run(scale)
+            } else if node.name == "pet" {
+                // Pet interaction — tap the cat!
+                HapticService.medium()
+
+                let jump = SKAction.sequence([
+                    SKAction.moveBy(x: 0, y: 12, duration: 0.15),
+                    SKAction.moveBy(x: 0, y: -12, duration: 0.15),
+                ])
+                jump.timingMode = .easeOut
+                let spin = SKAction.rotate(byAngle: .pi * 2, duration: 0.4)
+                node.run(SKAction.group([jump, spin]))
             }
         }
     }

@@ -46,6 +46,15 @@ struct MainTabView: View {
                     Text("Stats")
                 }
                 .tag(3)
+
+            NavigationStack {
+                SettingsView()
+            }
+            .tabItem {
+                Image(systemName: "gearshape.fill")
+                Text("Settings")
+            }
+            .tag(4)
         }
         .tint(PixelTheme.primary)
     }

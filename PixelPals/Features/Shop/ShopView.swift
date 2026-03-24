@@ -93,11 +93,16 @@ struct ShopView: View {
         guard let player = player else { return }
         let coinService = CoinService(modelContext: modelContext)
         if coinService.purchaseItem(itemID: item.id, player: player) {
+            HapticService.success()
+            SoundService.playPurchaseSound()
             purchaseAnimation = item.id
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 purchaseAnimation = nil
             }
             try? modelContext.save()
+        } else {
+            HapticService.error()
+            SoundService.playErrorSound()
         }
     }
 }
