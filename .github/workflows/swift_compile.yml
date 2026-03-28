@@ -1,0 +1,29 @@
+name: Compile Check
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+
+jobs:
+  build:
+    name: Swift Typecheck (iOS 17 Simulator)
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.2'
+
+      - name: Typecheck Core Swift Logic
+        # We perform a type-check sweep using the iOS 17 simulator SDK.
+        # This compiles the code natively without needing a bloated Xcode .pbxproj file
+        run: |
+          xcrun swiftc -typecheck -parse-as-library \
+          -sdk $(xcrun --sdk iphonesimulator --show-sdk-path) \
+          -target arm64-apple-ios17.0-simulator \
+          $(find PixelPals -name "*.swift") $(find PixelPalsWidget -name "*.swift")

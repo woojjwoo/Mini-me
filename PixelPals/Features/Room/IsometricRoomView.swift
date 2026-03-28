@@ -10,8 +10,15 @@ struct IsometricRoomView: View {
 
     @State private var selectedSlot: SlotType?
     @State private var showingSlotPicker = false
+    @State private var selectedRoomID: UUID?
 
-    private var room: Room? { rooms.first }
+    private var activeRoom: Room? {
+        if let selected = selectedRoomID {
+            return rooms.first { $0.id == selected }
+        }
+        return rooms.first { $0.isActive } ?? rooms.first
+    }
+
     private var player: Player? { players.first }
 
     var body: some View {
@@ -20,8 +27,32 @@ struct IsometricRoomView: View {
                 PixelTheme.background.ignoresSafeArea()
 
                 VStack(spacing: 0) {
+                    // Room Switcher UI
+                    if rooms.count > 1 {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 12) {
+                                ForEach(rooms) { r in
+                                    Button {
+                                        selectedRoomID = r.id
+                                    } label: {
+                                        Text(r.roomType.displayName)
+                                            .font(.system(size: 14, weight: .bold, design: .rounded))
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 8)
+                                            .background(activeRoom?.id == r.id ? PixelTheme.primary : PixelTheme.cardBackground)
+                                            .foregroundColor(activeRoom?.id == r.id ? .white : PixelTheme.text)
+                                            .cornerRadius(20)
+                                            .shadow(color: PixelTheme.shadowColor, radius: 1, y: 1)
+                                    }
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 8)
+                        }
+                    }
+
                     // SpriteKit room scene
-                    if let room = room {
+                    if let room = activeRoom {
                         SpriteView(scene: makeScene(room: room))
                             .frame(maxWidth: .infinity)
                             .frame(height: 400)
@@ -46,7 +77,7 @@ struct IsometricRoomView: View {
                                 ForEach(SlotType.allCases) { slot in
                                     SlotButton(
                                         slot: slot,
-                                        currentItemID: room?.assignment(for: slot)?.itemID,
+                                        currentItemID: activeRoom?.assignment(for: slot)?.itemID,
                                         onTap: {
                                             selectedSlot = slot
                                             showingSlotPicker = true
@@ -55,6 +86,7 @@ struct IsometricRoomView: View {
                                 }
                             }
                             .padding(.horizontal, 16)
+                            .padding(.bottom, 30) // Add padding so scroll isn't tight
                         }
                     }
                 }
@@ -62,7 +94,7 @@ struct IsometricRoomView: View {
             .navigationTitle("My Room")
             .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: $showingSlotPicker) {
-                if let slot = selectedSlot, let player = player, let room = room {
+                if let slot = selectedSlot, let player = player, let room = activeRoom {
                     SlotItemPicker(
                         slot: slot,
                         player: player,
