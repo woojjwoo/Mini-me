@@ -1,0 +1,968 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		22B49E452F78454E001FDADA /* desk_simple_1774708015237.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E102F78454E001FDADA /* desk_simple_1774708015237.png */; };
+		22B49E462F78454E001FDADA /* minime_idle_1774711350053.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E132F78454E001FDADA /* minime_idle_1774711350053.png */; };
+		22B49E472F78454E001FDADA /* room_base_1774707985306.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E152F78454E001FDADA /* room_base_1774707985306.png */; };
+		22B49E482F78454E001FDADA /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 22B49DF92F78454E001FDADA /* CLAUDE.md */; };
+		22B49E492F78454E001FDADA /* minime_sleeping_1774711364657.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E142F78454E001FDADA /* minime_sleeping_1774711364657.png */; };
+		22B49E4A2F78454E001FDADA /* bed_cozy_1774713357073.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E022F78454E001FDADA /* bed_cozy_1774713357073.png */; };
+		22B49E4B2F78454E001FDADA /* rug_round_1774713708291.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E062F78454E001FDADA /* rug_round_1774713708291.png */; };
+		22B49E4C2F78454E001FDADA /* chair_gaming_1774713666542.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E0C2F78454E001FDADA /* chair_gaming_1774713666542.png */; };
+		22B49E4D2F78454E001FDADA /* bed_wooden_1774707999566.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E0F2F78454E001FDADA /* bed_wooden_1774707999566.png */; };
+		22B49E4E2F78454E001FDADA /* shelf_books_1774713681529.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E072F78454E001FDADA /* shelf_books_1774713681529.png */; };
+		22B49E4F2F78454E001FDADA /* table_nightstand_1774713694772.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E042F78454E001FDADA /* table_nightstand_1774713694772.png */; };
+		22B49E502F78454E001FDADA /* chair_basic_1774713399654.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E0B2F78454E001FDADA /* chair_basic_1774713399654.png */; };
+		22B49E512F78454E001FDADA /* room_base_lofi_v2_1774708398444.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */; };
+		22B49E522F78454E001FDADA /* REFERENCES.md in Resources */ = {isa = PBXBuildFile; fileRef = 22B49DFC2F78454E001FDADA /* REFERENCES.md */; };
+		22B49E532F78454E001FDADA /* minime_happy_1774711380382.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E122F78454E001FDADA /* minime_happy_1774711380382.png */; };
+		22B49E542F78454E001FDADA /* desk_gaming_1774713385893.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E092F78454E001FDADA /* desk_gaming_1774713385893.png */; };
+		22B49E552F78454E001FDADA /* minime_boy_idle_1774712295172.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E112F78454E001FDADA /* minime_boy_idle_1774712295172.png */; };
+		22B49E562F78454E001FDADA /* bed_loft_1774713373805.png in Resources */ = {isa = PBXBuildFile; fileRef = 22B49E032F78454E001FDADA /* bed_loft_1774713373805.png */; };
+		22B49E572F78454E001FDADA /* DESIGN_CONVERSATION.md in Resources */ = {isa = PBXBuildFile; fileRef = 22B49DFB2F78454E001FDADA /* DESIGN_CONVERSATION.md */; };
+		22B49E582F78454E001FDADA /* DESIGN_SPEC.md in Resources */ = {isa = PBXBuildFile; fileRef = 22B49DFA2F78454E001FDADA /* DESIGN_SPEC.md */; };
+		22B49E592F78454E001FDADA /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3F2F78454E001FDADA /* Theme.swift */; };
+		22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E292F78454E001FDADA /* StatsView.swift */; };
+		22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E182F78454E001FDADA /* InsightsView.swift */; };
+		22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49DFF2F78454E001FDADA /* ContentView.swift */; };
+		22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E322F78454E001FDADA /* RoomSlot.swift */; };
+		22B49E602F78454E001FDADA /* OutfitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1D2F78454E001FDADA /* OutfitView.swift */; };
+		22B49E622F78454E001FDADA /* MiniMeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E002F78454E001FDADA /* MiniMeApp.swift */; };
+		22B49E632F78454E001FDADA /* StreakService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3C2F78454E001FDADA /* StreakService.swift */; };
+		22B49E642F78454E001FDADA /* IsometricRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1F2F78454E001FDADA /* IsometricRoomView.swift */; };
+		22B49E652F78454E001FDADA /* DailyScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E222F78454E001FDADA /* DailyScheduleView.swift */; };
+		22B49E662F78454E001FDADA /* BlockCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2C2F78454E001FDADA /* BlockCategory.swift */; };
+		22B49E672F78454E001FDADA /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E392F78454E001FDADA /* NotificationService.swift */; };
+		22B49E682F78454E001FDADA /* HapticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E382F78454E001FDADA /* HapticService.swift */; };
+		22B49E692F78454E001FDADA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E252F78454E001FDADA /* SettingsView.swift */; };
+		22B49E6A2F78454E001FDADA /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E312F78454E001FDADA /* Room.swift */; };
+		22B49E6B2F78454E001FDADA /* ShopItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E332F78454E001FDADA /* ShopItem.swift */; };
+		22B49E6C2F78454E001FDADA /* ShopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E272F78454E001FDADA /* ShopView.swift */; };
+		22B49E6D2F78454E001FDADA /* WidgetDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3D2F78454E001FDADA /* WidgetDataService.swift */; };
+		22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2E2F78454E001FDADA /* DayLog.swift */; };
+		22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E362F78454E001FDADA /* CalendarSyncService.swift */; };
+		22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3A2F78454E001FDADA /* PetMoodService.swift */; };
+		22B49E712F78454E001FDADA /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E302F78454E001FDADA /* Player.swift */; };
+		22B49E722F78454E001FDADA /* RoomScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E202F78454E001FDADA /* RoomScene.swift */; };
+		22B49E732F78454E001FDADA /* TimeBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E342F78454E001FDADA /* TimeBlock.swift */; };
+		22B49E742F78454E001FDADA /* CoinService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E372F78454E001FDADA /* CoinService.swift */; };
+		22B49E752F78454E001FDADA /* OnboardingSteps.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */; };
+		22B49E762F78454E001FDADA /* SoundService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3B2F78454E001FDADA /* SoundService.swift */; };
+		22B49E772F78454E001FDADA /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1B2F78454E001FDADA /* OnboardingView.swift */; };
+		22B49E782F78454E001FDADA /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2F2F78454E001FDADA /* Pet.swift */; };
+		22B49E792F78454E001FDADA /* DailySchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2D2F78454E001FDADA /* DailySchedule.swift */; };
+		22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E232F78454E001FDADA /* TimeBlockRow.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		22B49DDB2F7844BC001FDADA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22B49DC52F7844BB001FDADA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22B49DCC2F7844BB001FDADA;
+			remoteInfo = "mini-me";
+		};
+		22B49DE52F7844BC001FDADA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22B49DC52F7844BB001FDADA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 22B49DCC2F7844BB001FDADA;
+			remoteInfo = "mini-me";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		22B49DF92F78454E001FDADA /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		22B49DFA2F78454E001FDADA /* DESIGN_SPEC.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DESIGN_SPEC.md; sourceTree = "<group>"; };
+		22B49DFB2F78454E001FDADA /* DESIGN_CONVERSATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = DESIGN_CONVERSATION.md; sourceTree = "<group>"; };
+		22B49DFC2F78454E001FDADA /* REFERENCES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = REFERENCES.md; sourceTree = "<group>"; };
+		22B49DFE2F78454E001FDADA /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		22B49DFF2F78454E001FDADA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		22B49E002F78454E001FDADA /* MiniMeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMeApp.swift; sourceTree = "<group>"; };
+		22B49E022F78454E001FDADA /* bed_cozy_1774713357073.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bed_cozy_1774713357073.png; sourceTree = "<group>"; };
+		22B49E032F78454E001FDADA /* bed_loft_1774713373805.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bed_loft_1774713373805.png; sourceTree = "<group>"; };
+		22B49E042F78454E001FDADA /* table_nightstand_1774713694772.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = table_nightstand_1774713694772.png; sourceTree = "<group>"; };
+		22B49E062F78454E001FDADA /* rug_round_1774713708291.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = rug_round_1774713708291.png; sourceTree = "<group>"; };
+		22B49E072F78454E001FDADA /* shelf_books_1774713681529.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shelf_books_1774713681529.png; sourceTree = "<group>"; };
+		22B49E092F78454E001FDADA /* desk_gaming_1774713385893.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = desk_gaming_1774713385893.png; sourceTree = "<group>"; };
+		22B49E0B2F78454E001FDADA /* chair_basic_1774713399654.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chair_basic_1774713399654.png; sourceTree = "<group>"; };
+		22B49E0C2F78454E001FDADA /* chair_gaming_1774713666542.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = chair_gaming_1774713666542.png; sourceTree = "<group>"; };
+		22B49E0F2F78454E001FDADA /* bed_wooden_1774707999566.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bed_wooden_1774707999566.png; sourceTree = "<group>"; };
+		22B49E102F78454E001FDADA /* desk_simple_1774708015237.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = desk_simple_1774708015237.png; sourceTree = "<group>"; };
+		22B49E112F78454E001FDADA /* minime_boy_idle_1774712295172.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minime_boy_idle_1774712295172.png; sourceTree = "<group>"; };
+		22B49E122F78454E001FDADA /* minime_happy_1774711380382.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minime_happy_1774711380382.png; sourceTree = "<group>"; };
+		22B49E132F78454E001FDADA /* minime_idle_1774711350053.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minime_idle_1774711350053.png; sourceTree = "<group>"; };
+		22B49E142F78454E001FDADA /* minime_sleeping_1774711364657.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minime_sleeping_1774711364657.png; sourceTree = "<group>"; };
+		22B49E152F78454E001FDADA /* room_base_1774707985306.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_1774707985306.png; sourceTree = "<group>"; };
+		22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_lofi_v2_1774708398444.png; sourceTree = "<group>"; };
+		22B49E182F78454E001FDADA /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
+		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
+		22B49E1F2F78454E001FDADA /* IsometricRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsometricRoomView.swift; sourceTree = "<group>"; };
+		22B49E202F78454E001FDADA /* RoomScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomScene.swift; sourceTree = "<group>"; };
+		22B49E222F78454E001FDADA /* DailyScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyScheduleView.swift; sourceTree = "<group>"; };
+		22B49E232F78454E001FDADA /* TimeBlockRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBlockRow.swift; sourceTree = "<group>"; };
+		22B49E252F78454E001FDADA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		22B49E272F78454E001FDADA /* ShopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopView.swift; sourceTree = "<group>"; };
+		22B49E292F78454E001FDADA /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		22B49E2C2F78454E001FDADA /* BlockCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCategory.swift; sourceTree = "<group>"; };
+		22B49E2D2F78454E001FDADA /* DailySchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailySchedule.swift; sourceTree = "<group>"; };
+		22B49E2E2F78454E001FDADA /* DayLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayLog.swift; sourceTree = "<group>"; };
+		22B49E2F2F78454E001FDADA /* Pet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pet.swift; sourceTree = "<group>"; };
+		22B49E302F78454E001FDADA /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		22B49E312F78454E001FDADA /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		22B49E322F78454E001FDADA /* RoomSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSlot.swift; sourceTree = "<group>"; };
+		22B49E332F78454E001FDADA /* ShopItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShopItem.swift; sourceTree = "<group>"; };
+		22B49E342F78454E001FDADA /* TimeBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeBlock.swift; sourceTree = "<group>"; };
+		22B49E362F78454E001FDADA /* CalendarSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSyncService.swift; sourceTree = "<group>"; };
+		22B49E372F78454E001FDADA /* CoinService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinService.swift; sourceTree = "<group>"; };
+		22B49E382F78454E001FDADA /* HapticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticService.swift; sourceTree = "<group>"; };
+		22B49E392F78454E001FDADA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		22B49E3A2F78454E001FDADA /* PetMoodService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetMoodService.swift; sourceTree = "<group>"; };
+		22B49E3B2F78454E001FDADA /* SoundService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundService.swift; sourceTree = "<group>"; };
+		22B49E3C2F78454E001FDADA /* StreakService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakService.swift; sourceTree = "<group>"; };
+		22B49E3D2F78454E001FDADA /* WidgetDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataService.swift; sourceTree = "<group>"; };
+		22B49E3F2F78454E001FDADA /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		22B49E422F78454E001FDADA /* MiniMeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMeWidget.swift; sourceTree = "<group>"; };
+		22B49E432F78454E001FDADA /* WidgetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModels.swift; sourceTree = "<group>"; };
+		22B49F782F79EB2F001FDADA /* pixi me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pixi me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22B49F792F79EB2F001FDADA /* mini-meTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		22B49DCF2F7844BB001FDADA /* mini-me */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "mini-me";
+			sourceTree = "<group>";
+		};
+		22B49DDD2F7844BC001FDADA /* mini-meTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "mini-meTests";
+			sourceTree = "<group>";
+		};
+		22B49DE72F7844BC001FDADA /* mini-meUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "mini-meUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		22B49DCA2F7844BB001FDADA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DD72F7844BC001FDADA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DE12F7844BC001FDADA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		22B49DC42F7844BB001FDADA = {
+			isa = PBXGroup;
+			children = (
+				22B49DCF2F7844BB001FDADA /* mini-me */,
+				22B49DDD2F7844BC001FDADA /* mini-meTests */,
+				22B49DE72F7844BC001FDADA /* mini-meUITests */,
+				22B49DF92F78454E001FDADA /* CLAUDE.md */,
+				22B49DFA2F78454E001FDADA /* DESIGN_SPEC.md */,
+				22B49DFD2F78454E001FDADA /* docs */,
+				22B49DFE2F78454E001FDADA /* Package.swift */,
+				22B49E412F78454E001FDADA /* App */,
+				22B49E442F78454E001FDADA /* Widget */,
+				22B49F782F79EB2F001FDADA /* pixi me.app */,
+				22B49F792F79EB2F001FDADA /* mini-meTests.xctest */,
+				22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */,
+			);
+			sourceTree = "<group>";
+		};
+		22B49DFD2F78454E001FDADA /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				22B49DFB2F78454E001FDADA /* DESIGN_CONVERSATION.md */,
+				22B49DFC2F78454E001FDADA /* REFERENCES.md */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+		22B49E012F78454E001FDADA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				22B49DFF2F78454E001FDADA /* ContentView.swift */,
+				22B49E002F78454E001FDADA /* MiniMeApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		22B49E052F78454E001FDADA /* Bed_Tier */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E022F78454E001FDADA /* bed_cozy_1774713357073.png */,
+				22B49E032F78454E001FDADA /* bed_loft_1774713373805.png */,
+				22B49E042F78454E001FDADA /* table_nightstand_1774713694772.png */,
+			);
+			path = Bed_Tier;
+			sourceTree = "<group>";
+		};
+		22B49E082F78454E001FDADA /* Decor */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E062F78454E001FDADA /* rug_round_1774713708291.png */,
+				22B49E072F78454E001FDADA /* shelf_books_1774713681529.png */,
+			);
+			path = Decor;
+			sourceTree = "<group>";
+		};
+		22B49E0A2F78454E001FDADA /* Desk_Tier */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E092F78454E001FDADA /* desk_gaming_1774713385893.png */,
+			);
+			path = Desk_Tier;
+			sourceTree = "<group>";
+		};
+		22B49E0D2F78454E001FDADA /* Seating */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E0B2F78454E001FDADA /* chair_basic_1774713399654.png */,
+				22B49E0C2F78454E001FDADA /* chair_gaming_1774713666542.png */,
+			);
+			path = Seating;
+			sourceTree = "<group>";
+		};
+		22B49E0E2F78454E001FDADA /* ArtAssets */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E052F78454E001FDADA /* Bed_Tier */,
+				22B49E082F78454E001FDADA /* Decor */,
+				22B49E0A2F78454E001FDADA /* Desk_Tier */,
+				22B49E0D2F78454E001FDADA /* Seating */,
+			);
+			path = ArtAssets;
+			sourceTree = "<group>";
+		};
+		22B49E172F78454E001FDADA /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E0E2F78454E001FDADA /* ArtAssets */,
+				22B49E0F2F78454E001FDADA /* bed_wooden_1774707999566.png */,
+				22B49E102F78454E001FDADA /* desk_simple_1774708015237.png */,
+				22B49E112F78454E001FDADA /* minime_boy_idle_1774712295172.png */,
+				22B49E122F78454E001FDADA /* minime_happy_1774711380382.png */,
+				22B49E132F78454E001FDADA /* minime_idle_1774711350053.png */,
+				22B49E142F78454E001FDADA /* minime_sleeping_1774711364657.png */,
+				22B49E152F78454E001FDADA /* room_base_1774707985306.png */,
+				22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		22B49E192F78454E001FDADA /* Insights */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E182F78454E001FDADA /* InsightsView.swift */,
+			);
+			path = Insights;
+			sourceTree = "<group>";
+		};
+		22B49E1C2F78454E001FDADA /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */,
+				22B49E1B2F78454E001FDADA /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		22B49E1E2F78454E001FDADA /* Outfits */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E1D2F78454E001FDADA /* OutfitView.swift */,
+			);
+			path = Outfits;
+			sourceTree = "<group>";
+		};
+		22B49E212F78454E001FDADA /* Room */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E1F2F78454E001FDADA /* IsometricRoomView.swift */,
+				22B49E202F78454E001FDADA /* RoomScene.swift */,
+			);
+			path = Room;
+			sourceTree = "<group>";
+		};
+		22B49E242F78454E001FDADA /* Schedule */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E222F78454E001FDADA /* DailyScheduleView.swift */,
+				22B49E232F78454E001FDADA /* TimeBlockRow.swift */,
+			);
+			path = Schedule;
+			sourceTree = "<group>";
+		};
+		22B49E262F78454E001FDADA /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E252F78454E001FDADA /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		22B49E282F78454E001FDADA /* Shop */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E272F78454E001FDADA /* ShopView.swift */,
+			);
+			path = Shop;
+			sourceTree = "<group>";
+		};
+		22B49E2A2F78454E001FDADA /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E292F78454E001FDADA /* StatsView.swift */,
+			);
+			path = Stats;
+			sourceTree = "<group>";
+		};
+		22B49E2B2F78454E001FDADA /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E192F78454E001FDADA /* Insights */,
+				22B49E1C2F78454E001FDADA /* Onboarding */,
+				22B49E1E2F78454E001FDADA /* Outfits */,
+				22B49E212F78454E001FDADA /* Room */,
+				22B49E242F78454E001FDADA /* Schedule */,
+				22B49E262F78454E001FDADA /* Settings */,
+				22B49E282F78454E001FDADA /* Shop */,
+				22B49E2A2F78454E001FDADA /* Stats */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		22B49E352F78454E001FDADA /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E2C2F78454E001FDADA /* BlockCategory.swift */,
+				22B49E2D2F78454E001FDADA /* DailySchedule.swift */,
+				22B49E2E2F78454E001FDADA /* DayLog.swift */,
+				22B49E2F2F78454E001FDADA /* Pet.swift */,
+				22B49E302F78454E001FDADA /* Player.swift */,
+				22B49E312F78454E001FDADA /* Room.swift */,
+				22B49E322F78454E001FDADA /* RoomSlot.swift */,
+				22B49E332F78454E001FDADA /* ShopItem.swift */,
+				22B49E342F78454E001FDADA /* TimeBlock.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		22B49E3E2F78454E001FDADA /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E362F78454E001FDADA /* CalendarSyncService.swift */,
+				22B49E372F78454E001FDADA /* CoinService.swift */,
+				22B49E382F78454E001FDADA /* HapticService.swift */,
+				22B49E392F78454E001FDADA /* NotificationService.swift */,
+				22B49E3A2F78454E001FDADA /* PetMoodService.swift */,
+				22B49E3B2F78454E001FDADA /* SoundService.swift */,
+				22B49E3C2F78454E001FDADA /* StreakService.swift */,
+				22B49E3D2F78454E001FDADA /* WidgetDataService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		22B49E402F78454E001FDADA /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E3F2F78454E001FDADA /* Theme.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		22B49E412F78454E001FDADA /* App */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E012F78454E001FDADA /* App */,
+				22B49E172F78454E001FDADA /* Assets */,
+				22B49E2B2F78454E001FDADA /* Features */,
+				22B49E352F78454E001FDADA /* Models */,
+				22B49E3E2F78454E001FDADA /* Services */,
+				22B49E402F78454E001FDADA /* Shared */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		22B49E442F78454E001FDADA /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				22B49E422F78454E001FDADA /* MiniMeWidget.swift */,
+				22B49E432F78454E001FDADA /* WidgetModels.swift */,
+			);
+			path = Widget;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		22B49DCC2F7844BB001FDADA /* mini-me */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22B49DEE2F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-me" */;
+			buildPhases = (
+				22B49DC92F7844BB001FDADA /* Sources */,
+				22B49DCA2F7844BB001FDADA /* Frameworks */,
+				22B49DCB2F7844BB001FDADA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				22B49DCF2F7844BB001FDADA /* mini-me */,
+			);
+			name = "mini-me";
+			packageProductDependencies = (
+			);
+			productName = "mini-me";
+			productReference = 22B49F782F79EB2F001FDADA /* pixi me.app */;
+			productType = "com.apple.product-type.application";
+		};
+		22B49DD92F7844BC001FDADA /* mini-meTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22B49DF12F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-meTests" */;
+			buildPhases = (
+				22B49DD62F7844BC001FDADA /* Sources */,
+				22B49DD72F7844BC001FDADA /* Frameworks */,
+				22B49DD82F7844BC001FDADA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22B49DDC2F7844BC001FDADA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				22B49DDD2F7844BC001FDADA /* mini-meTests */,
+			);
+			name = "mini-meTests";
+			packageProductDependencies = (
+			);
+			productName = "mini-meTests";
+			productReference = 22B49F792F79EB2F001FDADA /* mini-meTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		22B49DE32F7844BC001FDADA /* mini-meUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22B49DF42F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-meUITests" */;
+			buildPhases = (
+				22B49DE02F7844BC001FDADA /* Sources */,
+				22B49DE12F7844BC001FDADA /* Frameworks */,
+				22B49DE22F7844BC001FDADA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				22B49DE62F7844BC001FDADA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				22B49DE72F7844BC001FDADA /* mini-meUITests */,
+			);
+			name = "mini-meUITests";
+			packageProductDependencies = (
+			);
+			productName = "mini-meUITests";
+			productReference = 22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		22B49DC52F7844BB001FDADA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2640;
+				LastUpgradeCheck = 2640;
+				TargetAttributes = {
+					22B49DCC2F7844BB001FDADA = {
+						CreatedOnToolsVersion = 26.4;
+					};
+					22B49DD92F7844BC001FDADA = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 22B49DCC2F7844BB001FDADA;
+					};
+					22B49DE32F7844BC001FDADA = {
+						CreatedOnToolsVersion = 26.4;
+						TestTargetID = 22B49DCC2F7844BB001FDADA;
+					};
+				};
+			};
+			buildConfigurationList = 22B49DC82F7844BB001FDADA /* Build configuration list for PBXProject "mini-me" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 22B49DC42F7844BB001FDADA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 22B49DC42F7844BB001FDADA;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				22B49DCC2F7844BB001FDADA /* mini-me */,
+				22B49DD92F7844BC001FDADA /* mini-meTests */,
+				22B49DE32F7844BC001FDADA /* mini-meUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		22B49DCB2F7844BB001FDADA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B49E452F78454E001FDADA /* desk_simple_1774708015237.png in Resources */,
+				22B49E462F78454E001FDADA /* minime_idle_1774711350053.png in Resources */,
+				22B49E472F78454E001FDADA /* room_base_1774707985306.png in Resources */,
+				22B49E482F78454E001FDADA /* CLAUDE.md in Resources */,
+				22B49E492F78454E001FDADA /* minime_sleeping_1774711364657.png in Resources */,
+				22B49E4A2F78454E001FDADA /* bed_cozy_1774713357073.png in Resources */,
+				22B49E4B2F78454E001FDADA /* rug_round_1774713708291.png in Resources */,
+				22B49E4C2F78454E001FDADA /* chair_gaming_1774713666542.png in Resources */,
+				22B49E4D2F78454E001FDADA /* bed_wooden_1774707999566.png in Resources */,
+				22B49E4E2F78454E001FDADA /* shelf_books_1774713681529.png in Resources */,
+				22B49E4F2F78454E001FDADA /* table_nightstand_1774713694772.png in Resources */,
+				22B49E502F78454E001FDADA /* chair_basic_1774713399654.png in Resources */,
+				22B49E512F78454E001FDADA /* room_base_lofi_v2_1774708398444.png in Resources */,
+				22B49E522F78454E001FDADA /* REFERENCES.md in Resources */,
+				22B49E532F78454E001FDADA /* minime_happy_1774711380382.png in Resources */,
+				22B49E542F78454E001FDADA /* desk_gaming_1774713385893.png in Resources */,
+				22B49E552F78454E001FDADA /* minime_boy_idle_1774712295172.png in Resources */,
+				22B49E562F78454E001FDADA /* bed_loft_1774713373805.png in Resources */,
+				22B49E572F78454E001FDADA /* DESIGN_CONVERSATION.md in Resources */,
+				22B49E582F78454E001FDADA /* DESIGN_SPEC.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DD82F7844BC001FDADA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DE22F7844BC001FDADA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		22B49DC92F7844BB001FDADA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B49E592F78454E001FDADA /* Theme.swift in Sources */,
+				22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */,
+				22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */,
+				22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */,
+				22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */,
+				22B49E602F78454E001FDADA /* OutfitView.swift in Sources */,
+				22B49E622F78454E001FDADA /* MiniMeApp.swift in Sources */,
+				22B49E632F78454E001FDADA /* StreakService.swift in Sources */,
+				22B49E642F78454E001FDADA /* IsometricRoomView.swift in Sources */,
+				22B49E652F78454E001FDADA /* DailyScheduleView.swift in Sources */,
+				22B49E662F78454E001FDADA /* BlockCategory.swift in Sources */,
+				22B49E672F78454E001FDADA /* NotificationService.swift in Sources */,
+				22B49E682F78454E001FDADA /* HapticService.swift in Sources */,
+				22B49E692F78454E001FDADA /* SettingsView.swift in Sources */,
+				22B49E6A2F78454E001FDADA /* Room.swift in Sources */,
+				22B49E6B2F78454E001FDADA /* ShopItem.swift in Sources */,
+				22B49E6C2F78454E001FDADA /* ShopView.swift in Sources */,
+				22B49E6D2F78454E001FDADA /* WidgetDataService.swift in Sources */,
+				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
+				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
+				22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */,
+				22B49E712F78454E001FDADA /* Player.swift in Sources */,
+				22B49E722F78454E001FDADA /* RoomScene.swift in Sources */,
+				22B49E732F78454E001FDADA /* TimeBlock.swift in Sources */,
+				22B49E742F78454E001FDADA /* CoinService.swift in Sources */,
+				22B49E752F78454E001FDADA /* OnboardingSteps.swift in Sources */,
+				22B49E762F78454E001FDADA /* SoundService.swift in Sources */,
+				22B49E772F78454E001FDADA /* OnboardingView.swift in Sources */,
+				22B49E782F78454E001FDADA /* Pet.swift in Sources */,
+				22B49E792F78454E001FDADA /* DailySchedule.swift in Sources */,
+				22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DD62F7844BC001FDADA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		22B49DE02F7844BC001FDADA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		22B49DDC2F7844BC001FDADA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22B49DCC2F7844BB001FDADA /* mini-me */;
+			targetProxy = 22B49DDB2F7844BC001FDADA /* PBXContainerItemProxy */;
+		};
+		22B49DE62F7844BC001FDADA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 22B49DCC2F7844BB001FDADA /* mini-me */;
+			targetProxy = 22B49DE52F7844BC001FDADA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		22B49DEC2F7844BC001FDADA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		22B49DED2F7844BC001FDADA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		22B49DEF2F7844BC001FDADA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pixie Me";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixieme;
+				PRODUCT_NAME = "pixi me";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		22B49DF02F7844BC001FDADA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pixie Me";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixieme;
+				PRODUCT_NAME = "pixi me";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		22B49DF22F7844BC001FDADA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixiemeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mini-me.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mini-me";
+			};
+			name = Debug;
+		};
+		22B49DF32F7844BC001FDADA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixiemeTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mini-me.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mini-me";
+			};
+			name = Release;
+		};
+		22B49DF52F7844BC001FDADA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.minimeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "mini-me";
+			};
+			name = Debug;
+		};
+		22B49DF62F7844BC001FDADA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.minimeUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "mini-me";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		22B49DC82F7844BB001FDADA /* Build configuration list for PBXProject "mini-me" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B49DEC2F7844BC001FDADA /* Debug */,
+				22B49DED2F7844BC001FDADA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22B49DEE2F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-me" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B49DEF2F7844BC001FDADA /* Debug */,
+				22B49DF02F7844BC001FDADA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22B49DF12F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-meTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B49DF22F7844BC001FDADA /* Debug */,
+				22B49DF32F7844BC001FDADA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22B49DF42F7844BC001FDADA /* Build configuration list for PBXNativeTarget "mini-meUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B49DF52F7844BC001FDADA /* Debug */,
+				22B49DF62F7844BC001FDADA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 22B49DC52F7844BB001FDADA /* Project object */;
+}
