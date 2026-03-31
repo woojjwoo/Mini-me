@@ -43,6 +43,29 @@ struct IsometricRoomView: View {
         return nil
     }
 
+    private var currentActivity: PetActivity {
+        let moodService = PetMoodService()
+        let schedule = currentDaySchedule
+        
+        let now = Date.now
+        let components = Calendar.current.dateComponents([.hour, .minute], from: now)
+        let currentMinutes = (components.hour ?? 0) * 60 + (components.minute ?? 0)
+        
+        var currentCategory: String? = nil
+        if let blocks = schedule?.blocks {
+            for block in blocks {
+                let start = block.startHour * 60 + block.startMinute
+                let end = start + block.durationMinutes
+                if currentMinutes >= start && currentMinutes < end {
+                    currentCategory = block.category
+                    break
+                }
+            }
+        }
+
+        return moodService.currentActivity(for: currentCategory)
+    }
+
     private var currentMood: PetMood {
         let moodService = PetMoodService()
         let schedule = currentDaySchedule
@@ -118,6 +141,9 @@ struct IsometricRoomView: View {
                             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowCelebration"))) { _ in
                                 currentScene?.showCelebration()
                             }
+                            .onChange(of: currentActivity) { old, new in
+                                currentScene?.updateForActivity(new)
+                            }
                     }
 
                     // Slot buttons (scrollable grid)
@@ -186,10 +212,11 @@ struct IsometricRoomView: View {
             room: room, 
             pet: pets.first, 
             mood: currentMood,
+            streakCount: player?.currentStreak ?? 0,
             size: CGSize(width: 400, height: 400)
         )
         scene.scaleMode = .aspectFit
-        scene.backgroundColor = .clear
+        scene.backgroundColor = SKColor.clear
         self.currentScene = scene
         return scene
     }

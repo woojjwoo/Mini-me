@@ -2,7 +2,108 @@
 import WidgetKit
 import SwiftUI
 
-// MARK: - Timeline Provider
+// MARK: - Snapshot Diorama Renderer for Widget
+
+struct RoomDioramaView: View {
+    let taskName: String?
+    
+    var body: some View {
+        ZStack {
+            // Load the rendered snapshot from the App Group container
+            if let image = loadSnapshot() {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+            } else {
+                // Fallback if no snapshot exists yet
+                Color.gray.opacity(0.2)
+                Text("Room Loading...")
+                    .font(.caption2)
+            }
+            
+            // Task Overlay
+            VStack {
+                Spacer()
+                HStack {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(taskName ?? "Free Time")
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
+                        Text("Active Now")
+                            .font(.system(size: 7, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color.black.opacity(0.6))
+                    .cornerRadius(6)
+                    Spacer()
+                }
+                .padding(8)
+            }
+        }
+    }
+    
+    private func loadSnapshot() -> UIImage? {
+        let groupID = "group.com.woojjwoo.pixieme.shared"
+        guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
+            return nil
+        }
+        let fileURL = container.appendingPathComponent("room_diorama.png")
+        return UIImage(contentsOfFile: fileURL.path)
+    }
+}
+
+// MARK: - Widget Views
+
+struct SmallWidgetView: View {
+    let entry: MiniMeEntry
+
+    var body: some View {
+        RoomDioramaView(taskName: entry.taskName)
+            .containerBackground(.clear, for: .widget)
+    }
+}
+
+struct MediumWidgetView: View {
+    let entry: MiniMeEntry
+
+    var body: some View {
+        HStack(spacing: 0) {
+            // Left: The Room Snapshot
+            RoomDioramaView(taskName: entry.taskName)
+                .frame(width: 150)
+            
+            // Right: Productivity Stats
+            VStack(alignment: .leading, spacing: 8) {
+                Text(entry.taskName ?? "Relaxing")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .lineLimit(1)
+                
+                Text(entry.categoryName ?? "No Task")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundStyle(.secondary)
+                
+                Divider()
+                
+                HStack {
+                    ProgressView(value: entry.completionRate)
+                        .tint(.green)
+                    Text("\(Int(entry.completionRate * 100))%")
+                        .font(.system(size: 10, weight: .bold))
+                }
+                
+                Text("\(entry.completedBlocks)/\(entry.totalBlocks) items done")
+                    .font(.system(size: 9))
+                    .foregroundStyle(.secondary)
+            }
+            .padding()
+        }
+        .containerBackground(.clear, for: .widget)
+    }
+}
+
+// MARK: - Provider & Logic
 
 struct MiniMeProvider: TimelineProvider {
     func placeholder(in context: Context) -> MiniMeEntry {
@@ -15,10 +116,8 @@ struct MiniMeProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<MiniMeEntry>) -> Void) {
         let entry = currentEntry()
-        // Refresh every 15 minutes
         let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: .now)!
-        let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
-        completion(timeline)
+        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
     }
 
     private func currentEntry() -> MiniMeEntry {
@@ -28,32 +127,26 @@ struct MiniMeProvider: TimelineProvider {
 
         return MiniMeEntry(
             date: .now,
-            petName: pet?.name ?? "Pixel",
-            petMood: pet?.mood ?? PetMood.neutral.rawValue,
-            petColor: pet?.color ?? PetColor.orangeTabby.rawValue,
+            petName: pet?.name ?? "Pixie",
+            petMood: pet?.mood ?? "neutral",
             completedBlocks: progress?.completedBlocks ?? 0,
             totalBlocks: progress?.totalBlocks ?? 0,
             coinsToday: progress?.coinsToday ?? 0,
-            nextBlockLabel: progress?.nextBlockLabel,
-            accessoryIDs: pet?.accessoryIDs ?? [],
-            equippedOutfitIDs: pet?.equippedOutfitIDs ?? []
+            taskName: progress?.currentTaskName,
+            categoryName: progress?.currentCategory
         )
     }
 }
-
-// MARK: - Entry
 
 struct MiniMeEntry: TimelineEntry {
     let date: Date
     let petName: String
     let petMood: String
-    let petColor: String
     let completedBlocks: Int
     let totalBlocks: Int
     let coinsToday: Int
-    let nextBlockLabel: String?
-    let accessoryIDs: [String]
-    let equippedOutfitIDs: [String]
+    let taskName: String?
+    let categoryName: String?
 
     var mood: PetMood {
         PetMood(rawValue: petMood) ?? .neutral
@@ -66,161 +159,15 @@ struct MiniMeEntry: TimelineEntry {
 
     static let placeholder = MiniMeEntry(
         date: .now,
-        petName: "Pixel",
-        petMood: "happy",
-        petColor: "orangeTabby",
-        completedBlocks: 5,
-        totalBlocks: 10,
-        coinsToday: 50,
-        nextBlockLabel: "Study",
-        accessoryIDs: [],
-        equippedOutfitIDs: []
+        petName: "Pixie",
+        petMood: "focused",
+        completedBlocks: 3,
+        totalBlocks: 8,
+        coinsToday: 40,
+        taskName: "Deep Work",
+        categoryName: "Work"
     )
-struct SmallWidgetView: View {
-    let entry: MiniMeEntry
-
-    var body: some View {
-        VStack(spacing: 6) {
-            // Context-aware icon
-            Text(activityIcon)
-                .font(.system(size: 30))
-
-            Text(entry.petName)
-                .font(.caption2.bold())
-
-            // Progress
-            ProgressView(value: entry.completionRate)
-                .tint(.green)
-
-            Text("\(entry.completedBlocks)/\(entry.totalBlocks)")
-                .font(.system(size: 10))
-        }
-        .containerBackground(.clear, for: .widget)
-    }
-
-    private var activityIcon: String {
-        switch entry.mood {
-        case .sleeping: return "😴"
-        case .focused: return "💻"
-        case .eating: return "🍎"
-        case .happy: return "✨"
-        default: return "🧑"
-        }
-    }
 }
-
-// MARK: - Medium Widget
-
-struct MediumWidgetView: View {
-    let entry: MiniMeEntry
-
-    var body: some View {
-        HStack(spacing: 16) {
-            // Pet side
-            VStack(spacing: 4) {
-                Text(activityIcon)
-                    .font(.system(size: 44))
-                Text(entry.petName)
-                    .font(.caption.bold())
-                Text(entry.mood.displayEmoji)
-                    .font(.title3)
-            }
-            .frame(width: 80)
-
-            // Stats side
-...
-        }
-        .containerBackground(.clear, for: .widget)
-    }
-
-    private var activityIcon: String {
-        switch entry.mood {
-        case .sleeping: return "😴"
-        case .focused: return "💻"
-        case .eating: return "🍎"
-        case .happy: return "✨"
-        default: return "🧑"
-        }
-    }
-}
-                Text("Today's Progress")
-                    .font(.caption.bold())
-                    .foregroundStyle(.secondary)
-                
-                HStack {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                    Text("\(entry.completedBlocks)/\(entry.totalBlocks) Blocks")
-                        .font(.subheadline)
-                }
-                
-                HStack {
-                    Image(systemName: "bitcoinsign.circle.fill")
-                        .foregroundStyle(.orange)
-                    Text("\(entry.coinsToday) Coins")
-                        .font(.subheadline)
-                }
-                
-                if let next = entry.nextBlockLabel {
-                    Text("Next: \(next)")
-                        .font(.caption)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.accentColor.opacity(0.2))
-                        .clipShape(Capsule())
-                }
-            }
-        }
-        .containerBackground(.clear, for: .widget)
-    }
-}
-
-// MARK: - Widget Configuration
-
-// MARK: - Lock Screen Widgets (v2)
-
-struct LockScreenCircularView: View {
-    let entry: MiniMeEntry
-
-    var body: some View {
-        ZStack {
-            AccessoryWidgetBackground()
-            VStack(spacing: 1) {
-                Text(entry.mood.displayEmoji)
-                    .font(.system(size: 20))
-                Text("\(entry.completedBlocks)")
-                    .font(.system(size: 10, weight: .bold))
-            }
-        }
-    }
-}
-
-struct LockScreenRectangularView: View {
-    let entry: MiniMeEntry
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Text(entry.mood.displayEmoji)
-                .font(.system(size: 22))
-            VStack(alignment: .leading) {
-                Text(entry.petName)
-                    .font(.headline)
-                Text("\(entry.completedBlocks)/\(entry.totalBlocks) blocks done")
-                    .font(.caption)
-            }
-        }
-    }
-}
-
-struct LockScreenInlineView: View {
-    let entry: MiniMeEntry
-
-    var body: some View {
-        Text("\(entry.mood.displayEmoji) \(entry.completedBlocks)/\(entry.totalBlocks) blocks · \(entry.coinsToday) coins")
-    }
-}
-
-// MARK: - Widget Configuration
 
 struct MiniMeWidget: Widget {
     let kind: String = "MiniMeWidget"
@@ -229,15 +176,9 @@ struct MiniMeWidget: Widget {
         StaticConfiguration(kind: kind, provider: MiniMeProvider()) { entry in
             MiniMeWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Mini Me")
-        .description("See your Mini Me and daily progress")
-        .supportedFamilies([
-            .systemSmall,
-            .systemMedium,
-            .accessoryCircular,
-            .accessoryRectangular,
-            .accessoryInline,
-        ])
+        .configurationDisplayName("Pixie Me")
+        .description("Your tiny friend living their best life.")
+        .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
 
@@ -247,18 +188,9 @@ struct MiniMeWidgetEntryView: View {
 
     var body: some View {
         switch family {
-        case .systemSmall:
-            SmallWidgetView(entry: entry)
-        case .systemMedium:
-            MediumWidgetView(entry: entry)
-        case .accessoryCircular:
-            LockScreenCircularView(entry: entry)
-        case .accessoryRectangular:
-            LockScreenRectangularView(entry: entry)
-        case .accessoryInline:
-            LockScreenInlineView(entry: entry)
-        default:
-            SmallWidgetView(entry: entry)
+        case .systemSmall: SmallWidgetView(entry: entry)
+        case .systemMedium: MediumWidgetView(entry: entry)
+        default: SmallWidgetView(entry: entry)
         }
     }
 }

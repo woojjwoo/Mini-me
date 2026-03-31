@@ -55,4 +55,18 @@ enum HapticService {
         UISelectionFeedbackGenerator().selectionChanged()
         #endif
     }
+
+    /// Celebration — used for perfect day, major milestones
+    static func celebration() {
+        #if os(iOS)
+        let notification = UINotificationFeedbackGenerator()
+        notification.prepare()
+        notification.notificationOccurred(.success)
+        
+        // Sequence for "Perfect Day"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            notification.notificationOccurred(.success)
+        }
+        #endif
+    }
 }

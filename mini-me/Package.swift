@@ -2,21 +2,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "MiniMe",
+    name: "PixieMe",
     platforms: [
         .iOS(.v17)
     ],
     products: [
-        .executable(name: "MiniMeApp", targets: ["MiniMe"])
+        .executable(name: "PixieMe", targets: ["App"])
     ],
     targets: [
         .executableTarget(
-            name: "MiniMe",
-            path: "MiniMe"
+            name: "App",
+            path: "App"
         ),
         .target(
-            name: "MiniMeWidget",
-            path: "MiniMeWidget"
+            name: "Widget",
+            path: "Widget"
         )
     ]
 )

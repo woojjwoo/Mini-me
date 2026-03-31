@@ -2,11 +2,11 @@ import Foundation
 import SwiftUI
 
 // MARK: - Shared types for Widget target
-// These mirror the main app types so the widget can decode shared data.
+// These mirror the main app types so the widget can decode the shared UserDefaults data.
 
 #if !APP
 enum PetMood: String, Codable {
-    case sleeping, happy, neutral, bored, sad, celebrating
+    case sleeping, happy, neutral, bored, sad, celebrating, focused, eating, walking
 
     var displayEmoji: String {
         switch self {
@@ -16,6 +16,9 @@ enum PetMood: String, Codable {
         case .bored: "🥱"
         case .sad: "😢"
         case .celebrating: "🎉"
+        case .focused: "💻"
+        case .eating: "🍎"
+        case .walking: "🚶"
         }
     }
 }
@@ -42,6 +45,8 @@ struct WidgetDayProgress: Codable {
     let totalBlocks: Int
     let coinsToday: Int
     let nextBlockLabel: String?
+    let currentTaskName: String?
+    let currentCategory: String?
     let date: Date
 }
 #endif
@@ -52,7 +57,7 @@ struct WidgetDayProgress: Codable {
 final class WidgetDataService {
     static let shared = WidgetDataService()
 
-    static let appGroupID = "group.com.woojjwoo.minime.shared"
+    static let appGroupID = "group.com.woojjwoo.pixieme.shared"
 
     private let defaults: UserDefaults?
 

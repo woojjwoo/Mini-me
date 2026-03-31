@@ -2,33 +2,40 @@ import Foundation
 import SwiftData
 import CoreGraphics
 
+enum PetActivity: String, Codable {
+    case idling, walking, working, reading, sleeping, eating, slacking, stretching
+
+    // Mapping coordinates relative to room center
+    var roomOffset: CGPoint {
+        switch self {
+        case .working:    return CGPoint(x: -45, y: 40)  // At Desk
+        case .reading:    return CGPoint(x: -70, y: -10) // At Beanbag/Cozy Corner
+        case .sleeping:   return CGPoint(x: 55, y: 15)   // In Bed
+        case .eating:     return CGPoint(x: 10, y: -20)  // Near Table
+        case .idling, .walking, .slacking, .stretching: 
+            return CGPoint(x: 0, y: -30)                 // Center Floor
+        }
+    }
+}
+
 enum PetMood: String, Codable {
-    case sleeping
-    case happy
-    case neutral
-    case bored
-    case sad
-    case celebrating
-    case focused    // at desk
-    case eating     // at floor/table
-    case walking    // movement state
+    case sleeping, happy, neutral, bored, sad, celebrating, focused, eating, walking
 
     var spriteSuffix: String {
         switch self {
         case .sleeping: "sleeping_1774711364657"
         case .happy: "happy_1774711380382"
-        case .walking: "idle_1774711350053" // We'll animate this via code since we don't have a walk cycle yet
-        case .focused, .neutral, .bored, .sad, .celebrating, .eating: "idle_1774711350053"
+        default: "idle_1774711350053"
         }
     }
 
-    // Offset in the cropped coordinate space relative to the room center
+    // Precise coordinates for the 248x248 room
     var roomOffset: CGPoint {
         switch self {
-        case .sleeping: return CGPoint(x: 45, y: 35)    // Deep on the bed
-        case .focused: return CGPoint(x: -45, y: 35)   // At the desk
-        case .eating: return CGPoint(x: 0, y: 0)       // Center floor
-        default: return CGPoint(x: 0, y: -20)          // Lower floor
+        case .sleeping: return CGPoint(x: 55, y: 15)    // In the bed
+        case .focused: return CGPoint(x: -45, y: 40)   // Sitting at desk
+        case .eating: return CGPoint(x: 10, y: -20)    // Center area
+        default: return CGPoint(x: 0, y: -30)          // Floor center
         }
     }
 
@@ -102,6 +109,10 @@ final class Pet {
 
     var spriteName: String {
         spriteName(for: .neutral)
+    }
+
+    func shouldShowStreakBonus(days: Int) -> Bool {
+        return days >= 3
     }
 
     func isWearing(_ outfitID: String) -> Bool {

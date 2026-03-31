@@ -1,16 +1,29 @@
 import Foundation
+import UIKit
 
 /// Shares data between main app and widget via App Groups
 final class WidgetDataService {
     static let shared = WidgetDataService()
 
     // App Group identifier — must match Xcode entitlements
-    static let appGroupID = "group.com.woojjwoo.minime.shared"
+    static let appGroupID = "group.com.woojjwoo.pixieme.shared"
 
     private let defaults: UserDefaults?
 
     private init() {
         defaults = UserDefaults(suiteName: Self.appGroupID)
+    }
+
+    // MARK: - Snapshot Management
+
+    func saveRoomSnapshot(_ image: UIImage) {
+        guard let data = image.pngData(),
+              let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Self.appGroupID) else {
+            return
+        }
+        
+        let fileURL = container.appendingPathComponent("room_diorama.png")
+        try? data.write(to: fileURL)
     }
 
     // MARK: - Keys
@@ -30,28 +43,32 @@ final class WidgetDataService {
         totalBlocks: Int,
         coinsToday: Int,
         nextBlockLabel: String?,
+        currentTaskName: String?,
+        currentCategory: String?,
         scheduleBlocks: [TimeBlockDTO]
     ) {
         let petDTO = PetDTO(
             name: pet.name,
-            color: pet.colorRaw,
+            color: pet.color.rawValue,
             mood: mood.rawValue,
             accessoryIDs: pet.accessoryIDs,
             equippedOutfitIDs: pet.equippedOutfitIDs
         )
 
-        let dayProgress = WidgetDayProgress(
+        let progress = WidgetDayProgress(
             completedBlocks: completedBlocks,
             totalBlocks: totalBlocks,
             coinsToday: coinsToday,
             nextBlockLabel: nextBlockLabel,
-            date: Date.now
+            currentTaskName: currentTaskName,
+            currentCategory: currentCategory,
+            date: .now
         )
 
         if let petJSON = try? JSONEncoder().encode(petDTO) {
             defaults?.set(petJSON, forKey: Keys.petData)
         }
-        if let progressJSON = try? JSONEncoder().encode(dayProgress) {
+        if let progressJSON = try? JSONEncoder().encode(progress) {
             defaults?.set(progressJSON, forKey: Keys.dayProgress)
         }
         defaults?.set(Date.now, forKey: Keys.lastUpdate)
@@ -75,6 +92,8 @@ struct WidgetDayProgress: Codable {
     let totalBlocks: Int
     let coinsToday: Int
     let nextBlockLabel: String?
+    let currentTaskName: String?
+    let currentCategory: String?
     let date: Date
 
     var completionFraction: String {

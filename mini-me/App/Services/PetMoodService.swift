@@ -4,6 +4,26 @@ import Foundation
 final class PetMoodService {
     private let calendar = Calendar.current
 
+    /// Determine exact activity based on current block category
+    func currentActivity(for category: String?) -> PetActivity {
+        guard let category = category?.lowercased() else { return .idling }
+        
+        if category.contains("work") || category.contains("study") || category.contains("learn") {
+            return .working
+        }
+        if category.contains("sleep") || category.contains("rest") || category.contains("nap") {
+            return .sleeping
+        }
+        if category.contains("read") || category.contains("wellness") || category.contains("book") {
+            return .reading
+        }
+        if category.contains("eat") || category.contains("meal") || category.contains("cooking") {
+            return .eating
+        }
+        
+        return .idling
+    }
+
     /// Determine pet mood, respecting manual status overrides
     func currentMood(
         completedBlocks: Int,

@@ -48,14 +48,15 @@ MiniMe/
 │                     # OutfitSlot enum (head, face, neck, top, hand, shoes)
 │                     # Season enum (spring, summer, fall, winter, holiday)
 ├── Services/         # CoinService, PetMoodService, StreakService, WidgetDataService,
-│                     # HapticService, SoundService, NotificationService, CalendarSyncService
+│                     # HapticService, SoundService, NotificationService, CalendarSyncService,
+│                     # TimeOfDayService, MilestoneService
 └── Shared/           # PixelTheme (colors, typography, Color hex init)
 
 MiniMeWidget/      # Widget extension (small, medium, lock screen circular/rectangular/inline)
 ```
 
 ## Key Models
-- **Player**: coins, ownedItemIDs, streaks, hasCompletedOnboarding, isPremium, manualStatusRaw, manualStatusExpiresAt
+- **Player**: coins, ownedItemIDs, streaks, hasCompletedOnboarding, isPremium, manualStatusRaw, manualStatusExpiresAt, unlockedMilestoneIDs
 - **Pet** (= Mini Me avatar): name, color/skin tone, accessoryIDs, equippedOutfitIDs
 - **DailySchedule**: isWeekday flag, name ("Weekday"/"Weekend"), contains TimeBlocks
 - **TimeBlock**: category, label, startHour/startMinute, durationMinutes, sortOrder
@@ -65,49 +66,14 @@ MiniMeWidget/      # Widget extension (small, medium, lock screen circular/recta
 - **OutfitItem**: 20 avatar outfits across 6 slots (head/face/neck/top/hand/shoes), with schedule auto-equip triggers
 - **SeasonalItem**: 12 limited-time items across 5 seasons (spring/summer/fall/winter/holiday)
 
-## Room Types (v2)
-- Bedroom (free starter), Study (500), Kitchen (600), Gym (750), Coffee Shop (1000), Rooftop (1500)
-- Each room has independent 12-slot decoration
-- Widget shows the active room
-
-## Outfit System (v2)
-- 6 slots: Head, Face, Neck, Top, Hand, Shoes
-- 20 outfits total with prices 60-250 coins
-- Some outfits auto-equip based on current schedule category (e.g., "Workout Headband" during Exercise blocks)
-- Outfits purchased in Shop → equipped in Outfits view
-
-## Manual Status / Sick Day (v2)
-- ManualStatus enum: sick, vacation, mentalHealthDay, traveling
-- Overrides avatar mood (e.g., sick → sleeping, vacation → happy)
-- Auto-expires at end of day
-- Set via Settings > Status picker
-
-## Seasonal Items (v2)
-- 12 items across spring, summer, fall, winter, holiday seasons
-- Only available during their season (e.g., holiday items in December only)
-- Special "Limited Time" badge in Shop
-
-## Coin Economy
-- 10 coins per block completed
-- 15 coins for completing all morning/afternoon/evening blocks
-- 50 coins for perfect day
-- Streak bonuses: 25 (3-day), 75 (7-day), 300 (30-day)
-- Room items: 30-800 coins
-- Outfits: 60-250 coins
-- Seasonal items: 60-300 coins
-- New rooms: 500-1500 coins
-
-## Avatar Mood Logic (PetMoodService)
-Mood determined by: time of day, completion rate, hours since last completion, streak
-**Manual status override**: sick/vacation/rest day/traveling overrides automatic mood
-States: sleeping, happy, neutral, bored, sad, celebrating
-The Mini Me's mood reflects how well the user is following their routine.
-
-## Current Status (v2)
+## Current Status (v2.5) — The Living Diorama Update
 ### COMPLETE
-- All v1 core game systems (schedule, coins, streaks, room, shop, widget)
-- Settings screen (avatar, schedule editing, data reset)
-- Haptic feedback + sound effects
+- **Living Diorama Engine**: Dynamic Z-sorting, Shadow projection, and "Walking Engine" (Stardew-style hops/directional flipping).
+- **Dynamic Lighting (Time of Day)**: Screen overlays and glowing electronics that react to real-world hours (Morning, Day, Sunset, Night).
+- **Milestone/Achievement System**: MilestoneService tracks streaks and block completions to unlock persistent room trophies.
+- **Contextual Rituals (Greetings)**: Context-aware thought bubbles for morning greetings and evening reflections.
+- **Soundscape/Haptic Juice**: Soft impact haptics and system sound "ticks" synced to character movement; multi-tone celebratory chimes.
+- **Isometric Depth Sorting (Y-Sorting)**: Continuous per-frame depth calculation based on feet position.
 - **v2: Outfit system** — 20 outfits, 6 slots, equip/unequip, auto-equip triggers
 - **v2: Multiple rooms** — 6 room types, room shop, per-room decoration
 - **v2: Notifications** — block reminders, streak warnings, morning greeting, mid-day nudge
@@ -120,14 +86,16 @@ The Mini Me's mood reflects how well the user is following their routine.
 - **v2: Premium/Pro gating** — upgrade flow in settings (StoreKit integration placeholder)
 
 ### MISSING
-- Avatar sprites / furniture art (using emoji + colored placeholder boxes)
-- StoreKit purchase flow (Pro upgrade button exists but uses placeholder logic)
+- Handcrafted production art (currently using optimized emoji/placeholder sprites)
+- StoreKit purchase flow (logic exists, UI/UX refinement needed)
 - Unit tests
-- Room switcher UI in IsometricRoomView (Room model supports it, needs view update)
 
 ## Important Notes
+- **Physical Foundation**: For proper isometric depth, `visualNode.anchorPoint` MUST be `(0.5, 0)`.
+- **Y-Sorting**: `RoomScene` update loop sets `zPosition = -position.y` for all world objects. Do not set manual Z-layers for floor-based items.
+- **Uniform Scaling**: To avoid "crunching" pixel art, always scale X and Y proportionally or keep variations under 2%.
 - SwiftData can't store enums directly — models use raw String values
-- Widget shares data via App Groups (UserDefaults suiteName: `group.com.pixelpals.shared`)
+- Widget shares data via App Groups (UserDefaults suiteName: `group.com.woojjwoo.pixieme.shared`)
 - Room uses 12 fixed SlotType positions with hardcoded isometric coordinates
 - Player.hasCompletedOnboarding gates the entire app (ContentView checks this)
 - The `Pet` model is named "Pet" internally but represents the Mini Me avatar — do NOT refer to it as a pet in UI

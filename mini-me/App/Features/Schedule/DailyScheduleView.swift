@@ -228,6 +228,8 @@ struct DailyScheduleView: View {
             totalBlocks: schedule.blocks.count,
             coinsToday: todayLog.totalCoins,
             nextBlockLabel: "", 
+            currentTaskName: currentBlock?.label,
+            currentCategory: currentBlock?.category,
             scheduleBlocks: schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
         )
         #endif
