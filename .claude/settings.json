@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(swiftc*)",
+      "Bash(bash mini-me/scripts/*)",
+      "Bash(sips*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git status*)",
+      "Bash(find mini-me -name *.swift*)",
+      "Bash(python3 mini-me/scripts/*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash mini-me/scripts/check-swift.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
