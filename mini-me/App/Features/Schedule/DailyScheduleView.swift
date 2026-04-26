@@ -161,6 +161,13 @@ struct DailyScheduleView: View {
         HapticService.success()
         SoundService.playCompleteSound()
 
+        // Check milestones
+        let milestoneService = MilestoneService(modelContext: modelContext)
+        let unlocked = milestoneService.checkMilestones(player: player, dayLogs: Array(dayLogs))
+        if !unlocked.isEmpty {
+            HapticService.celebration()
+        }
+
         // Check for perfect day celebration
         if todayLog.completedBlockIDs.count == schedule.blocks.count {
             HapticService.heavy()

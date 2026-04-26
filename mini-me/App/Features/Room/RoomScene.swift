@@ -10,10 +10,13 @@ class RoomScene: SKScene {
     private var assetScale: CGFloat = 1.2
     
     // Character Nodes
-    private var petNode = SKNode() 
-    private var visualNode = SKSpriteNode() 
+    private var petNode = SKNode()
+    private var visualNode = SKSpriteNode()
     private var shadowNode = SKShapeNode()
     private var speechBubble: SKNode?
+
+    // Lighting
+    private var lastAppliedHour: Int = -1
     
     // Physical Constants
     private let petBaseScale: CGFloat = 0.22
@@ -71,6 +74,11 @@ class RoomScene: SKScene {
         }
 
         setupPet()
+
+        // Apply current time-of-day lighting immediately on load
+        let hour = Calendar.current.component(.hour, from: .now)
+        lastAppliedHour = hour
+        applyTimeOfDay(TimeOfDayService.phase(forHour: hour))
     }
 
     private func setupPet() {
@@ -102,15 +110,44 @@ class RoomScene: SKScene {
     }
 
     override func update(_ currentTime: TimeInterval) {
-        // CRITICAL FIX: Continuous Y-Sorting for Depth
-        // Objects with lower Y (closer to bottom) get higher Z (closer to eye)
+        // Continuous Y-Sorting for Depth
         for node in worldLayer.children {
             if node == shadowNode { continue }
             node.zPosition = -node.position.y
         }
-        
-        // Sync shadow to pet floor position
         shadowNode.position = petNode.position
+
+        // Time-of-day lighting — cheap hour comparison, acts at most once per hour
+        let hour = Calendar.current.component(.hour, from: .now)
+        if hour != lastAppliedHour {
+            lastAppliedHour = hour
+            applyTimeOfDay(TimeOfDayService.phase(forHour: hour))
+        }
+    }
+
+    func applyTimeOfDay(_ tod: TimeOfDay) {
+        childNode(withName: "timeOverlay")?.removeFromParent()
+        guard tod != .day else { return }
+
+        let (r, g, b, a): (CGFloat, CGFloat, CGFloat, CGFloat)
+        switch tod {
+        case .morning: (r, g, b, a) = (1.0, 0.60, 0.20, 0.10)
+        case .sunset:  (r, g, b, a) = (0.90, 0.30, 0.10, 0.18)
+        case .night:   (r, g, b, a) = (0.10, 0.05, 0.40, 0.28)
+        case .day:     return
+        }
+
+        let overlay = SKSpriteNode(
+            color: SKColor(red: r, green: g, blue: b, alpha: 1),
+            size: self.size
+        )
+        overlay.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        overlay.position = CGPoint(x: size.width / 2, y: size.height / 2)
+        overlay.zPosition = 500
+        overlay.name = "timeOverlay"
+        overlay.alpha = 0
+        addChild(overlay)
+        overlay.run(SKAction.fadeAlpha(to: a, duration: 2.0))
     }
 
     // MARK: - Walking Engine

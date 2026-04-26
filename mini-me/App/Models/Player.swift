@@ -12,6 +12,7 @@ final class Player {
     var hasCompletedOnboarding: Bool
     var isPremium: Bool
     var lastCompletedDate: Date?
+    var unlockedMilestoneIDs: [String]
 
     init(
         id: UUID = UUID(),
@@ -21,7 +22,8 @@ final class Player {
         longestStreak: Int = 0,
         totalDaysCompleted: Int = 0,
         hasCompletedOnboarding: Bool = false,
-        isPremium: Bool = false
+        isPremium: Bool = false,
+        unlockedMilestoneIDs: [String] = []
     ) {
         self.id = id
         self.coins = coins
@@ -31,6 +33,7 @@ final class Player {
         self.totalDaysCompleted = totalDaysCompleted
         self.hasCompletedOnboarding = hasCompletedOnboarding
         self.isPremium = isPremium
+        self.unlockedMilestoneIDs = unlockedMilestoneIDs
     }
 
     // v2: Manual status override
