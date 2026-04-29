@@ -1,18 +1,19 @@
 import SwiftUI
 
 enum PixelTheme {
-    // Core palette from design spec
+    // Core palette
     static let background = Color(hex: "F5E6D3")    // warm cream
-    static let primary = Color(hex: "5B8C5A")        // sage green
-    static let accent = Color(hex: "E8985E")         // warm orange
-    static let text = Color(hex: "3D3D3D")           // soft black
+    static let primary = Color(hex: "E8985E")        // warm orange — main CTA, hoodie color
+    static let accent = Color(hex: "5B8C5A")         // sage green — secondary, wellness
+    static let text = Color(hex: "2D2040")           // warm dark purple — matches sprite outline
     static let completed = Color(hex: "7CB342")      // fresh green
     static let pending = Color(hex: "BDBDBD")        // light grey
     static let coin = Color(hex: "FFD54F")           // gold
 
     // Extended
-    static let cardBackground = Color.white.opacity(0.8)
-    static let shadowColor = Color.black.opacity(0.08)
+    static let cardBackground = Color(hex: "FFFAF4") // warm white, not cold
+    static let cardBorder = Color(hex: "2D2040").opacity(0.12)
+    static let shadowColor = Color(hex: "2D2040").opacity(0.10)
 
     // Typography
     static let titleFont: Font = .system(size: 24, weight: .bold, design: .rounded)

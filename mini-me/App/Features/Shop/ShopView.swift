@@ -22,9 +22,9 @@ struct ShopView: View {
 
         var displayName: String {
             switch self {
-            case .furniture: "Room Items"
-            case .outfits: "Outfits"
-            case .seasonal: "Seasonal"
+            case .furniture: "Furniture"
+            case .outfits: "Drip"
+            case .seasonal: "Limited"
             case .rooms: "Rooms"
             }
         }
@@ -102,10 +102,8 @@ struct ShopView: View {
     @State private var furnitureFilter: ItemCategory?
 
     private var filteredItems: [ShopItem] {
-        if let category = furnitureFilter {
-            return ItemCatalog.items(in: category)
-        }
-        return ItemCatalog.allItems
+        let base = furnitureFilter != nil ? ItemCatalog.items(in: furnitureFilter!) : ItemCatalog.allItems
+        return base.filter { $0.price > 0 }  // hide free starter items (mattress_floor)
     }
 
     private var furnitureGrid: some View {
@@ -160,13 +158,13 @@ struct ShopView: View {
 
         return VStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : Color.gray.opacity(0.1))
-                .frame(height: 100)
+                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.background.opacity(0.6))
+                .frame(height: 150)
                 .overlay {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 6) {
                         Image(systemName: outfit.outfitSlot.icon)
-                            .font(.title2)
-                            .foregroundColor(isOwned ? PixelTheme.primary : PixelTheme.text.opacity(0.3))
+                            .font(.system(size: 36))
+                            .foregroundColor(isOwned ? PixelTheme.primary : PixelTheme.text.opacity(0.2))
                         Text(outfit.outfitSlot.displayName)
                             .font(.system(size: 9))
                             .foregroundColor(PixelTheme.text.opacity(0.4))
@@ -289,13 +287,11 @@ struct ShopView: View {
         return VStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.accent.opacity(0.08))
-                .frame(height: 100)
+                .frame(height: 150)
                 .overlay {
-                    VStack {
-                        Image(systemName: item.season.icon)
-                            .font(.title)
-                            .foregroundColor(PixelTheme.accent.opacity(0.5))
-                    }
+                    Image(systemName: item.season.icon)
+                        .font(.system(size: 36))
+                        .foregroundColor(PixelTheme.accent.opacity(0.4))
                 }
 
             Text(item.name)
@@ -482,17 +478,25 @@ struct ShopItemCard: View {
     var body: some View {
         VStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : Color.gray.opacity(0.1))
-                .frame(height: 100)
+                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.background.opacity(0.6))
+                .frame(height: 150)
                 .overlay {
-                    VStack {
-                        if let slot = item.slot {
+                    if UIImage(named: item.spriteName) != nil {
+                        Image(item.spriteName)
+                            .resizable()
+                            .interpolation(.none)
+                            .scaledToFit()
+                            .padding(16)
+                    } else {
+                        VStack(spacing: 4) {
                             Image(systemName: "square.dashed")
-                                .font(.title)
-                                .foregroundColor(PixelTheme.text.opacity(0.3))
-                            Text(slot.displayName)
-                                .font(.system(size: 9))
-                                .foregroundColor(PixelTheme.text.opacity(0.4))
+                                .font(.system(size: 36))
+                                .foregroundColor(PixelTheme.text.opacity(0.2))
+                            if let slot = item.slot {
+                                Text(slot.displayName)
+                                    .font(.system(size: 9))
+                                    .foregroundColor(PixelTheme.text.opacity(0.35))
+                            }
                         }
                     }
                 }

@@ -2,281 +2,306 @@ import SwiftUI
 
 // MARK: - Step 1: Welcome
 
-struct WelcomeStep: View {
+struct OnboardingWelcomeStep: View {
     let onNext: () -> Void
+    @State private var spriteScale: CGFloat = 0.7
+    @State private var spriteOpacity: Double = 0
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             Spacer()
 
-            // Placeholder for pixel art logo/cat
-            RoundedRectangle(cornerRadius: 20)
-                .fill(PixelTheme.primary.opacity(0.15))
-                .frame(width: 160, height: 160)
-                .overlay {
+            // Character art — large, centered
+            Group {
+                if UIImage(named: "minime_idle") != nil {
+                    Image("minime_idle")
+                        .resizable()
+                        .interpolation(.none)
+                        .scaledToFit()
+                        .frame(width: 120, height: 200)
+                } else {
                     Text("🧑")
-                        .font(.system(size: 80))
+                        .font(.system(size: 100))
                 }
+            }
+            .scaleEffect(spriteScale)
+            .opacity(spriteOpacity)
+            .onAppear {
+                withAnimation(.spring(response: 0.6, dampingFraction: 0.65)) {
+                    spriteScale = 1.0
+                    spriteOpacity = 1.0
+                }
+            }
 
-            Text("Let's design your ideal day.")
-                .font(PixelTheme.titleFont)
-                .foregroundColor(PixelTheme.text)
-                .multilineTextAlignment(.center)
+            Spacer().frame(height: 40)
 
-            Text("Build the daily routine you actually want to follow — your Mini Me lives in a pixel room that grows as you stick to it.")
-                .font(PixelTheme.bodyFont)
-                .foregroundColor(PixelTheme.text.opacity(0.7))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+            VStack(spacing: 12) {
+                Text("Your pixel life\nstarts here.")
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .foregroundColor(PixelTheme.text)
+                    .multilineTextAlignment(.center)
+
+                Text("Build a routine. Grow your room.\nBecome your best Mini Me.")
+                    .font(PixelTheme.bodyFont)
+                    .foregroundColor(PixelTheme.text.opacity(0.6))
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 32)
 
             Spacer()
 
-            OnboardingButton(title: "Let's Go", action: onNext)
-                .padding(.bottom, 40)
+            OnboardingButton(title: "Let's Go →", action: onNext)
+                .padding(.bottom, 48)
         }
-        .padding(.horizontal, 24)
     }
 }
 
-// MARK: - Step 2: Wake Up Time
+// MARK: - Step 2: Name
 
-struct WakeUpStep: View {
-    @Binding var hour: Int
-    @Binding var minute: Int
+struct OnboardingNameStep: View {
+    @Binding var petName: String
     let onNext: () -> Void
+    @FocusState private var focused: Bool
+
+    private var displayName: String {
+        petName.trimmingCharacters(in: .whitespaces).isEmpty ? "Pixel" : petName
+    }
 
     var body: some View {
-        VStack(spacing: 24) {
+        VStack(spacing: 0) {
             Spacer()
 
-            Text("What time do you wake up?")
-                .font(PixelTheme.titleFont)
-                .foregroundColor(PixelTheme.text)
-
-            Text("This is your ideal wake-up time — not your alarm, your goal.")
-                .font(PixelTheme.bodyFont)
-                .foregroundColor(PixelTheme.text.opacity(0.7))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
-
-            HStack(spacing: 4) {
-                Picker("Hour", selection: $hour) {
-                    ForEach(4..<13, id: \.self) { h in
-                        Text("\(h == 0 ? 12 : h)").tag(h)
+            // Character + speech bubble
+            ZStack(alignment: .topTrailing) {
+                Group {
+                    if UIImage(named: "minime_idle") != nil {
+                        Image("minime_idle")
+                            .resizable()
+                            .interpolation(.none)
+                            .scaledToFit()
+                            .frame(width: 80, height: 133)
+                    } else {
+                        Text("🧑").font(.system(size: 70))
                     }
                 }
-                .pickerStyle(.wheel)
-                .frame(width: 80)
 
-                Text(":")
-                    .font(.title)
+                // Speech bubble
+                Text("Hi, I'm \(displayName)!")
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
                     .foregroundColor(PixelTheme.text)
-
-                Picker("Minute", selection: $minute) {
-                    Text("00").tag(0)
-                    Text("15").tag(15)
-                    Text("30").tag(30)
-                    Text("45").tag(45)
-                }
-                .pickerStyle(.wheel)
-                .frame(width: 80)
-
-                Text("AM")
-                    .font(PixelTheme.headlineFont)
-                    .foregroundColor(PixelTheme.primary)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(PixelTheme.cardBackground)
+                    .cornerRadius(12)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(PixelTheme.cardBorder, lineWidth: 1)
+                    )
+                    .shadow(color: PixelTheme.shadowColor, radius: 4, y: 2)
+                    .offset(x: 100, y: -20)
+                    .fixedSize()
             }
-            .padding(.vertical, 20)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 80)
+            .animation(.spring(response: 0.3), value: displayName)
+
+            Spacer().frame(height: 48)
+
+            VStack(spacing: 16) {
+                Text("What should I\ncall you?")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundColor(PixelTheme.text)
+                    .multilineTextAlignment(.center)
+
+                TextField("Your name...", text: $petName)
+                    .font(.system(size: 22, weight: .medium, design: .rounded))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(PixelTheme.text)
+                    .padding(.vertical, 16)
+                    .background(Color.clear)
+                    .overlay(
+                        Rectangle()
+                            .fill(PixelTheme.primary.opacity(0.4))
+                            .frame(height: 2),
+                        alignment: .bottom
+                    )
+                    .padding(.horizontal, 40)
+                    .focused($focused)
+            }
+
+            Spacer()
+
+            OnboardingButton(title: "Continue", action: onNext)
+                .padding(.bottom, 48)
+        }
+        .padding(.horizontal, 24)
+        .onAppear { focused = true }
+    }
+}
+
+// MARK: - Step 3: Wake Time (horizontal snap scroll)
+
+struct OnboardingWakeStep: View {
+    @Binding var wakeUpHour: Int
+    let onNext: () -> Void
+
+    private let hours = Array(4...11) // 4am–11am
+
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+
+            VStack(spacing: 16) {
+                Text("When do you\nwake up?")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundColor(PixelTheme.text)
+                    .multilineTextAlignment(.center)
+
+                Text("Set your ideal wake-up time.")
+                    .font(PixelTheme.bodyFont)
+                    .foregroundColor(PixelTheme.text.opacity(0.55))
+            }
+            .padding(.horizontal, 32)
+
+            Spacer().frame(height: 48)
+
+            // Horizontal hour snap scroll
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 0) {
+                        ForEach(hours, id: \.self) { hour in
+                            let isSelected = hour == wakeUpHour
+                            VStack(spacing: 6) {
+                                Text(hourLabel(hour))
+                                    .font(.system(size: isSelected ? 28 : 20, weight: isSelected ? .bold : .regular, design: .rounded))
+                                    .foregroundColor(isSelected ? PixelTheme.text : PixelTheme.text.opacity(0.3))
+                                    .scaleEffect(isSelected ? 1.0 : 0.85)
+
+                                Circle()
+                                    .fill(isSelected ? PixelTheme.primary : Color.clear)
+                                    .frame(width: 6, height: 6)
+                            }
+                            .frame(width: 100)
+                            .animation(.spring(response: 0.3), value: wakeUpHour)
+                            .id(hour)
+                            .onTapGesture {
+                                HapticService.selection()
+                                withAnimation(.spring(response: 0.3)) {
+                                    wakeUpHour = hour
+                                    proxy.scrollTo(hour, anchor: .center)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.vertical, 16)
+                }
+                .scrollTargetBehavior(.viewAligned)
+                .onAppear {
+                    proxy.scrollTo(wakeUpHour, anchor: .center)
+                }
+            }
+            .frame(height: 80)
 
             Spacer()
 
             OnboardingButton(title: "Next", action: onNext)
-                .padding(.bottom, 40)
+                .padding(.bottom, 48)
         }
         .padding(.horizontal, 24)
     }
+
+    private func hourLabel(_ hour: Int) -> String {
+        let h = hour > 12 ? hour - 12 : hour
+        let suffix = hour < 12 ? "am" : "pm"
+        return "\(h)\(suffix)"
+    }
 }
 
-// MARK: - Step 3/4/5: Block Picker
+// MARK: - Step 4: First Habit (single pick)
 
-struct BlockPickerStep: View {
-    let title: String
-    let subtitle: String
-    @Binding var selectedBlocks: [OnboardingBlock]
-    let suggestedCategories: [BlockCategory]
-    let onNext: () -> Void
+struct OnboardingHabitStep: View {
+    @Binding var selectedCategory: BlockCategory?
+    let petName: String
+    let onFinish: () -> Void
 
-    @State private var showingCustomSheet = false
+    @State private var bounceCategory: BlockCategory? = nil
+
+    private let displayName: String
+    init(selectedCategory: Binding<BlockCategory?>, petName: String, onFinish: @escaping () -> Void) {
+        self._selectedCategory = selectedCategory
+        self.petName = petName
+        self.onFinish = onFinish
+        self.displayName = petName.trimmingCharacters(in: .whitespaces).isEmpty ? "Pixel" : petName
+    }
+
+    private let categories: [BlockCategory] = [
+        .routine, .exercise, .wellness, .nutrition, .work, .learning, .creative, .social, .rest
+    ]
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text(title)
-                .font(PixelTheme.titleFont)
-                .foregroundColor(PixelTheme.text)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 0) {
+            Spacer().frame(height: 32)
 
-            Text(subtitle)
-                .font(PixelTheme.captionFont)
-                .foregroundColor(PixelTheme.text.opacity(0.6))
+            VStack(spacing: 12) {
+                Text("What's your\n#1 morning habit?")
+                    .font(.system(size: 26, weight: .bold, design: .rounded))
+                    .foregroundColor(PixelTheme.text)
+                    .multilineTextAlignment(.center)
 
-            // Selected blocks preview
-            if !selectedBlocks.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(selectedBlocks) { block in
-                            SelectedBlockChip(block: block) {
-                                selectedBlocks.removeAll { $0.id == block.id }
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                }
-                .frame(height: 44)
+                Text("Pick one to start. You can add more later.")
+                    .font(PixelTheme.captionFont)
+                    .foregroundColor(PixelTheme.text.opacity(0.5))
             }
+            .padding(.horizontal, 32)
 
-            // Category grid
-            ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                ], spacing: 12) {
-                    ForEach(suggestedCategories) { category in
-                        CategoryBlockButton(category: category) {
-                            let block = OnboardingBlock(
-                                category: category,
-                                label: category.displayName,
-                                duration: 60
-                            )
-                            selectedBlocks.append(block)
+            Spacer().frame(height: 32)
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                ForEach(categories) { category in
+                    let isSelected = selectedCategory == category
+
+                    Button {
+                        HapticService.selection()
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.55)) {
+                            selectedCategory = category
+                            bounceCategory = category
                         }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                            bounceCategory = nil
+                        }
+                    } label: {
+                        VStack(spacing: 10) {
+                            Image(systemName: category.icon)
+                                .font(.system(size: 28))
+                                .foregroundColor(isSelected ? .white : category.color)
+                            Text(category.displayName)
+                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .foregroundColor(isSelected ? .white : PixelTheme.text)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 20)
+                        .background(isSelected ? category.color : PixelTheme.cardBackground)
+                        .cornerRadius(14)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14)
+                                .stroke(isSelected ? Color.clear : PixelTheme.cardBorder, lineWidth: 1)
+                        )
+                        .shadow(color: isSelected ? category.color.opacity(0.35) : PixelTheme.shadowColor, radius: isSelected ? 8 : 2, y: isSelected ? 4 : 1)
+                        .scaleEffect(bounceCategory == category ? 1.06 : 1.0)
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 16)
             }
+            .padding(.horizontal, 16)
 
             Spacer()
 
             OnboardingButton(
-                title: selectedBlocks.isEmpty ? "Skip" : "Next",
-                action: onNext
+                title: selectedCategory != nil ? "Start! 🎉" : "Skip",
+                action: onFinish
             )
-            .padding(.bottom, 40)
+            .padding(.bottom, 48)
         }
-        .padding(.horizontal, 8)
-    }
-}
-
-struct SelectedBlockChip: View {
-    let block: OnboardingBlock
-    let onRemove: () -> Void
-
-    var body: some View {
-        HStack(spacing: 4) {
-            Image(systemName: block.category.icon)
-                .font(.caption)
-            Text(block.label)
-                .font(PixelTheme.captionFont)
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.caption2)
-            }
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(block.category.color.opacity(0.2))
-        .foregroundColor(PixelTheme.text)
-        .cornerRadius(16)
-    }
-}
-
-struct CategoryBlockButton: View {
-    let category: BlockCategory
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 8) {
-                Image(systemName: category.icon)
-                    .font(.title3)
-                    .foregroundColor(category.color)
-                Text(category.displayName)
-                    .font(PixelTheme.bodyFont)
-                    .foregroundColor(PixelTheme.text)
-                Spacer()
-                Image(systemName: "plus.circle.fill")
-                    .foregroundColor(PixelTheme.primary.opacity(0.6))
-            }
-            .padding(14)
-            .background(PixelTheme.cardBackground)
-            .cornerRadius(12)
-            .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
-        }
-    }
-}
-
-// MARK: - Step 6: Pet Setup
-
-struct PetSetupStep: View {
-    @Binding var petName: String
-    @Binding var petColor: PetColor
-    let onFinish: () -> Void
-
-    var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            Text("Create your Mini Me!")
-                .font(PixelTheme.titleFont)
-                .foregroundColor(PixelTheme.text)
-
-            // Placeholder for pixel cat preview
-            RoundedRectangle(cornerRadius: 20)
-                .fill(petColor == .orangeTabby ? Color(hex: "FFD180") :
-                      petColor == .black ? Color(hex: "4A4A4A") :
-                      Color(hex: "F5F5F5"))
-                .frame(width: 120, height: 120)
-                .overlay {
-                    Text("🧑")
-                        .font(.system(size: 60))
-                }
-
-            // Color picker
-            HStack(spacing: 16) {
-                ForEach(PetColor.allCases) { color in
-                    VStack(spacing: 4) {
-                        Circle()
-                            .fill(color == .orangeTabby ? Color(hex: "FFB74D") :
-                                  color == .black ? Color(hex: "4A4A4A") :
-                                  Color(hex: "FAFAFA"))
-                            .frame(width: 48, height: 48)
-                            .overlay {
-                                Circle()
-                                    .stroke(petColor == color ? PixelTheme.primary : Color.clear, lineWidth: 3)
-                            }
-                            .shadow(color: PixelTheme.shadowColor, radius: 2)
-
-                        Text(color.displayName)
-                            .font(PixelTheme.captionFont)
-                            .foregroundColor(PixelTheme.text.opacity(0.7))
-                    }
-                    .onTapGesture { petColor = color }
-                }
-            }
-
-            // Name field
-            TextField("Name your Mini Me...", text: $petName)
-                .font(PixelTheme.bodyFont)
-                .padding(14)
-                .background(PixelTheme.cardBackground)
-                .cornerRadius(12)
-                .padding(.horizontal, 40)
-                .multilineTextAlignment(.center)
-
-            Spacer()
-
-            OnboardingButton(title: "Start My Ideal Day!", action: onFinish)
-                .padding(.bottom, 40)
-        }
-        .padding(.horizontal, 24)
     }
 }
 

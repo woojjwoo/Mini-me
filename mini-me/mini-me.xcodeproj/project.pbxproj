@@ -30,6 +30,7 @@
 		22B49E592F78454E001FDADA /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3F2F78454E001FDADA /* Theme.swift */; };
 		22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E292F78454E001FDADA /* StatsView.swift */; };
 		22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E182F78454E001FDADA /* InsightsView.swift */; };
+		22B49EAB2F78454E001FDADA /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49EAA2F78454E001FDADA /* YouView.swift */; };
 		22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49DFF2F78454E001FDADA /* ContentView.swift */; };
 		22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E322F78454E001FDADA /* RoomSlot.swift */; };
 		22B49E602F78454E001FDADA /* OutfitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1D2F78454E001FDADA /* OutfitView.swift */; };
@@ -58,6 +59,8 @@
 		22B49E782F78454E001FDADA /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2F2F78454E001FDADA /* Pet.swift */; };
 		22B49E792F78454E001FDADA /* DailySchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2D2F78454E001FDADA /* DailySchedule.swift */; };
 		22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E232F78454E001FDADA /* TimeBlockRow.swift */; };
+		3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */; };
+		3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D02F9EFE970041ED43 /* MilestoneService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +105,7 @@
 		22B49E152F78454E001FDADA /* room_base_1774707985306.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_1774707985306.png; sourceTree = "<group>"; };
 		22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_lofi_v2_1774708398444.png; sourceTree = "<group>"; };
 		22B49E182F78454E001FDADA /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		22B49EAA2F78454E001FDADA /* YouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouView.swift; sourceTree = "<group>"; };
 		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
@@ -135,6 +139,8 @@
 		22B49F782F79EB2F001FDADA /* pixi me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pixi me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B49F792F79EB2F001FDADA /* mini-meTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayService.swift; sourceTree = "<group>"; };
+		3BD990D02F9EFE970041ED43 /* MilestoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -346,12 +352,21 @@
 			path = Stats;
 			sourceTree = "<group>";
 		};
+		22B49EAC2F78454E001FDADA /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				22B49EAA2F78454E001FDADA /* YouView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		22B49E2B2F78454E001FDADA /* Features */ = {
 			isa = PBXGroup;
 			children = (
 				22B49E192F78454E001FDADA /* Insights */,
 				22B49E1C2F78454E001FDADA /* Onboarding */,
 				22B49E1E2F78454E001FDADA /* Outfits */,
+				22B49EAC2F78454E001FDADA /* Profile */,
 				22B49E212F78454E001FDADA /* Room */,
 				22B49E242F78454E001FDADA /* Schedule */,
 				22B49E262F78454E001FDADA /* Settings */,
@@ -380,6 +395,8 @@
 		22B49E3E2F78454E001FDADA /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				3BD990D02F9EFE970041ED43 /* MilestoneService.swift */,
+				3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */,
 				22B49E362F78454E001FDADA /* CalendarSyncService.swift */,
 				22B49E372F78454E001FDADA /* CoinService.swift */,
 				22B49E382F78454E001FDADA /* HapticService.swift */,
@@ -590,6 +607,7 @@
 				22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */,
 				22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */,
 				22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */,
+				3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */,
 				22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */,
 				22B49E602F78454E001FDADA /* OutfitView.swift in Sources */,
 				22B49E622F78454E001FDADA /* MiniMeApp.swift in Sources */,
@@ -599,6 +617,7 @@
 				22B49E662F78454E001FDADA /* BlockCategory.swift in Sources */,
 				22B49E672F78454E001FDADA /* NotificationService.swift in Sources */,
 				22B49E682F78454E001FDADA /* HapticService.swift in Sources */,
+				3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */,
 				22B49E692F78454E001FDADA /* SettingsView.swift in Sources */,
 				22B49E6A2F78454E001FDADA /* Room.swift in Sources */,
 				22B49E6B2F78454E001FDADA /* ShopItem.swift in Sources */,
@@ -617,6 +636,7 @@
 				22B49E782F78454E001FDADA /* Pet.swift in Sources */,
 				22B49E792F78454E001FDADA /* DailySchedule.swift in Sources */,
 				22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */,
+				22B49EAB2F78454E001FDADA /* YouView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

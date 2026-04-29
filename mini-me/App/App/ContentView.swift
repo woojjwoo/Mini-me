@@ -21,7 +21,7 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             DailyScheduleView()
                 .tabItem {
-                    Image(systemName: "calendar")
+                    Image(systemName: "calendar.badge.checkmark")
                     Text("Today")
                 }
                 .tag(0)
@@ -40,21 +40,12 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
-            InsightsView()
+            YouView()
                 .tabItem {
-                    Image(systemName: "chart.bar.fill")
-                    Text("Insights")
+                    Image(systemName: "person.crop.circle")
+                    Text("You")
                 }
                 .tag(3)
-
-            NavigationStack {
-                SettingsView()
-            }
-            .tabItem {
-                Image(systemName: "gearshape.fill")
-                Text("Settings")
-            }
-            .tag(4)
         }
         .tint(PixelTheme.primary)
     }

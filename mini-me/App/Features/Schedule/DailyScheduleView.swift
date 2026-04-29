@@ -13,6 +13,10 @@ struct DailyScheduleView: View {
     @Query private var pets: [Pet]
 
     @State private var animatingBlockID: UUID?
+    @State private var characterHopScale: CGFloat = 1.0
+    @State private var coinFloatVisible = false
+    @State private var coinFloatOffset: CGFloat = 0
+    @State private var coinFloatOpacity: Double = 0
 
     private var player: Player? { players.first }
     private var pet: Pet? { pets.first }
@@ -35,17 +39,23 @@ struct DailyScheduleView: View {
         return newLog
     }
 
+    private var currentMood: PetMood {
+        guard let schedule = todaySchedule, schedule.blocks.count > 0 else { return .neutral }
+        let pct = Double(todayLog.completedBlockIDs.count) / Double(schedule.blocks.count)
+        if pct >= 1.0 { return .happy }
+        if pct >= 0.5 { return .neutral }
+        return .bored
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 PixelTheme.background.ignoresSafeArea()
 
                 ScrollView {
-                    VStack(spacing: 16) {
-                        // Header with pet + progress
+                    VStack(spacing: 12) {
                         headerCard
 
-                        // Schedule blocks
                         if let schedule = todaySchedule {
                             ForEach(schedule.sortedBlocks) { block in
                                 TimeBlockRow(
@@ -74,74 +84,127 @@ struct DailyScheduleView: View {
     // MARK: - Header
 
     private var headerCard: some View {
-        VStack(spacing: 12) {
-            HStack {
-                // Pet mood placeholder
-                VStack {
-                    Text("🧑")
-                        .font(.system(size: 40))
-                    if let pet = pet {
-                        Text(pet.name)
-                            .font(PixelTheme.captionFont)
-                            .foregroundColor(PixelTheme.text.opacity(0.7))
+        ZStack(alignment: .topTrailing) {
+            VStack(spacing: 12) {
+                HStack(alignment: .top, spacing: 14) {
+                    // Character sprite
+                    ZStack {
+                        let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
+                        if UIImage(named: spriteName) != nil {
+                            Image(spriteName)
+                                .resizable()
+                                .interpolation(.none)
+                                .scaledToFit()
+                                .frame(width: 44, height: 73)
+                        } else {
+                            Text("🧑")
+                                .font(.system(size: 40))
+                        }
                     }
+                    .scaleEffect(characterHopScale, anchor: .bottom)
+
+                    // Name + mood + streak
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(pet?.name ?? "Pixel")
+                            .font(PixelTheme.headlineFont)
+                            .foregroundColor(PixelTheme.text)
+
+                        HStack(spacing: 6) {
+                            Text(currentMood.displayEmoji)
+                                .font(.system(size: 14))
+                            Text(moodLabel)
+                                .font(PixelTheme.captionFont)
+                                .foregroundColor(PixelTheme.text.opacity(0.6))
+
+                            if let streak = player?.currentStreak, streak > 0 {
+                                Text("·").foregroundColor(PixelTheme.text.opacity(0.3))
+                                    .font(PixelTheme.captionFont)
+                                Text("\(streak)🔥")
+                                    .font(PixelTheme.captionFont)
+                                    .foregroundColor(PixelTheme.primary)
+                            }
+                        }
+
+                        Text(dateString)
+                            .font(.system(size: 11, weight: .medium, design: .rounded))
+                            .foregroundColor(PixelTheme.text.opacity(0.4))
+                    }
+
+                    Spacer()
                 }
 
-                Spacer()
+                // Segmented blocky progress bar
+                if let schedule = todaySchedule, schedule.blocks.count > 0 {
+                    let total = schedule.blocks.count
+                    let completed = todayLog.completedBlockIDs.count
 
-                VStack(alignment: .trailing, spacing: 4) {
-                    Text(dateString)
-                        .font(PixelTheme.headlineFont)
-                        .foregroundColor(PixelTheme.text)
+                    VStack(spacing: 5) {
+                        HStack(spacing: 3) {
+                            ForEach(0..<total, id: \.self) { index in
+                                RoundedRectangle(cornerRadius: 3)
+                                    .fill(index < completed ? PixelTheme.primary : PixelTheme.pending.opacity(0.25))
+                                    .frame(height: 8)
+                                    .animation(.spring(response: 0.4), value: completed)
+                            }
+                        }
 
-                    // Coins
-                    HStack(spacing: 4) {
-                        Image(systemName: "circle.fill")
-                            .font(.caption)
-                            .foregroundColor(PixelTheme.coin)
-                        Text("\(player?.coins ?? 0)")
-                            .font(PixelTheme.coinFont)
-                            .foregroundColor(PixelTheme.text)
+                        HStack {
+                            Text("\(completed)/\(total) done")
+                                .font(PixelTheme.captionFont)
+                                .foregroundColor(PixelTheme.text.opacity(0.5))
+                            Spacer()
+                            if total > 0 {
+                                Text("\(Int(Double(completed) / Double(total) * 100))%")
+                                    .font(PixelTheme.captionFont)
+                                    .foregroundColor(completed > 0 ? PixelTheme.primary : PixelTheme.text.opacity(0.3))
+                            }
+                        }
                     }
                 }
             }
+            .padding(16)
 
-            // Progress bar
-            if let schedule = todaySchedule {
-                let total = schedule.blocks.count
-                let completed = todayLog.completedBlockIDs.count
+            // Coins — top right
+            HStack(spacing: 4) {
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 8))
+                    .foregroundColor(PixelTheme.coin)
+                Text("\(player?.coins ?? 0)")
+                    .font(PixelTheme.coinFont)
+                    .foregroundColor(PixelTheme.text)
+            }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(PixelTheme.coin.opacity(0.15))
+            .cornerRadius(12)
+            .padding(12)
 
-                VStack(spacing: 4) {
-                    GeometryReader { geo in
-                        ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(PixelTheme.pending.opacity(0.3))
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(PixelTheme.completed)
-                                .frame(width: total > 0 ? geo.size.width * CGFloat(completed) / CGFloat(total) : 0)
-                                .animation(.spring(response: 0.4), value: completed)
-                        }
-                    }
-                    .frame(height: 10)
-
-                    HStack {
-                        Text("\(completed)/\(total) done")
-                            .font(PixelTheme.captionFont)
-                            .foregroundColor(PixelTheme.text.opacity(0.6))
-                        Spacer()
-                        if total > 0 {
-                            Text("\(Int(Double(completed) / Double(total) * 100))%")
-                                .font(PixelTheme.captionFont)
-                                .foregroundColor(PixelTheme.completed)
-                        }
-                    }
+            // Coin float overlay
+            if coinFloatVisible {
+                HStack(spacing: 3) {
+                    Text("+\(CoinService.coinsPerBlock)")
+                        .font(PixelTheme.coinFont)
+                        .foregroundColor(PixelTheme.coin)
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 8))
+                        .foregroundColor(PixelTheme.coin)
                 }
+                .offset(x: -20, y: coinFloatOffset)
+                .opacity(coinFloatOpacity)
             }
         }
-        .padding(16)
         .background(PixelTheme.cardBackground)
         .cornerRadius(16)
-        .shadow(color: PixelTheme.shadowColor, radius: 4, y: 2)
+        .overlay(RoundedRectangle(cornerRadius: 16).stroke(PixelTheme.cardBorder, lineWidth: 1))
+        .shadow(color: PixelTheme.shadowColor, radius: 6, y: 2)
+    }
+
+    private var moodLabel: String {
+        switch currentMood {
+        case .happy: "Crushing it!"
+        case .bored: "Needs motivation"
+        default: "Doing well"
+        }
     }
 
     // MARK: - Actions
@@ -157,35 +220,39 @@ struct DailyScheduleView: View {
             schedule: schedule
         )
 
-        // Feedback
         HapticService.success()
         SoundService.playCompleteSound()
 
-        // Check milestones
         let milestoneService = MilestoneService(modelContext: modelContext)
         let unlocked = milestoneService.checkMilestones(player: player, dayLogs: Array(dayLogs))
-        if !unlocked.isEmpty {
-            HapticService.celebration()
-        }
+        if !unlocked.isEmpty { HapticService.celebration() }
 
-        // Check for perfect day celebration
         if todayLog.completedBlockIDs.count == schedule.blocks.count {
             HapticService.heavy()
             SoundService.playCelebrationSound()
         }
 
-        // Trigger animation
         animatingBlockID = block.id
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            animatingBlockID = nil
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { animatingBlockID = nil }
+
+        // Character hop
+        withAnimation(.spring(response: 0.15, dampingFraction: 0.4)) { characterHopScale = 1.12 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            withAnimation(.spring(response: 0.2)) { characterHopScale = 1.0 }
         }
 
-        // Update widget
-        updateWidget()
+        // Coin float
+        coinFloatOffset = 0
+        coinFloatOpacity = 1.0
+        coinFloatVisible = true
+        withAnimation(.easeOut(duration: 0.65)) {
+            coinFloatOffset = -48
+            coinFloatOpacity = 0
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) { coinFloatVisible = false }
 
-        // Notify Room for animations
+        updateWidget()
         NotificationCenter.default.post(name: NSNotification.Name("ShowCoinShower"), object: nil)
-        
         if todayLog.completedBlockIDs.count == schedule.blocks.count {
             NotificationCenter.default.post(name: NSNotification.Name("ShowCelebration"), object: nil)
         }
@@ -206,18 +273,15 @@ struct DailyScheduleView: View {
     private func updateWidget() {
         #if canImport(WidgetKit)
         guard let pet = pet, let schedule = todaySchedule else { return }
-        
         let now = Date.now
         let hour = Calendar.current.component(.hour, from: now)
         let minute = Calendar.current.component(.minute, from: now)
         let currentMinutes = hour * 60 + minute
-        
         let currentBlock = schedule.blocks.first { block in
             let blockStart = block.startHour * 60 + block.startMinute
             let blockEnd = blockStart + block.durationMinutes
             return currentMinutes >= blockStart && currentMinutes < blockEnd
         }
-
         let moodService = PetMoodService()
         let mood = moodService.currentMood(
             completedBlocks: todayLog.completedBlockIDs.count,
@@ -227,14 +291,13 @@ struct DailyScheduleView: View {
             manualStatus: player?.manualStatus,
             currentActivity: currentBlock?.category
         )
-        // Ensure WidgetDataService is available
         WidgetDataService.shared.updateWidgetData(
             pet: pet,
             mood: mood,
             completedBlocks: todayLog.completedBlockIDs.count,
             totalBlocks: schedule.blocks.count,
             coinsToday: todayLog.totalCoins,
-            nextBlockLabel: "", 
+            nextBlockLabel: "",
             currentTaskName: currentBlock?.label,
             currentCategory: currentBlock?.category,
             scheduleBlocks: schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
