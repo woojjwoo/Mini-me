@@ -156,18 +156,20 @@ struct ShopView: View {
         let isOwned = player?.ownsItem(outfit.id) ?? false
         let canAfford = player?.canAfford(outfit.price) ?? false
 
+        let slotColor = outfitSlotColor(outfit.outfitSlot)
+
         return VStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.background.opacity(0.6))
+                .fill(isOwned ? PixelTheme.completed.opacity(0.12) : slotColor.opacity(0.12))
                 .frame(height: 150)
                 .overlay {
-                    VStack(spacing: 6) {
+                    VStack(spacing: 8) {
                         Image(systemName: outfit.outfitSlot.icon)
-                            .font(.system(size: 36))
-                            .foregroundColor(isOwned ? PixelTheme.primary : PixelTheme.text.opacity(0.2))
+                            .font(.system(size: 32))
+                            .foregroundColor(isOwned ? PixelTheme.accent : slotColor.opacity(0.7))
                         Text(outfit.outfitSlot.displayName)
-                            .font(.system(size: 9))
-                            .foregroundColor(PixelTheme.text.opacity(0.4))
+                            .font(.system(size: 11, weight: .semibold, design: .rounded))
+                            .foregroundColor(isOwned ? PixelTheme.accent : slotColor)
                     }
                 }
                 .overlay(alignment: .topTrailing) {
@@ -396,6 +398,19 @@ struct ShopView: View {
         .padding(.bottom, 20)
     }
 
+    // MARK: - Slot color helpers
+
+    private func outfitSlotColor(_ slot: OutfitSlot) -> Color {
+        switch slot {
+        case .head: return Color(hex: "E8985E")
+        case .face: return Color(hex: "FFD180")
+        case .neck: return Color(hex: "B388FF")
+        case .top: return Color(hex: "5B8C5A")
+        case .hand: return Color(hex: "4FC3F7")
+        case .shoes: return Color(hex: "E8985E").opacity(0.8)
+        }
+    }
+
     // MARK: - Purchase Actions
 
     private func purchaseItem(_ itemID: String, _ price: Int) {
@@ -475,10 +490,34 @@ struct ShopItemCard: View {
     let isPurchasing: Bool
     let onPurchase: () -> Void
 
+    private func slotIcon(_ slot: SlotType?) -> String {
+        switch slot {
+        case .bed: return "bed.double.fill"
+        case .desk, .deskChair: return "laptopcomputer"
+        case .shelf: return "books.vertical.fill"
+        case .wallDecor1, .wallDecor2: return "photo.fill"
+        case .windowArea: return "window.ceiling.closed"
+        case .cozyCorner: return "sofa.fill"
+        case .sideTable: return "lamp.table.fill"
+        case .petBed: return "pawprint.fill"
+        default: return "sparkles"
+        }
+    }
+
+    private var placeholderColor: Color {
+        switch item.slot {
+        case .bed, .sideTable: return PixelTheme.primary
+        case .desk, .deskChair: return PixelTheme.accent
+        case .shelf, .wallDecor1, .wallDecor2: return Color(hex: "B388FF")
+        case .windowArea, .cozyCorner: return Color(hex: "FFD180")
+        default: return PixelTheme.primary.opacity(0.7)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 8) {
             RoundedRectangle(cornerRadius: 10)
-                .fill(isOwned ? PixelTheme.completed.opacity(0.15) : PixelTheme.background.opacity(0.6))
+                .fill(isOwned ? PixelTheme.completed.opacity(0.12) : placeholderColor.opacity(0.12))
                 .frame(height: 150)
                 .overlay {
                     if UIImage(named: item.spriteName) != nil {
@@ -488,15 +527,15 @@ struct ShopItemCard: View {
                             .scaledToFit()
                             .padding(16)
                     } else {
-                        VStack(spacing: 4) {
-                            Image(systemName: "square.dashed")
-                                .font(.system(size: 36))
-                                .foregroundColor(PixelTheme.text.opacity(0.2))
-                            if let slot = item.slot {
-                                Text(slot.displayName)
-                                    .font(.system(size: 9))
-                                    .foregroundColor(PixelTheme.text.opacity(0.35))
-                            }
+                        VStack(spacing: 8) {
+                            Image(systemName: slotIcon(item.slot))
+                                .font(.system(size: 32))
+                                .foregroundColor(placeholderColor.opacity(0.7))
+                            Text(item.name)
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .foregroundColor(placeholderColor)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 8)
                         }
                     }
                 }

@@ -55,6 +55,7 @@ struct DailyScheduleView: View {
                 ScrollView {
                     VStack(spacing: 12) {
                         headerCard
+                            .zIndex(1)
 
                         if let schedule = todaySchedule {
                             ForEach(schedule.sortedBlocks) { block in
@@ -73,7 +74,9 @@ struct DailyScheduleView: View {
                                 .padding(.top, 40)
                         }
                     }
-                    .padding(16)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 24)
                 }
             }
             .navigationTitle("")
@@ -84,119 +87,145 @@ struct DailyScheduleView: View {
     // MARK: - Header
 
     private var headerCard: some View {
-        ZStack(alignment: .topTrailing) {
-            VStack(spacing: 12) {
-                HStack(alignment: .top, spacing: 14) {
-                    // Character sprite
-                    ZStack {
-                        let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
-                        if UIImage(named: spriteName) != nil {
-                            Image(spriteName)
-                                .resizable()
-                                .interpolation(.none)
-                                .scaledToFit()
-                                .frame(width: 44, height: 73)
-                        } else {
-                            Text("🧑")
-                                .font(.system(size: 40))
-                        }
-                    }
-                    .scaleEffect(characterHopScale, anchor: .bottom)
+        ZStack(alignment: .bottom) {
+            // Card background — gradient
+            RoundedRectangle(cornerRadius: 18)
+                .fill(
+                    LinearGradient(
+                        colors: [PixelTheme.cardBackground, PixelTheme.primary.opacity(0.06)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(PixelTheme.cardBorder, lineWidth: 1)
+                )
+                .shadow(color: PixelTheme.shadowColor, radius: 8, y: 3)
 
-                    // Name + mood + streak
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(pet?.name ?? "Pixel")
-                            .font(PixelTheme.headlineFont)
+            HStack(alignment: .bottom, spacing: 0) {
+                // Left: text content
+                VStack(alignment: .leading, spacing: 0) {
+                    // Coin pill — top
+                    HStack(spacing: 4) {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 8))
+                            .foregroundColor(PixelTheme.coin)
+                        Text("\(player?.coins ?? 0)")
+                            .font(PixelTheme.coinFont)
                             .foregroundColor(PixelTheme.text)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(PixelTheme.coin.opacity(0.15))
+                    .cornerRadius(12)
 
-                        HStack(spacing: 6) {
-                            Text(currentMood.displayEmoji)
-                                .font(.system(size: 14))
-                            Text(moodLabel)
-                                .font(PixelTheme.captionFont)
-                                .foregroundColor(PixelTheme.text.opacity(0.6))
+                    Spacer().frame(height: 10)
 
-                            if let streak = player?.currentStreak, streak > 0 {
-                                Text("·").foregroundColor(PixelTheme.text.opacity(0.3))
-                                    .font(PixelTheme.captionFont)
-                                Text("\(streak)🔥")
-                                    .font(PixelTheme.captionFont)
-                                    .foregroundColor(PixelTheme.primary)
-                            }
+                    // Pet name
+                    Text(pet?.name ?? "Pixel")
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(PixelTheme.text)
+
+                    Spacer().frame(height: 4)
+
+                    // Mood + streak
+                    HStack(spacing: 6) {
+                        Text(currentMood.displayEmoji)
+                            .font(.system(size: 13))
+                        Text(moodLabel)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundColor(PixelTheme.text.opacity(0.6))
+
+                        if let streak = player?.currentStreak, streak > 0 {
+                            Text("·").font(.system(size: 12)).foregroundColor(PixelTheme.text.opacity(0.3))
+                            Text("\(streak)🔥")
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundColor(PixelTheme.primary)
                         }
-
-                        Text(dateString)
-                            .font(.system(size: 11, weight: .medium, design: .rounded))
-                            .foregroundColor(PixelTheme.text.opacity(0.4))
                     }
 
-                    Spacer()
-                }
+                    Spacer().frame(height: 4)
 
-                // Segmented blocky progress bar
-                if let schedule = todaySchedule, schedule.blocks.count > 0 {
-                    let total = schedule.blocks.count
-                    let completed = todayLog.completedBlockIDs.count
+                    // Date
+                    Text(dateString)
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundColor(PixelTheme.text.opacity(0.35))
 
-                    VStack(spacing: 5) {
-                        HStack(spacing: 3) {
-                            ForEach(0..<total, id: \.self) { index in
-                                RoundedRectangle(cornerRadius: 3)
-                                    .fill(index < completed ? PixelTheme.primary : PixelTheme.pending.opacity(0.25))
-                                    .frame(height: 8)
-                                    .animation(.spring(response: 0.4), value: completed)
+                    Spacer().frame(height: 14)
+
+                    // Segmented progress bar — 12pt, with glow on last filled
+                    if let schedule = todaySchedule, schedule.blocks.count > 0 {
+                        let total = schedule.blocks.count
+                        let completed = todayLog.completedBlockIDs.count
+
+                        VStack(spacing: 5) {
+                            HStack(spacing: 3) {
+                                ForEach(0..<total, id: \.self) { index in
+                                    let isFilled = index < completed
+                                    let isLastFilled = index == completed - 1
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(isFilled ? PixelTheme.primary : PixelTheme.pending.opacity(0.2))
+                                        .frame(height: 12)
+                                        .shadow(
+                                            color: isLastFilled ? PixelTheme.primary.opacity(0.5) : .clear,
+                                            radius: isLastFilled ? 4 : 0
+                                        )
+                                        .animation(.spring(response: 0.4), value: completed)
+                                }
                             }
-                        }
 
-                        HStack {
-                            Text("\(completed)/\(total) done")
-                                .font(PixelTheme.captionFont)
-                                .foregroundColor(PixelTheme.text.opacity(0.5))
-                            Spacer()
-                            if total > 0 {
-                                Text("\(Int(Double(completed) / Double(total) * 100))%")
-                                    .font(PixelTheme.captionFont)
-                                    .foregroundColor(completed > 0 ? PixelTheme.primary : PixelTheme.text.opacity(0.3))
+                            HStack {
+                                Text("\(completed)/\(total) done")
+                                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                                    .foregroundColor(PixelTheme.text.opacity(0.45))
+                                Spacer()
+                                if total > 0 && completed > 0 {
+                                    Text("\(Int(Double(completed) / Double(total) * 100))%")
+                                        .font(.system(size: 11, weight: .semibold, design: .monospaced))
+                                        .foregroundColor(PixelTheme.primary)
+                                }
                             }
                         }
                     }
                 }
-            }
-            .padding(16)
+                .padding(16)
+                .padding(.bottom, 4)
 
-            // Coins — top right
-            HStack(spacing: 4) {
-                Image(systemName: "circle.fill")
-                    .font(.system(size: 8))
-                    .foregroundColor(PixelTheme.coin)
-                Text("\(player?.coins ?? 0)")
-                    .font(PixelTheme.coinFont)
-                    .foregroundColor(PixelTheme.text)
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .background(PixelTheme.coin.opacity(0.15))
-            .cornerRadius(12)
-            .padding(12)
+                Spacer()
 
-            // Coin float overlay
-            if coinFloatVisible {
-                HStack(spacing: 3) {
-                    Text("+\(CoinService.coinsPerBlock)")
+                // Right: character sprite — anchored to bottom, overflows card
+                ZStack(alignment: .bottom) {
+                    let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
+                    if UIImage(named: spriteName) != nil {
+                        Image(spriteName)
+                            .resizable()
+                            .interpolation(.none)
+                            .scaledToFit()
+                            .frame(width: 64, height: 107)
+                    } else {
+                        Text("🧑")
+                            .font(.system(size: 64))
+                            .frame(width: 64, height: 107, alignment: .bottom)
+                    }
+                }
+                .scaleEffect(characterHopScale, anchor: .bottom)
+                .offset(y: 12)
+                .padding(.trailing, 16)
+
+                // Coin float overlay (positioned near character)
+                if coinFloatVisible {
+                    Text("+\(CoinService.coinsPerBlock) 🪙")
                         .font(PixelTheme.coinFont)
                         .foregroundColor(PixelTheme.coin)
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 8))
-                        .foregroundColor(PixelTheme.coin)
+                        .offset(y: coinFloatOffset)
+                        .opacity(coinFloatOpacity)
+                        .padding(.trailing, 8)
                 }
-                .offset(x: -20, y: coinFloatOffset)
-                .opacity(coinFloatOpacity)
             }
+            .frame(minHeight: 160)
         }
-        .background(PixelTheme.cardBackground)
-        .cornerRadius(16)
-        .overlay(RoundedRectangle(cornerRadius: 16).stroke(PixelTheme.cardBorder, lineWidth: 1))
-        .shadow(color: PixelTheme.shadowColor, radius: 6, y: 2)
+        .padding(.bottom, 12)
     }
 
     private var moodLabel: String {

@@ -6,52 +6,79 @@ struct OnboardingWelcomeStep: View {
     let onNext: () -> Void
     @State private var spriteScale: CGFloat = 0.7
     @State private var spriteOpacity: Double = 0
+    @State private var decorOpacity: Double = 0
+
+    // Fixed decoration positions — scattered around character
+    private let decorations: [(String, CGFloat, CGFloat, CGFloat)] = [
+        ("⭐", -120, -60, 18),
+        ("✨", 110, -40, 14),
+        ("🌟", -90, 80, 16),
+        ("⭐", 95, 100, 12),
+        ("✨", -50, -120, 20),
+        ("🌟", 60, -100, 15),
+    ]
 
     var body: some View {
-        VStack(spacing: 0) {
-            Spacer()
+        ZStack {
+            VStack(spacing: 0) {
+                Spacer()
 
-            // Character art — large, centered
-            Group {
-                if UIImage(named: "minime_idle") != nil {
-                    Image("minime_idle")
-                        .resizable()
-                        .interpolation(.none)
-                        .scaledToFit()
-                        .frame(width: 120, height: 200)
-                } else {
-                    Text("🧑")
-                        .font(.system(size: 100))
+                ZStack {
+                    // Scattered backdrop decorations
+                    ForEach(Array(decorations.enumerated()), id: \.offset) { i, d in
+                        Text(d.0)
+                            .font(.system(size: d.3))
+                            .offset(x: d.1, y: d.2)
+                            .opacity(decorOpacity * 0.18)
+                    }
+
+                    // Character art — large, centered
+                    Group {
+                        if UIImage(named: "minime_idle") != nil {
+                            Image("minime_idle")
+                                .resizable()
+                                .interpolation(.none)
+                                .scaledToFit()
+                                .frame(width: 120, height: 200)
+                        } else {
+                            Text("🧑")
+                                .font(.system(size: 100))
+                        }
+                    }
+                    .scaleEffect(spriteScale)
+                    .opacity(spriteOpacity)
                 }
-            }
-            .scaleEffect(spriteScale)
-            .opacity(spriteOpacity)
-            .onAppear {
-                withAnimation(.spring(response: 0.6, dampingFraction: 0.65)) {
-                    spriteScale = 1.0
-                    spriteOpacity = 1.0
+                .frame(height: 260)
+                .onAppear {
+                    withAnimation(.spring(response: 0.6, dampingFraction: 0.65)) {
+                        spriteScale = 1.0
+                        spriteOpacity = 1.0
+                    }
+                    withAnimation(.easeIn(duration: 0.8).delay(0.3)) {
+                        decorOpacity = 1.0
+                    }
                 }
+
+                Spacer().frame(height: 32)
+
+                VStack(spacing: 12) {
+                    Text("Your pixel life\nstarts here.")
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                        .foregroundColor(PixelTheme.text)
+                        .multilineTextAlignment(.center)
+
+                    Text("Build a routine. Grow your room.\nBecome your best Mini Me.")
+                        .font(PixelTheme.bodyFont)
+                        .foregroundColor(PixelTheme.text.opacity(0.6))
+                        .multilineTextAlignment(.center)
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+
+                OnboardingButton(title: "Let's Go →", action: onNext)
+                    .padding(.bottom, 48)
             }
-
-            Spacer().frame(height: 40)
-
-            VStack(spacing: 12) {
-                Text("Your pixel life\nstarts here.")
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
-                    .foregroundColor(PixelTheme.text)
-                    .multilineTextAlignment(.center)
-
-                Text("Build a routine. Grow your room.\nBecome your best Mini Me.")
-                    .font(PixelTheme.bodyFont)
-                    .foregroundColor(PixelTheme.text.opacity(0.6))
-                    .multilineTextAlignment(.center)
-            }
-            .padding(.horizontal, 32)
-
-            Spacer()
-
-            OnboardingButton(title: "Let's Go →", action: onNext)
-                .padding(.bottom, 48)
         }
     }
 }
@@ -62,6 +89,7 @@ struct OnboardingNameStep: View {
     @Binding var petName: String
     let onNext: () -> Void
     @FocusState private var focused: Bool
+    @State private var bobPhase = false
 
     private var displayName: String {
         petName.trimmingCharacters(in: .whitespaces).isEmpty ? "Pixel" : petName
@@ -82,6 +110,12 @@ struct OnboardingNameStep: View {
                             .frame(width: 80, height: 133)
                     } else {
                         Text("🧑").font(.system(size: 70))
+                    }
+                }
+                .offset(y: bobPhase ? -4 : 0)
+                .onAppear {
+                    withAnimation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                        bobPhase = true
                     }
                 }
 
@@ -286,7 +320,7 @@ struct OnboardingHabitStep: View {
                             RoundedRectangle(cornerRadius: 14)
                                 .stroke(isSelected ? Color.clear : PixelTheme.cardBorder, lineWidth: 1)
                         )
-                        .shadow(color: isSelected ? category.color.opacity(0.35) : PixelTheme.shadowColor, radius: isSelected ? 8 : 2, y: isSelected ? 4 : 1)
+                        .shadow(color: isSelected ? category.color.opacity(0.5) : PixelTheme.shadowColor, radius: isSelected ? 12 : 2, y: isSelected ? 6 : 1)
                         .scaleEffect(bounceCategory == category ? 1.06 : 1.0)
                     }
                     .buttonStyle(.plain)
@@ -323,7 +357,7 @@ struct OnboardingButton: View {
                 .padding(.vertical, 16)
                 .background(PixelTheme.primary)
                 .cornerRadius(16)
-                .shadow(color: PixelTheme.primary.opacity(0.3), radius: 8, y: 4)
+                .shadow(color: PixelTheme.primary.opacity(0.4), radius: 12, y: 6)
         }
         .padding(.horizontal, 24)
     }

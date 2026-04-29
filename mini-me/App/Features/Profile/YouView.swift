@@ -92,41 +92,44 @@ struct YouView: View {
 
     private var characterHero: some View {
         VStack(spacing: 16) {
-            // Sprite
+            // Sprite — 96×160pt
             let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
             if UIImage(named: spriteName) != nil {
                 Image(spriteName)
                     .resizable()
                     .interpolation(.none)
                     .scaledToFit()
-                    .frame(width: 54, height: 90)
+                    .frame(width: 96, height: 160)
             } else {
-                Image(systemName: "person.fill")
-                    .font(.system(size: 54))
-                    .foregroundColor(PixelTheme.primary)
+                Text("🧑")
+                    .font(.system(size: 80))
+                    .frame(width: 96, height: 160, alignment: .bottom)
             }
 
-            // Name + mood + streak
-            VStack(spacing: 4) {
-                Text(pet?.name ?? "Pixel")
-                    .font(PixelTheme.titleFont)
-                    .foregroundColor(PixelTheme.text)
+            // Pet name — large
+            Text(pet?.name ?? "Pixel")
+                .font(PixelTheme.titleFont)
+                .foregroundColor(PixelTheme.text)
 
-                HStack(spacing: 8) {
-                    Text(currentMood.displayEmoji)
-                    Text(moodLabel)
-                        .font(PixelTheme.captionFont)
-                        .foregroundColor(PixelTheme.text.opacity(0.6))
+            // Mood + streak — single pill
+            HStack(spacing: 8) {
+                Text(currentMood.displayEmoji)
+                Text(moodLabel)
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .foregroundColor(PixelTheme.text.opacity(0.7))
 
-                    if let streak = player?.currentStreak, streak > 0 {
-                        Text("·")
-                            .foregroundColor(PixelTheme.text.opacity(0.3))
-                        Text("\(streak)🔥")
-                            .font(PixelTheme.captionFont)
-                            .foregroundColor(PixelTheme.primary)
-                    }
+                if let streak = player?.currentStreak, streak > 0 {
+                    Text("·").foregroundColor(PixelTheme.text.opacity(0.3))
+                        .font(.system(size: 13))
+                    Text("\(streak)🔥")
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
+                        .foregroundColor(PixelTheme.primary)
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(PixelTheme.primary.opacity(0.10))
+            .cornerRadius(20)
 
             // Action pills
             HStack(spacing: 12) {
@@ -140,15 +143,22 @@ struct YouView: View {
                 }
             }
         }
-        .padding(20)
+        .padding(.vertical, 24)
+        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .background(PixelTheme.cardBackground)
+        .background(
+            LinearGradient(
+                colors: [PixelTheme.cardBackground, PixelTheme.primary.opacity(0.08)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
         .cornerRadius(20)
         .overlay(
             RoundedRectangle(cornerRadius: 20)
                 .stroke(PixelTheme.cardBorder, lineWidth: 1)
         )
-        .shadow(color: PixelTheme.shadowColor, radius: 6, y: 2)
+        .shadow(color: PixelTheme.shadowColor, radius: 8, y: 3)
         .padding(.top, 8)
     }
 
@@ -176,6 +186,7 @@ struct YouView: View {
             .padding(.vertical, 10)
             .background(PixelTheme.primary.opacity(0.12))
             .cornerRadius(20)
+            .shadow(color: PixelTheme.primary.opacity(0.2), radius: 6, y: 3)
         }
     }
 
@@ -261,7 +272,7 @@ struct YouView: View {
     private func streakStat(value: Int, label: String, color: Color) -> some View {
         VStack(spacing: 4) {
             Text("\(value)")
-                .font(.system(size: 28, weight: .bold, design: .rounded))
+                .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundColor(color)
             Text(label)
                 .font(PixelTheme.captionFont)
