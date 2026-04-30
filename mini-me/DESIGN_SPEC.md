@@ -2,7 +2,18 @@
 
 ## One-Liner
 
-A pixel-art iOS app where you design your ideal daily schedule, complete it to earn coins, and spend coins decorating an isometric pixel room — with your Mini Me avatar living on your home screen widget.
+**A home-screen widget where a pixel version of you lives your day** — working when you work, exercising when you exercise, hanging out with your friends' mini-mes when you're being social. The phone app exists to configure the widget; **the widget IS the product.**
+
+## The Wedge
+
+The market is saturated with habit trackers and static-pet widgets. Pixel Pals puts a *static* pet on the widget. Widgetable is co-parenting a Tamagotchi. Finch is app-only. **No competitor owns "your day, animated on your home screen."** That's our wedge.
+
+| Competitor | What they do | What's missing |
+|---|---|---|
+| Pixel Pals (id6444085825) | Static pixel pet on widget | Pet doesn't *do anything*. No social. |
+| Widgetable Pixel Pet | Co-parent a pet with friend | A Tamagotchi with a partner — not "you" |
+| Finch | Self-care bird, app-only | No widget presence; bird is a metaphor, not you |
+| **Mini Me (us)** | **Your activity → reflected live on your widget; friends visible during shared activity** | This combination is uncontested |
 
 ---
 
@@ -23,12 +34,13 @@ A pixel-art iOS app where you design your ideal daily schedule, complete it to e
 
 ## Core Philosophy
 
-**"Design the life you want, then live it."**
+**"Your day, on display."**
 
-Users don't sync their messy calendar. They answer: *"What does your ideal day look like?"*
-The app builds a personalized daily schedule from that answer. Every completed block earns coins. Coins buy room items and avatar outfits. Your Mini Me on the widget reflects how your day is going.
+Users design their ideal daily schedule once during onboarding. From then on, the widget reflects whatever they're doing right now: at a `work` block, mini-me sits at a desk in a pixel study scene; at `exercise`, mini-me does jumping jacks in a gym scene; at `social`, mini-me hangs out — and if a friend is also in a social block, their mini-me is right there in the scene too.
 
-**The character is YOU.** Not a pet. Not a Tamagotchi. A pixel version of yourself that thrives when you follow your routine.
+**The character is YOU.** Not a pet. Not a Tamagotchi. A pixel version of yourself, alive on your home screen.
+
+The completion mechanic (tap a block when done) drives a small coin economy that lets you decorate scenes, but the *primary feedback loop is ambient* — you glance at your home screen and see a pixel scene that matches what you're supposed to be doing. That glance is the product.
 
 ---
 
@@ -59,29 +71,36 @@ Coin:        #FFD54F (gold)
 
 ---
 
-## V1 MVP Scope (8-10 week target)
+## V1 MVP Scope (Widget-First)
+
+The order below is the **priority order**. The first 4 are the showpiece — anything below that is supporting.
 
 ### What's IN v1
 
-1. Ideal Day Builder (onboarding + editable)
-2. Daily schedule view with tap-to-complete
-3. Coin economy (earn from completing blocks)
-4. One isometric pixel room with purchasable furniture
-5. Mini Me avatar with basic mood states on iOS widget
-6. Home screen widget showing avatar + today's progress
-7. Settings screen (edit schedule, customize avatar, reset data)
+1. **Activity-aware widget** (small, medium, large, lock-screen) — the showpiece
+2. **Schedule input → activity output pipeline** (current `BlockCategory` drives current `RoomType + PetActivity` written to App Group)
+3. **Mini Me avatar with 6+ activity poses** (idle, sleeping, happy, working, exercising, eating, reading, socializing)
+4. **5 scenes auto-swapping with activity** (bedroom, study, gym, kitchen, coffeeShop)
+5. Daily schedule view with tap-to-complete (configures the widget)
+6. Coin economy + lightweight scene decoration (secondary loop)
+7. Settings screen (edit schedule, customize Mini Me, reset data)
 8. Haptic feedback + sound effects
+9. Block reminder notifications
 
-### What's OUT of v1 (future versions)
+### What's OUT of v1 (deferred)
 
-- Multiple rooms / room themes
-- Avatar outfit shop (framework exists, UI not built yet)
-- Social features / friend visits / gift dropping
-- Apple Watch support
-- Advanced stats / analytics
-- Calendar sync (optional add-on later)
-- Mini-games
-- Notifications
+- **Friends layer** → v1.5 (CloudKit-based, friend mini-mes appear during shared social blocks — this is the moat)
+- **Multiple rooms as purchasable shop content** → reframed: rooms are activity scenes, not purchases
+- **Habit insights / 2-week trend / streaks page** → keep code, hide tab until v1.1
+- **Calendar sync** → keep EventKit code, hide UI in v1
+- **Pro tier with cosmetic IAP** → v1.1 with real StoreKit 2 (currently a stub Apple will reject)
+- **Outfit visual overlay on character** → v2 (auto-equip logic exists; visual rendering pending)
+- **Apple Watch** → v2
+- **Mini-games** → v2
+
+### Pivot Notes (April 2026)
+
+The original v1 spec framed Mini Me as a habit tracker with a widget on the side. We're correcting course: the widget is the product. Habit-tracker features (insights, streaks, gamification) are *demoted*, not removed — they'll re-surface in v1.1 once the widget-first launch validates the wedge.
 
 ---
 
@@ -264,35 +283,45 @@ Screen 6: "Create your Mini Me!" → name + skin tone picker
 
 ---
 
-### 6. iOS Widget
+### 6. iOS Widget — The Showpiece
 
-**Widget sizes supported (v1):**
+The widget is **the product**. See `docs/WIDGET_SPEC.md` for full implementation detail; this section is the product-facing summary.
 
-**Small widget (2×2):**
-```
-┌──────────┐
-│  [Avatar]│
-│  ██░░ 4/8│
-│  60 🪙   │
-└──────────┘
-```
-Shows: Avatar with current mood, progress fraction, coins earned today.
+**Activity-driven scene + pose:**
 
-**Medium widget (4×2):**
-```
-┌──────────────────────┐
-│ [Avatar] Tue, Mar 24 │
-│ ████░░░░  5/10 done  │
-│ Next: Deep Work 2:00 │
-│ 🪙 145 today         │
-└──────────────────────┘
-```
-Shows: Avatar, date, progress bar, next upcoming block, coins.
+The current `TimeBlock.category` (or absence of an active block) drives:
+- Which **scene** the widget shows (study, gym, kitchen, coffeeShop, bedroom)
+- Which **pose** the mini-me holds (working, exercising, eating, socializing, sleeping, idling)
 
-**Widget behavior:**
-- Updates every 15 minutes (iOS limitation)
-- Tapping widget opens app to daily schedule
-- Avatar mood reflects current completion status
+| Block Category | Scene | Mini-Me Pose |
+|---|---|---|
+| `work` | Study | `minime_working` (typing at desk) |
+| `learning`, `creative` | Study | `minime_reading` |
+| `exercise` | Gym | `minime_exercising` (jumping jack / yoga) |
+| `nutrition` | Kitchen | `minime_eating` |
+| `social` | Coffee Shop | `minime_socializing` |
+| `rest`, `routine` (evening) | Bedroom | `minime_sleeping` |
+| No active block | Bedroom | `minime_idle` |
+
+**Widget sizes (v1):**
+
+**Small (2×2):** Scene snapshot fills the entire widget. Activity label badge at bottom-left ("Working", "Exercise", etc.). No data clutter — pure ambient pixel art.
+
+**Medium (4×2):** Scene fills the left half; right half shows activity name (large), progress fraction, coin count. The scene is still the focal point.
+
+**Large (4×4):** Full scene at fidelity, with subtle activity label, "Up next" preview at bottom, and friend presence bubbles ("3 friends online") in v1.5.
+
+**Lock screen (circular / rectangular / inline):** Inherit existing implementations; rectangular shows the activity icon + label; circular shows mini-me head only.
+
+**Refresh strategy:**
+- iOS limits widget refresh to ~15-min intervals
+- App schedules timeline entries at every block boundary in today's schedule
+- Each timeline entry corresponds to a pre-rendered snapshot (`room_diorama_<scene>_<pose>.png`)
+- Snapshots are pre-baked when the user edits their schedule, so the widget never needs to wait for SpriteKit at render time
+
+**Friends in scene (v1.5):**
+- During shared `social` blocks, friends' mini-me sprites are composited into your coffee-shop scene at secondary positions
+- Only `currentActivity + sceneType + name + sprite` syncs via CloudKit — no schedule, completion, or coin data ever leaves the device
 
 ---
 

@@ -1,10 +1,12 @@
 # Mini Me - Project Memory
 
 ## What This App Is
-Mini Me is a **virtual avatar / Tamagotchi-style iOS app** that gamifies daily routines. Users build a daily schedule of time blocks, earn coins by completing them, and use coins to buy furniture for an isometric pixel room. The user's **Mini Me** avatar lives in the room and reflects their progress through mood states — it's NOT a pet, it's a pixel version of YOU.
+Mini Me is a **widget-first iOS app**. The product is a home-screen widget where a pixel version of you lives your day — working when you work, exercising when you exercise, hanging out with your friends' mini-mes when you're being social. The phone app exists to **configure** the widget (set your schedule, customize your mini-me, add friends). **The widget IS the product.**
 
 ## Core Concept
-The character is the user's **Mini Me** — a pixel avatar that represents them. It lives in their room, reacts to their daily habits, and celebrates their wins. Think of it as a digital twin that thrives when you follow your routine.
+The user's **Mini Me** is a pixel avatar that mirrors their real day on their home screen. The current `TimeBlock.category` drives which scene the widget shows (study/gym/kitchen/coffeeShop/bedroom) and which pose the character holds (typing/exercising/eating/socializing/sleeping). When friends are added (v1.5), their mini-mes appear in the same scene during shared `social` blocks.
+
+**Why widget-first wins:** Pixel Pals (id6444085825) puts a *static* pet on the widget — pet doesn't do anything. Widgetable is co-parenting a Tamagotchi. Finch is app-only. **No competitor owns "your day, animated on your home screen."** That's the wedge.
 
 ## Art & Aesthetic Identity — NON-NEGOTIABLE
 The entire app identity is **pixel art with a lo-fi cozy vibe**. This is the soul of the product, not a skin.
@@ -67,28 +69,35 @@ MiniMeWidget/      # Widget extension (small, medium, lock screen circular/recta
 - **SeasonalItem**: 12 limited-time items across 5 seasons (spring/summer/fall/winter/holiday)
 
 ## Current Status (v2.5) — The Living Diorama Update
-### COMPLETE
-- **Living Diorama Engine**: Dynamic Z-sorting, Shadow projection, and "Walking Engine" (Stardew-style hops/directional flipping).
-- **Dynamic Lighting (Time of Day)**: Screen overlays and glowing electronics that react to real-world hours (Morning, Day, Sunset, Night).
-- **Milestone/Achievement System**: MilestoneService tracks streaks and block completions to unlock persistent room trophies.
-- **Contextual Rituals (Greetings)**: Context-aware thought bubbles for morning greetings and evening reflections.
-- **Soundscape/Haptic Juice**: Soft impact haptics and system sound "ticks" synced to character movement; multi-tone celebratory chimes.
-- **Isometric Depth Sorting (Y-Sorting)**: Continuous per-frame depth calculation based on feet position.
-- **v2: Outfit system** — 20 outfits, 6 slots, equip/unequip, auto-equip triggers
-- **v2: Multiple rooms** — 6 room types, room shop, per-room decoration
-- **v2: Notifications** — block reminders, streak warnings, morning greeting, mid-day nudge
-- **v2: Weekend schedule** — separate weekend schedule creation and editing
-- **v2: Habit insights** — 2-week trend, category breakdown, time-of-day analysis, streak history, fun stats
-- **v2: Lock screen widget** — circular, rectangular, and inline widget families
-- **v2: Sick day / manual status** — 4 statuses with mood override and auto-expiry
-- **v2: Seasonal items** — 12 items across 5 seasons, availability logic
-- **v2: Calendar sync** — EventKit integration, import calendar events as blocks
-- **v2: Premium/Pro gating** — upgrade flow in settings (StoreKit integration placeholder)
 
-### MISSING
-- Handcrafted production art (currently using optimized emoji/placeholder sprites)
-- StoreKit purchase flow (logic exists, UI/UX refinement needed)
-- Unit tests
+### CORE TO PIVOT — Widget-First Foundations
+- **Living Diorama Engine**: Dynamic Z-sorting, Shadow projection, and "Walking Engine" (Stardew-style hops/directional flipping).
+- **Dynamic Lighting (Time of Day)**: Screen overlays and glowing electronics that react to real-world hours.
+- **Isometric Depth Sorting (Y-Sorting)**: Continuous per-frame depth calculation based on feet position.
+- **Lock screen widget**: circular, rectangular, and inline widget families.
+- **Snapshot pipeline**: `RoomScene` → `room_diorama.png` → App Group → widget rendering.
+- **`PetActivity` enum** (idling, walking, working, reading, sleeping, eating, slacking, stretching) — the activity-pose scaffold already exists.
+- **`RoomType` enum** (study, kitchen, gym, coffeeShop, rooftop) — these are the activity scenes (currently mis-framed as "rooms you buy").
+
+### SECONDARY — Hide UI in v1, keep code
+- **Outfits** (20 items, 6 slots, auto-equip triggers) — code stays, UI hidden until visual outfit overlay ships in v2.
+- **Multiple-rooms shop** — reframe rooms as automatic activity-driven scene swaps, not purchasable rooms. Hide tab in v1.
+- **Habit insights** (2-week trend, streaks, fun stats) — habit-tracker framing distracts from widget-first pitch. Hide tab in v1.
+- **Calendar sync** — keep EventKit code, hide UI in v1.
+- **Sick day / manual status** — keep, low priority.
+- **Seasonal items** — keep, content lever for post-launch.
+- **Pro upgrade** — currently sets `isPremium = true` client-side. Apple will reject. Hide UI in v1, re-introduce v1.1 with real StoreKit 2.
+- **Notifications** — keep block reminders + streak warnings.
+- **Milestone system** — keep.
+- **Contextual greetings** — keep.
+
+### MISSING — Required for Pivot Launch
+- **Activity-aware widget engine**: `BlockCategory → RoomType + PetActivity` mapping piping into snapshot pipeline.
+- **5 mini-me activity poses**: `minime_working`, `minime_exercising`, `minime_eating`, `minime_reading`, `minime_socializing`.
+- **4 scene backgrounds**: study, gym, kitchen, coffeeShop (bedroom exists).
+- **Friends layer (v1.5)**: CloudKit-based friend pairing + presence sync, friend mini-me composited into your scene during shared social blocks.
+- **App Store assets**: full app icon set (13 sizes), screenshots showing widget on home screen, privacy policy URL.
+- **StoreKit 2** for any future Pro tier — currently a stub.
 
 ## Important Notes
 - **Physical Foundation**: For proper isometric depth, `visualNode.anchorPoint` MUST be `(0.5, 0)`.
@@ -106,6 +115,7 @@ MiniMeWidget/      # Widget extension (small, medium, lock screen circular/recta
 - CalendarSyncService.guessCategory does best-effort category mapping from event titles
 
 ## Project Documents
-- `DESIGN_SPEC.md` — Full design specification (features, monetization, architecture, art direction)
+- `DESIGN_SPEC.md` — Full design specification (widget-first product, scope, architecture, art direction)
+- `docs/WIDGET_SPEC.md` — Single source of truth for the widget product (sizes, scene mapping, pose mapping, refresh strategy)
 - `docs/DESIGN_CONVERSATION.md` — Complete design conversation log (every critique, pivot, decision, and rationale)
 - `docs/REFERENCES.md` — Art style references, competitor links, inspiration sources
