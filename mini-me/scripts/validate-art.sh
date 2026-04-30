@@ -24,13 +24,27 @@ else
     echo "✅  Format: png"
 fi
 
-# --- Dimension check (32x32 or 64x64) ---
+# --- Dimension check ---
+# Allowed sizes (paired):
+#   Furniture / room items: 32×32, 64×64, 128×128
+#   Mini Me character poses (widget pivot): 192×320
+#   Scene backgrounds (widget pivot):       246×246
 W=$(sips_get pixelWidth  "$FILE")
 H=$(sips_get pixelHeight "$FILE")
-if [[ ("$W" == "32" && "$H" == "32") || ("$W" == "64" && "$H" == "64") || ("$W" == "128" && "$H" == "128") ]]; then
-    echo "✅  Dimensions: ${W}×${H}"
+DIMS_OK=false
+DIM_KIND=""
+if   [[ "$W" == "32"  && "$H" == "32"  ]]; then DIMS_OK=true; DIM_KIND="furniture (32×32)"
+elif [[ "$W" == "64"  && "$H" == "64"  ]]; then DIMS_OK=true; DIM_KIND="furniture (64×64)"
+elif [[ "$W" == "128" && "$H" == "128" ]]; then DIMS_OK=true; DIM_KIND="furniture (128×128)"
+elif [[ "$W" == "192" && "$H" == "320" ]]; then DIMS_OK=true; DIM_KIND="character pose (192×320)"
+elif [[ "$W" == "246" && "$H" == "246" ]]; then DIMS_OK=true; DIM_KIND="scene background (246×246)"
+fi
+
+if $DIMS_OK; then
+    echo "✅  Dimensions: ${W}×${H} — $DIM_KIND"
 else
-    echo "❌  Dimensions: ${W}×${H} — expected 32×32, 64×64, or 128×128"
+    echo "❌  Dimensions: ${W}×${H} — expected 32×32, 64×64, 128×128 (furniture),"
+    echo "              192×320 (character pose), or 246×246 (scene background)"
     PASS=false
 fi
 
