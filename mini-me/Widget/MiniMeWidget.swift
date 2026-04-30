@@ -6,30 +6,40 @@ import SwiftUI
 
 struct RoomDioramaView: View {
     let taskName: String?
-    
+    let scene: RoomType
+    let activity: PetActivity
+
     var body: some View {
         ZStack {
-            // Load the rendered snapshot from the App Group container
+            // Load the scene-specific snapshot from the App Group container,
+            // falling back to the generic snapshot if a scene-specific one
+            // hasn't been baked yet (e.g. before sprite art lands).
             if let image = loadSnapshot() {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             } else {
-                // Fallback if no snapshot exists yet
-                Color.gray.opacity(0.2)
-                Text("Room Loading...")
-                    .font(.caption2)
+                // Fallback gradient — warm cream → orange tint, evokes the app
+                LinearGradient(
+                    colors: [Color(red: 0.96, green: 0.90, blue: 0.83),
+                             Color(red: 0.91, green: 0.60, blue: 0.37).opacity(0.4)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+                Text(scene.displayName)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundColor(Color(red: 0.18, green: 0.13, blue: 0.25))
             }
-            
-            // Task Overlay
+
+            // Activity badge — bottom-left, semi-transparent dark pill
             VStack {
                 Spacer()
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(taskName ?? "Free Time")
+                        Text(taskName ?? activityLabel)
                             .font(.system(size: 10, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
-                        Text("Active Now")
+                        Text(activity == .idling ? "Free time" : "Active now")
                             .font(.system(size: 7, weight: .medium))
                             .foregroundColor(.white.opacity(0.8))
                     }
@@ -43,14 +53,32 @@ struct RoomDioramaView: View {
             }
         }
     }
-    
+
+    /// Human-readable label for the current activity, used when no taskName is set.
+    private var activityLabel: String {
+        switch activity {
+        case .working: "Working"
+        case .reading: "Reading"
+        case .eating: "Eating"
+        case .stretching: "Exercising"
+        case .sleeping: "Resting"
+        case .slacking: "Hanging out"
+        case .walking: "Walking"
+        case .idling: "Free time"
+        }
+    }
+
+    /// Try the scene-specific snapshot first (`room_diorama_<scene>_<activity>.png`),
+    /// then fall back to the generic `room_diorama.png` for backward compatibility.
     private func loadSnapshot() -> UIImage? {
         let groupID = "group.com.woojjwoo.pixieme.shared"
         guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
             return nil
         }
-        let fileURL = container.appendingPathComponent("room_diorama.png")
-        return UIImage(contentsOfFile: fileURL.path)
+        let specific = container.appendingPathComponent("room_diorama_\(scene.rawValue)_\(activity.rawValue).png")
+        if let img = UIImage(contentsOfFile: specific.path) { return img }
+        let fallback = container.appendingPathComponent("room_diorama.png")
+        return UIImage(contentsOfFile: fallback.path)
     }
 }
 
@@ -60,7 +88,7 @@ struct SmallWidgetView: View {
     let entry: MiniMeEntry
 
     var body: some View {
-        RoomDioramaView(taskName: entry.taskName)
+        RoomDioramaView(taskName: entry.taskName, scene: entry.scene, activity: entry.activity)
             .containerBackground(.clear, for: .widget)
     }
 }
@@ -71,7 +99,7 @@ struct MediumWidgetView: View {
     var body: some View {
         HStack(spacing: 0) {
             // Left: The Room Snapshot
-            RoomDioramaView(taskName: entry.taskName)
+            RoomDioramaView(taskName: entry.taskName, scene: entry.scene, activity: entry.activity)
                 .frame(width: 150)
             
             // Right: Productivity Stats
@@ -124,6 +152,7 @@ struct MiniMeProvider: TimelineProvider {
         let widgetService = WidgetDataService.shared
         let pet = widgetService.readPetData()
         let progress = widgetService.readDayProgress()
+        let activeScene = widgetService.readActiveScene()
 
         return MiniMeEntry(
             date: .now,
@@ -133,7 +162,9 @@ struct MiniMeProvider: TimelineProvider {
             totalBlocks: progress?.totalBlocks ?? 0,
             coinsToday: progress?.coinsToday ?? 0,
             taskName: progress?.currentTaskName,
-            categoryName: progress?.currentCategory
+            categoryName: progress?.currentCategory,
+            scene: activeScene.scene,
+            activity: activeScene.activity
         )
     }
 }
@@ -147,6 +178,8 @@ struct MiniMeEntry: TimelineEntry {
     let coinsToday: Int
     let taskName: String?
     let categoryName: String?
+    let scene: RoomType
+    let activity: PetActivity
 
     var mood: PetMood {
         PetMood(rawValue: petMood) ?? .neutral
@@ -165,7 +198,9 @@ struct MiniMeEntry: TimelineEntry {
         totalBlocks: 8,
         coinsToday: 40,
         taskName: "Deep Work",
-        categoryName: "Work"
+        categoryName: "Work",
+        scene: .study,
+        activity: .working
     )
 }
 

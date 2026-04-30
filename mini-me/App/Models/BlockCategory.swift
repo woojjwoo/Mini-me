@@ -59,4 +59,43 @@ enum BlockCategory: String, Codable, CaseIterable, Identifiable {
         case .custom: Color(hex: "CCFF90")
         }
     }
+
+    // MARK: - Widget Activity Mapping
+    //
+    // The widget reads (RoomType, PetActivity) from the App Group and renders
+    // the matching pre-baked snapshot. These mappings drive that pipeline.
+    // See `docs/WIDGET_SPEC.md` for the full source-of-truth table.
+
+    /// Which scene the widget renders when this category's block is active.
+    var sceneRoomType: RoomType {
+        switch self {
+        case .work, .learning, .creative: return .study
+        case .exercise: return .gym
+        case .nutrition: return .kitchen
+        case .social: return .coffeeShop
+        case .wellness, .routine, .rest, .custom: return .bedroom
+        }
+    }
+
+    /// Which character pose the widget shows when this category's block is active.
+    var sceneActivity: PetActivity {
+        switch self {
+        case .work, .creative: return .working
+        case .learning: return .reading
+        case .exercise: return .stretching
+        case .nutrition: return .eating
+        case .social: return .slacking
+        case .rest: return .sleeping
+        case .wellness, .routine, .custom: return .idling
+        }
+    }
+}
+
+// MARK: - Default scene fallback
+
+extension BlockCategory? {
+    /// Scene + pose to render when no block is active (or input is nil).
+    /// After-hours / pre-wake also routes through here in `WidgetDataService`.
+    static var widgetDefaultScene: RoomType { .bedroom }
+    static var widgetDefaultActivity: PetActivity { .idling }
 }
