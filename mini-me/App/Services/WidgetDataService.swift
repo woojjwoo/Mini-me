@@ -61,6 +61,10 @@ final class WidgetDataService {
         static let lastUpdate = "widget_last_update"
         static let activeScene = "widget_active_scene"
         static let activeActivity = "widget_active_activity"
+        /// Hash of the unique (scene, activity) pairs in the most-recently-baked
+        /// schedule. Lets `triggerBakeIfScheduleChanged()` skip re-baking when
+        /// the structural set of pairs hasn't shifted.
+        static let lastBakedPairsHash = "widget_last_baked_pairs_hash"
     }
 
     // MARK: - Write (from main app)
@@ -153,6 +157,62 @@ final class WidgetDataService {
         let scene = RoomType(rawValue: sceneRaw) ?? .bedroom
         let activity = PetActivity(rawValue: activityRaw) ?? .idling
         return (scene, activity)
+    }
+
+    // MARK: - Pre-bake orchestration
+
+    /// Trigger an off-screen pre-bake of every unique (scene, activity)
+    /// snapshot the user will encounter today, BUT only if the pair set
+    /// has changed since the last bake. Cheap to call from anywhere.
+    ///
+    /// Call this from:
+    /// - DailyScheduleView when blocks are added/edited/removed
+    /// - Onboarding completion
+    /// - App foreground (once per day check)
+    @MainActor
+    func triggerBakeIfScheduleChanged(
+        schedule: DailySchedule,
+        pet: Pet?,
+        room: Room
+    ) {
+        let hash = uniquePairsHash(for: schedule)
+        let lastHash = defaults?.string(forKey: Keys.lastBakedPairsHash)
+        guard hash != lastHash else { return }
+
+        WidgetSnapshotBakery.shared.bakeRequiredSnapshots(
+            for: schedule,
+            pet: pet,
+            room: room
+        )
+        defaults?.set(hash, forKey: Keys.lastBakedPairsHash)
+    }
+
+    /// Force a re-bake regardless of hash. Use after the user customizes
+    /// their Mini Me (skin tone, outfit) since the same (scene, activity)
+    /// pair will produce a different rendered image.
+    @MainActor
+    func forceBakeAll(
+        schedule: DailySchedule,
+        pet: Pet?,
+        room: Room
+    ) {
+        WidgetSnapshotBakery.shared.bakeRequiredSnapshots(
+            for: schedule,
+            pet: pet,
+            room: room
+        )
+        defaults?.set(uniquePairsHash(for: schedule), forKey: Keys.lastBakedPairsHash)
+    }
+
+    /// Stable hash of the unique (scene, activity) pairs derived from a
+    /// schedule's blocks, plus the default fallback pair.
+    private func uniquePairsHash(for schedule: DailySchedule) -> String {
+        var seen = Set<String>(["bedroom_idling"])
+        for block in schedule.blocks {
+            let cat = block.blockCategory
+            seen.insert("\(cat.sceneRoomType.rawValue)_\(cat.sceneActivity.rawValue)")
+        }
+        return seen.sorted().joined(separator: "|")
     }
 }
 

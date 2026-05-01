@@ -61,6 +61,7 @@
 		22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E232F78454E001FDADA /* TimeBlockRow.swift */; };
 		3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */; };
 		3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D02F9EFE970041ED43 /* MilestoneService.swift */; };
+		3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 		22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayService.swift; sourceTree = "<group>"; };
 		3BD990D02F9EFE970041ED43 /* MilestoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneService.swift; sourceTree = "<group>"; };
+		3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotBakery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -405,6 +407,7 @@
 				22B49E3B2F78454E001FDADA /* SoundService.swift */,
 				22B49E3C2F78454E001FDADA /* StreakService.swift */,
 				22B49E3D2F78454E001FDADA /* WidgetDataService.swift */,
+				3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -623,6 +626,7 @@
 				22B49E6B2F78454E001FDADA /* ShopItem.swift in Sources */,
 				22B49E6C2F78454E001FDADA /* ShopView.swift in Sources */,
 				22B49E6D2F78454E001FDADA /* WidgetDataService.swift in Sources */,
+				3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */,
 				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
 				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
 				22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */,

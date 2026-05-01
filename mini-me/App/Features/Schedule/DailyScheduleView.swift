@@ -11,6 +11,7 @@ struct DailyScheduleView: View {
         order: .reverse
     ) private var dayLogs: [DayLog]
     @Query private var pets: [Pet]
+    @Query private var rooms: [Room]
 
     @State private var animatingBlockID: UUID?
     @State private var characterHopScale: CGFloat = 1.0
@@ -331,6 +332,18 @@ struct DailyScheduleView: View {
             currentCategory: currentBlock?.category,
             scheduleBlocks: schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
         )
+
+        // Pre-bake all (scene, activity) snapshot variants the widget might
+        // need today. Hash-deduped so this is a no-op when the unique pair
+        // set hasn't changed since the last bake (i.e. on every block tap
+        // inside the same schedule, this short-circuits cheaply).
+        if let activeRoom = rooms.first(where: { $0.isActive }) ?? rooms.first {
+            WidgetDataService.shared.triggerBakeIfScheduleChanged(
+                schedule: schedule,
+                pet: pet,
+                room: activeRoom
+            )
+        }
         #endif
     }
 
