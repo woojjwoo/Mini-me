@@ -59,12 +59,12 @@ struct YouView: View {
             if let pet = pet { PetEditorSheet(pet: pet).presentationDetents([.medium]) }
         }
         .sheet(isPresented: $showingOutfitView) { OutfitView() }
-        .sheet(isPresented: $showingScheduleEditor) {
+        .sheet(isPresented: $showingScheduleEditor, onDismiss: bakeAfterScheduleEdit) {
             if let schedule = weekdaySchedule {
                 ScheduleEditorSheet(schedule: schedule).presentationDetents([.large])
             }
         }
-        .sheet(isPresented: $showingWeekendScheduleEditor) {
+        .sheet(isPresented: $showingWeekendScheduleEditor, onDismiss: bakeAfterScheduleEdit) {
             if let schedule = weekendSchedule {
                 ScheduleEditorSheet(schedule: schedule).presentationDetents([.large])
             } else {
@@ -529,6 +529,25 @@ struct YouView: View {
         if current < 7 { return 7 }
         if current < 30 { return 30 }
         return ((current / 30) + 1) * 30
+    }
+
+    /// Fired by `.sheet(onDismiss:)` after the user closes a schedule
+    /// editor. Walks today's unique (scene, activity) pairs and pre-bakes
+    /// any new ones the widget pipeline now needs. Hash-deduped so it's
+    /// near-free if the user opened the editor and made no changes.
+    @MainActor
+    private func bakeAfterScheduleEdit() {
+        let isWeekday = !Calendar.current.isDateInWeekend(.now)
+        guard
+            let pet = pet,
+            let room = rooms.first(where: { $0.isActive }) ?? rooms.first,
+            let schedule = (isWeekday ? weekdaySchedule : weekendSchedule) ?? weekdaySchedule
+        else { return }
+        WidgetDataService.shared.triggerBakeIfScheduleChanged(
+            schedule: schedule,
+            pet: pet,
+            room: room
+        )
     }
 
     private func resetAllData() {

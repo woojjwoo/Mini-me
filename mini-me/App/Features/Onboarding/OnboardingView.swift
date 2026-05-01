@@ -65,6 +65,14 @@ struct OnboardingView: View {
 
         do {
             try modelContext.save()
+            // Pre-bake widget snapshots immediately so the user has real PNGs
+            // for their first widget add — no "loading…" placeholder on day 1.
+            // Hash-deduped inside the bakery so repeat calls are no-ops.
+            WidgetDataService.shared.triggerBakeIfScheduleChanged(
+                schedule: schedule,
+                pet: pet,
+                room: room
+            )
         } catch {
             print("❌ Onboarding save failed: \(error)")
         }
