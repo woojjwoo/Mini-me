@@ -56,10 +56,10 @@ struct SettingsView: View {
                         notificationToggleRow
                     }
 
-                    // Calendar section
-                    settingsSection(title: "Calendar Sync") {
-                        calendarSyncRow
-                    }
+                    // Calendar section hidden in v1 — auto-sync ships in v1.1
+                    // settingsSection(title: "Calendar Sync") {
+                    //     calendarSyncRow
+                    // }
 
                     // App section
                     settingsSection(title: "App") {

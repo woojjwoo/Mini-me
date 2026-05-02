@@ -12,29 +12,25 @@ struct ShopView: View {
     private var player: Player? { players.first }
     private var room: Room? { rooms.first }
 
+    // v1: Only Furniture and Seasonal are visible.
+    // Outfits and Rooms are deferred to v2 — code stays, UI hidden.
     enum ShopTab: String, CaseIterable, Identifiable {
         case furniture
-        case outfits
         case seasonal
-        case rooms
 
         var id: String { rawValue }
 
         var displayName: String {
             switch self {
             case .furniture: "Furniture"
-            case .outfits: "Drip"
             case .seasonal: "Limited"
-            case .rooms: "Rooms"
             }
         }
 
         var icon: String {
             switch self {
             case .furniture: "square.grid.2x2.fill"
-            case .outfits: "tshirt.fill"
             case .seasonal: "leaf.fill"
-            case .rooms: "house.fill"
             }
         }
     }
@@ -82,12 +78,8 @@ struct ShopView: View {
                         switch selectedCategory {
                         case .furniture:
                             furnitureGrid
-                        case .outfits:
-                            outfitGrid
                         case .seasonal:
                             seasonalGrid
-                        case .rooms:
-                            roomShop
                         }
                     }
                 }
