@@ -337,40 +337,6 @@ struct YouView: View {
                 }
             }
 
-            if !(player?.isPremium ?? false) {
-                settingsGroup {
-                    Button {
-                        HapticService.medium()
-                        player?.isPremium = true
-                        try? modelContext.save()
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: "crown.fill")
-                                .font(.title3)
-                                .foregroundColor(PixelTheme.coin)
-                                .frame(width: 44, height: 44)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text("Upgrade to Pro")
-                                    .font(PixelTheme.bodyFont)
-                                    .foregroundColor(PixelTheme.text)
-                                Text("$1.99/mo — Exclusive items, lock screen widget")
-                                    .font(PixelTheme.captionFont)
-                                    .foregroundColor(PixelTheme.text.opacity(0.5))
-                            }
-                            Spacer()
-                            Text("$1.99")
-                                .font(.system(size: 14, weight: .bold, design: .rounded))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12).padding(.vertical, 6)
-                                .background(PixelTheme.primary)
-                                .cornerRadius(10)
-                        }
-                        .padding(14)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
             settingsGroup {
                 HStack(spacing: 12) {
                     Image(systemName: "info.circle")

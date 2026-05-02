@@ -172,18 +172,6 @@ struct ShopView: View {
                             .foregroundColor(isOwned ? PixelTheme.accent : slotColor)
                     }
                 }
-                .overlay(alignment: .topTrailing) {
-                    if outfit.isPremium {
-                        Text("PRO")
-                            .font(.system(size: 8, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(PixelTheme.accent)
-                            .cornerRadius(4)
-                            .padding(6)
-                    }
-                }
                 .overlay(alignment: .topLeading) {
                     if outfit.scheduleTrigger != nil {
                         Image(systemName: "bolt.fill")
@@ -537,18 +525,6 @@ struct ShopItemCard: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal, 8)
                         }
-                    }
-                }
-                .overlay(alignment: .topTrailing) {
-                    if item.isPremium {
-                        Text("PRO")
-                            .font(.system(size: 8, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(PixelTheme.accent)
-                            .cornerRadius(4)
-                            .padding(6)
                     }
                 }
                 .scaleEffect(isPurchasing ? 1.05 : 1.0)

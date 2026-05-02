@@ -61,13 +61,6 @@ struct SettingsView: View {
                         calendarSyncRow
                     }
 
-                    // Pro section
-                    if !(player?.isPremium ?? false) {
-                        settingsSection(title: "Mini Me Pro") {
-                            proUpgradeRow
-                        }
-                    }
-
                     // App section
                     settingsSection(title: "App") {
                         infoRow(icon: "info.circle", label: "Version", value: "2.0.0")
@@ -392,45 +385,6 @@ struct SettingsView: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(PixelTheme.text.opacity(0.3))
-            }
-            .padding(14)
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: - Pro Upgrade
-
-    private var proUpgradeRow: some View {
-        Button {
-            HapticService.medium()
-            // In production: trigger StoreKit purchase flow
-            player?.isPremium = true
-            try? modelContext.save()
-        } label: {
-            HStack(spacing: 12) {
-                Image(systemName: "crown.fill")
-                    .font(.title3)
-                    .foregroundColor(PixelTheme.coin)
-                    .frame(width: 44, height: 44)
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Upgrade to Pro")
-                        .font(PixelTheme.bodyFont)
-                        .foregroundColor(PixelTheme.text)
-                    Text("$1.99/mo — Exclusive items, lock screen widget, weekend schedule")
-                        .font(PixelTheme.captionFont)
-                        .foregroundColor(PixelTheme.text.opacity(0.5))
-                }
-
-                Spacer()
-
-                Text("$1.99")
-                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(PixelTheme.accent)
-                    .cornerRadius(10)
             }
             .padding(14)
         }

@@ -8,7 +8,6 @@ struct ShopItem: Identifiable, Codable {
     let slotType: String     // which SlotType this item fits in
     let price: Int
     let spriteName: String   // asset name for SpriteKit
-    let isPremium: Bool      // requires Pro subscription
 
     var slot: SlotType? {
         SlotType(rawValue: slotType)
@@ -47,7 +46,6 @@ struct OutfitItem: Identifiable, Codable {
     let outfitSlot: OutfitSlot
     let price: Int
     let spriteName: String
-    let isPremium: Bool
     let scheduleTrigger: String? // auto-equip when doing this category (e.g. "exercise")
 }
 
@@ -87,36 +85,36 @@ enum OutfitSlot: String, Codable, CaseIterable, Identifiable {
 enum OutfitCatalog {
     static let allOutfits: [OutfitItem] = [
         // Head
-        OutfitItem(id: "outfit_cap", name: "Baseball Cap", outfitSlot: .head, price: 80, spriteName: "outfit_cap", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_beanie", name: "Cozy Beanie", outfitSlot: .head, price: 100, spriteName: "outfit_beanie", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_headband", name: "Workout Headband", outfitSlot: .head, price: 60, spriteName: "outfit_headband", isPremium: false, scheduleTrigger: "exercise"),
-        OutfitItem(id: "outfit_partyhat", name: "Party Hat", outfitSlot: .head, price: 150, spriteName: "outfit_partyhat", isPremium: true, scheduleTrigger: nil),
+        OutfitItem(id: "outfit_cap", name: "Baseball Cap", outfitSlot: .head, price: 80, spriteName: "outfit_cap", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_beanie", name: "Cozy Beanie", outfitSlot: .head, price: 100, spriteName: "outfit_beanie", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_headband", name: "Workout Headband", outfitSlot: .head, price: 60, spriteName: "outfit_headband", scheduleTrigger: "exercise"),
+        OutfitItem(id: "outfit_partyhat", name: "Party Hat", outfitSlot: .head, price: 150, spriteName: "outfit_partyhat", scheduleTrigger: nil),
 
         // Face
-        OutfitItem(id: "outfit_glasses", name: "Round Glasses", outfitSlot: .face, price: 100, spriteName: "outfit_glasses", isPremium: false, scheduleTrigger: "learning"),
-        OutfitItem(id: "outfit_sunglasses", name: "Cool Shades", outfitSlot: .face, price: 120, spriteName: "outfit_sunglasses", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_pixelglasses", name: "Pixel Shades", outfitSlot: .face, price: 200, spriteName: "outfit_pixelglasses", isPremium: true, scheduleTrigger: nil),
+        OutfitItem(id: "outfit_glasses", name: "Round Glasses", outfitSlot: .face, price: 100, spriteName: "outfit_glasses", scheduleTrigger: "learning"),
+        OutfitItem(id: "outfit_sunglasses", name: "Cool Shades", outfitSlot: .face, price: 120, spriteName: "outfit_sunglasses", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_pixelglasses", name: "Pixel Shades", outfitSlot: .face, price: 200, spriteName: "outfit_pixelglasses", scheduleTrigger: nil),
 
         // Neck
-        OutfitItem(id: "outfit_headphones", name: "Headphones", outfitSlot: .neck, price: 150, spriteName: "outfit_headphones", isPremium: false, scheduleTrigger: "creative"),
-        OutfitItem(id: "outfit_scarf", name: "Warm Scarf", outfitSlot: .neck, price: 80, spriteName: "outfit_scarf", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_bowtie", name: "Pixel Bow Tie", outfitSlot: .neck, price: 100, spriteName: "outfit_bowtie", isPremium: true, scheduleTrigger: "work"),
+        OutfitItem(id: "outfit_headphones", name: "Headphones", outfitSlot: .neck, price: 150, spriteName: "outfit_headphones", scheduleTrigger: "creative"),
+        OutfitItem(id: "outfit_scarf", name: "Warm Scarf", outfitSlot: .neck, price: 80, spriteName: "outfit_scarf", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_bowtie", name: "Pixel Bow Tie", outfitSlot: .neck, price: 100, spriteName: "outfit_bowtie", scheduleTrigger: "work"),
 
         // Top
-        OutfitItem(id: "outfit_hoodie", name: "Cozy Hoodie", outfitSlot: .top, price: 200, spriteName: "outfit_hoodie", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_gymtank", name: "Gym Tank", outfitSlot: .top, price: 120, spriteName: "outfit_gymtank", isPremium: false, scheduleTrigger: "exercise"),
-        OutfitItem(id: "outfit_blazer", name: "Smart Blazer", outfitSlot: .top, price: 250, spriteName: "outfit_blazer", isPremium: false, scheduleTrigger: "work"),
-        OutfitItem(id: "outfit_pajamas", name: "Cozy Pajamas", outfitSlot: .top, price: 150, spriteName: "outfit_pajamas", isPremium: false, scheduleTrigger: "rest"),
+        OutfitItem(id: "outfit_hoodie", name: "Cozy Hoodie", outfitSlot: .top, price: 200, spriteName: "outfit_hoodie", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_gymtank", name: "Gym Tank", outfitSlot: .top, price: 120, spriteName: "outfit_gymtank", scheduleTrigger: "exercise"),
+        OutfitItem(id: "outfit_blazer", name: "Smart Blazer", outfitSlot: .top, price: 250, spriteName: "outfit_blazer", scheduleTrigger: "work"),
+        OutfitItem(id: "outfit_pajamas", name: "Cozy Pajamas", outfitSlot: .top, price: 150, spriteName: "outfit_pajamas", scheduleTrigger: "rest"),
 
         // Hand
-        OutfitItem(id: "outfit_coffee", name: "Coffee Cup", outfitSlot: .hand, price: 60, spriteName: "outfit_coffee", isPremium: false, scheduleTrigger: "routine"),
-        OutfitItem(id: "outfit_phone", name: "Pixel Phone", outfitSlot: .hand, price: 100, spriteName: "outfit_phone", isPremium: false, scheduleTrigger: nil),
-        OutfitItem(id: "outfit_book", name: "Open Book", outfitSlot: .hand, price: 80, spriteName: "outfit_book", isPremium: false, scheduleTrigger: "learning"),
-        OutfitItem(id: "outfit_paintbrush", name: "Paintbrush", outfitSlot: .hand, price: 100, spriteName: "outfit_paintbrush", isPremium: true, scheduleTrigger: "creative"),
+        OutfitItem(id: "outfit_coffee", name: "Coffee Cup", outfitSlot: .hand, price: 60, spriteName: "outfit_coffee", scheduleTrigger: "routine"),
+        OutfitItem(id: "outfit_phone", name: "Pixel Phone", outfitSlot: .hand, price: 100, spriteName: "outfit_phone", scheduleTrigger: nil),
+        OutfitItem(id: "outfit_book", name: "Open Book", outfitSlot: .hand, price: 80, spriteName: "outfit_book", scheduleTrigger: "learning"),
+        OutfitItem(id: "outfit_paintbrush", name: "Paintbrush", outfitSlot: .hand, price: 100, spriteName: "outfit_paintbrush", scheduleTrigger: "creative"),
 
         // Shoes
-        OutfitItem(id: "outfit_sneakers", name: "Fresh Sneakers", outfitSlot: .shoes, price: 150, spriteName: "outfit_sneakers", isPremium: false, scheduleTrigger: "exercise"),
-        OutfitItem(id: "outfit_slippers", name: "Fuzzy Slippers", outfitSlot: .shoes, price: 100, spriteName: "outfit_slippers", isPremium: false, scheduleTrigger: "rest"),
+        OutfitItem(id: "outfit_sneakers", name: "Fresh Sneakers", outfitSlot: .shoes, price: 150, spriteName: "outfit_sneakers", scheduleTrigger: "exercise"),
+        OutfitItem(id: "outfit_slippers", name: "Fuzzy Slippers", outfitSlot: .shoes, price: 100, spriteName: "outfit_slippers", scheduleTrigger: "rest"),
     ]
 
     static func outfit(byID id: String) -> OutfitItem? {
@@ -225,49 +223,49 @@ enum SeasonalCatalog {
 enum ItemCatalog {
     static let allItems: [ShopItem] = [
         // Bed area
-        ShopItem(id: "bed_wooden", name: "Wooden Bed", category: .furniture, slotType: "bed", price: 400, spriteName: "bed_wooden_1774707999566", isPremium: false),
-        ShopItem(id: "bed_cozy", name: "Cozy Bed", category: .furniture, slotType: "bed", price: 600, spriteName: "bed_cozy_1774713357073", isPremium: false),
-        ShopItem(id: "bed_loft", name: "Loft Bed", category: .furniture, slotType: "bed", price: 800, spriteName: "bed_loft_1774713373805", isPremium: true),
+        ShopItem(id: "bed_wooden", name: "Wooden Bed", category: .furniture, slotType: "bed", price: 400, spriteName: "bed_wooden_1774707999566"),
+        ShopItem(id: "bed_cozy", name: "Cozy Bed", category: .furniture, slotType: "bed", price: 600, spriteName: "bed_cozy_1774713357073"),
+        ShopItem(id: "bed_loft", name: "Loft Bed", category: .furniture, slotType: "bed", price: 800, spriteName: "bed_loft_1774713373805"),
 
         // Desk area
-        ShopItem(id: "desk_simple", name: "Simple Desk", category: .furniture, slotType: "desk", price: 200, spriteName: "desk_simple_1774708015237", isPremium: false),
-        ShopItem(id: "desk_gaming", name: "Gaming Desk", category: .furniture, slotType: "desk", price: 500, spriteName: "desk_gaming_1774713385893", isPremium: true),
+        ShopItem(id: "desk_simple", name: "Simple Desk", category: .furniture, slotType: "desk", price: 200, spriteName: "desk_simple_1774708015237"),
+        ShopItem(id: "desk_gaming", name: "Gaming Desk", category: .furniture, slotType: "desk", price: 500, spriteName: "desk_gaming_1774713385893"),
 
         // Desk chair
-        ShopItem(id: "chair_basic", name: "Basic Chair", category: .furniture, slotType: "deskChair", price: 100, spriteName: "chair_basic_1774713399654", isPremium: false),
-        ShopItem(id: "chair_gaming", name: "Gaming Chair", category: .furniture, slotType: "deskChair", price: 350, spriteName: "chair_gaming_1774713666542", isPremium: true),
+        ShopItem(id: "chair_basic", name: "Basic Chair", category: .furniture, slotType: "deskChair", price: 100, spriteName: "chair_basic_1774713399654"),
+        ShopItem(id: "chair_gaming", name: "Gaming Chair", category: .furniture, slotType: "deskChair", price: 350, spriteName: "chair_gaming_1774713666542"),
 
         // Shelf
-        ShopItem(id: "shelf_books", name: "Bookshelf", category: .furniture, slotType: "shelf", price: 300, spriteName: "shelf_books_1774713681529", isPremium: false),
+        ShopItem(id: "shelf_books", name: "Bookshelf", category: .furniture, slotType: "shelf", price: 300, spriteName: "shelf_books_1774713681529"),
 
         // Floor center
-        ShopItem(id: "rug_round", name: "Round Rug", category: .decor, slotType: "floorCenter", price: 150, spriteName: "rug_round_1774713708291", isPremium: false),
-        ShopItem(id: "rug_pixel", name: "Pixel Art Rug", category: .decor, slotType: "floorCenter", price: 250, spriteName: "rug_pixel", isPremium: true),
+        ShopItem(id: "rug_round", name: "Round Rug", category: .decor, slotType: "floorCenter", price: 150, spriteName: "rug_round_1774713708291"),
+        ShopItem(id: "rug_pixel", name: "Pixel Art Rug", category: .decor, slotType: "floorCenter", price: 250, spriteName: "rug_pixel"),
 
         // Wall decor
-        ShopItem(id: "poster_sunset", name: "Sunset Poster", category: .decor, slotType: "wallDecor1", price: 80, spriteName: "poster_sunset", isPremium: false),
-        ShopItem(id: "poster_cat", name: "Selfie Poster", category: .decor, slotType: "wallDecor2", price: 80, spriteName: "poster_cat", isPremium: false),
-        ShopItem(id: "clock_pixel", name: "Pixel Clock", category: .decor, slotType: "wallDecor1", price: 120, spriteName: "clock_pixel", isPremium: false),
+        ShopItem(id: "poster_sunset", name: "Sunset Poster", category: .decor, slotType: "wallDecor1", price: 80, spriteName: "poster_sunset"),
+        ShopItem(id: "poster_cat", name: "Selfie Poster", category: .decor, slotType: "wallDecor2", price: 80, spriteName: "poster_cat"),
+        ShopItem(id: "clock_pixel", name: "Pixel Clock", category: .decor, slotType: "wallDecor1", price: 120, spriteName: "clock_pixel"),
 
         // Cozy corner
-        ShopItem(id: "plant_succulent", name: "Succulent", category: .cozy, slotType: "cozyCorner", price: 50, spriteName: "plant_succulent", isPremium: false),
-        ShopItem(id: "lamp_floor", name: "Floor Lamp", category: .cozy, slotType: "cozyCorner", price: 180, spriteName: "lamp_floor", isPremium: false),
-        ShopItem(id: "beanbag", name: "Bean Bag", category: .cozy, slotType: "cozyCorner", price: 250, spriteName: "beanbag", isPremium: false),
+        ShopItem(id: "plant_succulent", name: "Succulent", category: .cozy, slotType: "cozyCorner", price: 50, spriteName: "plant_succulent"),
+        ShopItem(id: "lamp_floor", name: "Floor Lamp", category: .cozy, slotType: "cozyCorner", price: 180, spriteName: "lamp_floor"),
+        ShopItem(id: "beanbag", name: "Bean Bag", category: .cozy, slotType: "cozyCorner", price: 250, spriteName: "beanbag"),
 
         // Side table
-        ShopItem(id: "table_nightstand", name: "Nightstand", category: .furniture, slotType: "sideTable", price: 120, spriteName: "table_nightstand_1774713694772", isPremium: false),
+        ShopItem(id: "table_nightstand", name: "Nightstand", category: .furniture, slotType: "sideTable", price: 120, spriteName: "table_nightstand_1774713694772"),
 
         // Window
-        ShopItem(id: "curtain_white", name: "White Curtains", category: .decor, slotType: "windowArea", price: 100, spriteName: "curtain_white", isPremium: false),
+        ShopItem(id: "curtain_white", name: "White Curtains", category: .decor, slotType: "windowArea", price: 100, spriteName: "curtain_white"),
 
         // Pet bed
-        ShopItem(id: "petbed_cushion", name: "Floor Cushion", category: .cozy, slotType: "petBed", price: 80, spriteName: "petbed_cushion", isPremium: false),
-        ShopItem(id: "petbed_box", name: "Cardboard Box", category: .fun, slotType: "petBed", price: 30, spriteName: "petbed_box", isPremium: false),
+        ShopItem(id: "petbed_cushion", name: "Floor Cushion", category: .cozy, slotType: "petBed", price: 80, spriteName: "petbed_cushion"),
+        ShopItem(id: "petbed_box", name: "Cardboard Box", category: .fun, slotType: "petBed", price: 30, spriteName: "petbed_box"),
 
         // Accent items
-        ShopItem(id: "guitar_acoustic", name: "Acoustic Guitar", category: .fun, slotType: "accentItem", price: 300, spriteName: "guitar_acoustic", isPremium: false),
-        ShopItem(id: "console_retro", name: "Retro Console", category: .electronics, slotType: "accentItem", price: 500, spriteName: "console_retro", isPremium: true),
-        ShopItem(id: "laptop_pixel", name: "Pixel Laptop", category: .electronics, slotType: "accentItem", price: 200, spriteName: "laptop_pixel", isPremium: false),
+        ShopItem(id: "guitar_acoustic", name: "Acoustic Guitar", category: .fun, slotType: "accentItem", price: 300, spriteName: "guitar_acoustic"),
+        ShopItem(id: "console_retro", name: "Retro Console", category: .electronics, slotType: "accentItem", price: 500, spriteName: "console_retro"),
+        ShopItem(id: "laptop_pixel", name: "Pixel Laptop", category: .electronics, slotType: "accentItem", price: 200, spriteName: "laptop_pixel"),
     ]
 
     static func items(for slotType: SlotType) -> [ShopItem] {

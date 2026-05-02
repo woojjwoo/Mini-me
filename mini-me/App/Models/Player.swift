@@ -10,7 +10,6 @@ final class Player {
     var longestStreak: Int
     var totalDaysCompleted: Int
     var hasCompletedOnboarding: Bool
-    var isPremium: Bool
     var lastCompletedDate: Date?
     var unlockedMilestoneIDs: [String]
 
@@ -22,7 +21,6 @@ final class Player {
         longestStreak: Int = 0,
         totalDaysCompleted: Int = 0,
         hasCompletedOnboarding: Bool = false,
-        isPremium: Bool = false,
         unlockedMilestoneIDs: [String] = []
     ) {
         self.id = id
@@ -32,7 +30,6 @@ final class Player {
         self.longestStreak = longestStreak
         self.totalDaysCompleted = totalDaysCompleted
         self.hasCompletedOnboarding = hasCompletedOnboarding
-        self.isPremium = isPremium
         self.unlockedMilestoneIDs = unlockedMilestoneIDs
     }
 
