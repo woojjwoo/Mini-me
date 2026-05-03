@@ -22,6 +22,17 @@ enum RoomType: String, Codable, CaseIterable {
         case .rooftop:    "Rooftop"
         }
     }
+
+    var fallbackEmoji: String {
+        switch self {
+        case .bedroom:    "🛏️"
+        case .study:      "💻"
+        case .kitchen:    "🍳"
+        case .gym:        "🏋️"
+        case .coffeeShop: "☕"
+        case .rooftop:    "🌆"
+        }
+    }
 }
 
 enum PetActivity: String, Codable {

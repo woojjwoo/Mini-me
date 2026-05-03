@@ -66,6 +66,20 @@ final class WidgetSnapshotBakery {
         WidgetCenter.shared.reloadAllTimelines()
     }
 
+    /// Ambient fill color per scene type.
+    /// Used as the solid background for the baked PNG so the widget never shows
+    /// black bars where the isometric room art doesn't fill the canvas edges.
+    private func ambientColor(for scene: RoomType) -> UIColor {
+        switch scene {
+        case .bedroom:    return UIColor(red: 0.10, green: 0.06, blue: 0.19, alpha: 1) // deep purple-night
+        case .study:      return UIColor(red: 0.11, green: 0.09, blue: 0.06, alpha: 1) // warm dark wood
+        case .gym:        return UIColor(red: 0.05, green: 0.10, blue: 0.05, alpha: 1) // dark green
+        case .kitchen:    return UIColor(red: 0.10, green: 0.07, blue: 0.03, alpha: 1) // warm amber
+        case .coffeeShop: return UIColor(red: 0.10, green: 0.05, blue: 0.05, alpha: 1) // warm brick
+        case .rooftop:    return UIColor(red: 0.04, green: 0.05, blue: 0.10, alpha: 1) // night sky
+        }
+    }
+
     /// Render a single (scene, activity) pair off-screen. Public for testing.
     func render(
         scene: RoomType,
@@ -73,10 +87,11 @@ final class WidgetSnapshotBakery {
         pet: Pet?,
         room: Room
     ) -> UIImage? {
+        let ambient = ambientColor(for: scene)
         let frame = CGRect(origin: .zero, size: snapshotSize)
         let skView = SKView(frame: frame)
-        skView.allowsTransparency = true
-        skView.backgroundColor = .clear
+        skView.allowsTransparency = false
+        skView.backgroundColor = ambient
 
         // SKView needs to be in a real window for layout + texture resolution.
         // We attach it to the keyWindow with alpha=0 so it's invisible to the
@@ -104,7 +119,7 @@ final class WidgetSnapshotBakery {
             initialActivity: activity
         )
         roomScene.scaleMode = .aspectFill
-        roomScene.backgroundColor = .clear
+        roomScene.backgroundColor = SKColor(uiColor: ambient)
         skView.presentScene(roomScene)
 
         // One layout pass so the scene's didMove/setupRoom runs and textures load.

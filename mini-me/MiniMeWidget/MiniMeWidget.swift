@@ -104,29 +104,39 @@ struct SceneImageView: View {
     let activity: PetActivity
 
     var body: some View {
-        if let image = loadSceneSnapshot(scene: scene, activity: activity) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .clipped()
-        } else {
-            fallbackView
+        ZStack {
+            // Ambient fill — matches the scene's baked background color.
+            // Fills transparent PNG edges AND acts as the fallback background.
+            sceneAmbientColor
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if let image = loadSceneSnapshot(scene: scene, activity: activity) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                    .clipped()
+            } else {
+                // No snapshot yet — show ambient + scene emoji until art is baked
+                VStack(spacing: 6) {
+                    Text(scene.fallbackEmoji).font(.system(size: 32))
+                    Text(scene.displayName)
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.5))
+                }
+            }
         }
     }
 
-    private var fallbackView: some View {
-        ZStack {
-            LinearGradient(
-                colors: [Color(hex: "1A1030"), Color(hex: "3D2860")],
-                startPoint: .topLeading, endPoint: .bottomTrailing
-            )
-            VStack(spacing: 6) {
-                Text("🏠").font(.system(size: 32))
-                Text(scene.displayName)
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.5))
-            }
+    /// Per-scene ambient color — must match WidgetSnapshotBakery.ambientColor(for:)
+    private var sceneAmbientColor: Color {
+        switch scene {
+        case .bedroom:    Color(hex: "1A1030")  // deep purple-night
+        case .study:      Color(hex: "1C1810")  // warm dark wood
+        case .gym:        Color(hex: "0D1A0D")  // dark green
+        case .kitchen:    Color(hex: "1A1208")  // warm kitchen amber
+        case .coffeeShop: Color(hex: "1A0D0D")  // warm brick
+        case .rooftop:    Color(hex: "0A0D1A")  // night sky
         }
     }
 }
