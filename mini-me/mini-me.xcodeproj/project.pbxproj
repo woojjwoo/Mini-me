@@ -30,7 +30,6 @@
 		22B49E592F78454E001FDADA /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3F2F78454E001FDADA /* Theme.swift */; };
 		22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E292F78454E001FDADA /* StatsView.swift */; };
 		22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E182F78454E001FDADA /* InsightsView.swift */; };
-		22B49EAB2F78454E001FDADA /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49EAA2F78454E001FDADA /* YouView.swift */; };
 		22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49DFF2F78454E001FDADA /* ContentView.swift */; };
 		22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E322F78454E001FDADA /* RoomSlot.swift */; };
 		22B49E602F78454E001FDADA /* OutfitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1D2F78454E001FDADA /* OutfitView.swift */; };
@@ -59,9 +58,13 @@
 		22B49E782F78454E001FDADA /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2F2F78454E001FDADA /* Pet.swift */; };
 		22B49E792F78454E001FDADA /* DailySchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E2D2F78454E001FDADA /* DailySchedule.swift */; };
 		22B49E7A2F78454E001FDADA /* TimeBlockRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E232F78454E001FDADA /* TimeBlockRow.swift */; };
+		22B49EAB2F78454E001FDADA /* YouView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49EAA2F78454E001FDADA /* YouView.swift */; };
 		3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */; };
 		3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D02F9EFE970041ED43 /* MilestoneService.swift */; };
 		3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */; };
+		3BD991012FA7A2E20041ED43 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991002FA7A2E20041ED43 /* WidgetKit.framework */; };
+		3BD991032FA7A2E20041ED43 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991022FA7A2E20041ED43 /* SwiftUI.framework */; };
+		3BD991122FA7A2E40041ED43 /* MiniMeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,7 +82,28 @@
 			remoteGlobalIDString = 22B49DCC2F7844BB001FDADA;
 			remoteInfo = "mini-me";
 		};
+		3BD991102FA7A2E40041ED43 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 22B49DC52F7844BB001FDADA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3BD990FD2FA7A2E20041ED43;
+			remoteInfo = MiniMeWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3BD991132FA7A2E40041ED43 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3BD991122FA7A2E40041ED43 /* MiniMeWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		22B49DF92F78454E001FDADA /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
@@ -106,7 +130,6 @@
 		22B49E152F78454E001FDADA /* room_base_1774707985306.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_1774707985306.png; sourceTree = "<group>"; };
 		22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_lofi_v2_1774708398444.png; sourceTree = "<group>"; };
 		22B49E182F78454E001FDADA /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
-		22B49EAA2F78454E001FDADA /* YouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouView.swift; sourceTree = "<group>"; };
 		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
@@ -137,13 +160,27 @@
 		22B49E3F2F78454E001FDADA /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		22B49E422F78454E001FDADA /* MiniMeWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniMeWidget.swift; sourceTree = "<group>"; };
 		22B49E432F78454E001FDADA /* WidgetModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetModels.swift; sourceTree = "<group>"; };
+		22B49EAA2F78454E001FDADA /* YouView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouView.swift; sourceTree = "<group>"; };
 		22B49F782F79EB2F001FDADA /* pixi me.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pixi me.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B49F792F79EB2F001FDADA /* mini-meTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "mini-meUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayService.swift; sourceTree = "<group>"; };
 		3BD990D02F9EFE970041ED43 /* MilestoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneService.swift; sourceTree = "<group>"; };
 		3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotBakery.swift; sourceTree = "<group>"; };
+		3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MiniMeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD991002FA7A2E20041ED43 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		3BD991022FA7A2E20041ED43 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3BD991162FA7A2E40041ED43 /* Exceptions for "MiniMeWidget" folder in "MiniMeWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3BD990FD2FA7A2E20041ED43 /* MiniMeWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		22B49DCF2F7844BB001FDADA /* mini-me */ = {
@@ -159,6 +196,14 @@
 		22B49DE72F7844BC001FDADA /* mini-meUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "mini-meUITests";
+			sourceTree = "<group>";
+		};
+		3BD991042FA7A2E20041ED43 /* MiniMeWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3BD991162FA7A2E40041ED43 /* Exceptions for "MiniMeWidget" folder in "MiniMeWidgetExtension" target */,
+			);
+			path = MiniMeWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -185,6 +230,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3BD990FB2FA7A2E20041ED43 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3BD991032FA7A2E20041ED43 /* SwiftUI.framework in Frameworks */,
+				3BD991012FA7A2E20041ED43 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -203,6 +257,9 @@
 				22B49F782F79EB2F001FDADA /* pixi me.app */,
 				22B49F792F79EB2F001FDADA /* mini-meTests.xctest */,
 				22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */,
+				3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */,
+				3BD991042FA7A2E20041ED43 /* MiniMeWidget */,
+				3BD990FF2FA7A2E20041ED43 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -354,14 +411,6 @@
 			path = Stats;
 			sourceTree = "<group>";
 		};
-		22B49EAC2F78454E001FDADA /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				22B49EAA2F78454E001FDADA /* YouView.swift */,
-			);
-			path = Profile;
-			sourceTree = "<group>";
-		};
 		22B49E2B2F78454E001FDADA /* Features */ = {
 			isa = PBXGroup;
 			children = (
@@ -442,6 +491,23 @@
 			path = Widget;
 			sourceTree = "<group>";
 		};
+		22B49EAC2F78454E001FDADA /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				22B49EAA2F78454E001FDADA /* YouView.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		3BD990FF2FA7A2E20041ED43 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3BD991002FA7A2E20041ED43 /* WidgetKit.framework */,
+				3BD991022FA7A2E20041ED43 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -452,10 +518,12 @@
 				22B49DC92F7844BB001FDADA /* Sources */,
 				22B49DCA2F7844BB001FDADA /* Frameworks */,
 				22B49DCB2F7844BB001FDADA /* Resources */,
+				3BD991132FA7A2E40041ED43 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3BD991112FA7A2E40041ED43 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				22B49DCF2F7844BB001FDADA /* mini-me */,
@@ -513,6 +581,28 @@
 			productReference = 22B49F7A2F79EB2F001FDADA /* mini-meUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		3BD990FD2FA7A2E20041ED43 /* MiniMeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3BD991172FA7A2E40041ED43 /* Build configuration list for PBXNativeTarget "MiniMeWidgetExtension" */;
+			buildPhases = (
+				3BD990FA2FA7A2E20041ED43 /* Sources */,
+				3BD990FB2FA7A2E20041ED43 /* Frameworks */,
+				3BD990FC2FA7A2E20041ED43 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3BD991042FA7A2E20041ED43 /* MiniMeWidget */,
+			);
+			name = MiniMeWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = MiniMeWidgetExtension;
+			productReference = 3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -534,6 +624,9 @@
 						CreatedOnToolsVersion = 26.4;
 						TestTargetID = 22B49DCC2F7844BB001FDADA;
 					};
+					3BD990FD2FA7A2E20041ED43 = {
+						CreatedOnToolsVersion = 26.4.1;
+					};
 				};
 			};
 			buildConfigurationList = 22B49DC82F7844BB001FDADA /* Build configuration list for PBXProject "mini-me" */;
@@ -553,6 +646,7 @@
 				22B49DCC2F7844BB001FDADA /* mini-me */,
 				22B49DD92F7844BC001FDADA /* mini-meTests */,
 				22B49DE32F7844BC001FDADA /* mini-meUITests */,
+				3BD990FD2FA7A2E20041ED43 /* MiniMeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -593,6 +687,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		22B49DE22F7844BC001FDADA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3BD990FC2FA7A2E20041ED43 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -658,6 +759,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3BD990FA2FA7A2E20041ED43 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -670,6 +778,11 @@
 			isa = PBXTargetDependency;
 			target = 22B49DCC2F7844BB001FDADA /* mini-me */;
 			targetProxy = 22B49DE52F7844BC001FDADA /* PBXContainerItemProxy */;
+		};
+		3BD991112FA7A2E40041ED43 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3BD990FD2FA7A2E20041ED43 /* MiniMeWidgetExtension */;
+			targetProxy = 3BD991102FA7A2E40041ED43 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -798,6 +911,7 @@
 		22B49DEF2F7844BC001FDADA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -832,6 +946,7 @@
 		22B49DF02F7844BC001FDADA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -947,6 +1062,68 @@
 			};
 			name = Release;
 		};
+		3BD991142FA7A2E40041ED43 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "MiniMeWidget/MiniMeWidgetExtension.entitlements";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MiniMeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MiniMeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixieme.MiniMeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3BD991152FA7A2E40041ED43 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "MiniMeWidget/MiniMeWidgetExtension.entitlements";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = DJ8S97LM9B;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = MiniMeWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = MiniMeWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woojjwoo.pixieme.MiniMeWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -982,6 +1159,15 @@
 			buildConfigurations = (
 				22B49DF52F7844BC001FDADA /* Debug */,
 				22B49DF62F7844BC001FDADA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3BD991172FA7A2E40041ED43 /* Build configuration list for PBXNativeTarget "MiniMeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3BD991142FA7A2E40041ED43 /* Debug */,
+				3BD991152FA7A2E40041ED43 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
