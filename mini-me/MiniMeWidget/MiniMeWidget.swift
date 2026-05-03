@@ -2,125 +2,102 @@ import WidgetKit
 import SwiftUI
 import UIKit
 
-// MARK: - Small Widget — full-bleed scene, no chrome
+// MARK: - Small Widget
 
 struct SmallWidgetView: View {
     let entry: MiniMeEntry
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack(alignment: .bottom) {
-                // Scene fills every pixel
-                SceneImageView(scene: entry.scene, activity: entry.activity)
+        ZStack(alignment: .bottomLeading) {
+            SceneImageView(scene: entry.scene, activity: entry.activity)
 
-                // Subtle gradient so the label is legible without a card
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.55)],
-                    startPoint: .center,
-                    endPoint: .bottom
-                )
+            // Vignette so text is readable
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.6)],
+                startPoint: UnitPoint(x: 0.5, y: 0.35),
+                endPoint: .bottom
+            )
 
-                // Status pill — bottom left, minimal
-                HStack {
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(entry.taskName ?? entry.activityLabel)
-                            .font(.system(size: 11, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        if entry.totalBlocks > 0 {
-                            Text("\(entry.completedBlocks)/\(entry.totalBlocks) done")
-                                .font(.system(size: 8, weight: .medium, design: .rounded))
-                                .foregroundColor(.white.opacity(0.75))
-                        }
-                    }
-                    Spacer()
+            // Label
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entry.taskName ?? entry.activityLabel)
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                if entry.totalBlocks > 0 {
+                    Text("\(entry.completedBlocks)/\(entry.totalBlocks) blocks")
+                        .font(.system(size: 8, weight: .medium, design: .rounded))
+                        .foregroundColor(.white.opacity(0.8))
                 }
-                .padding(.horizontal, 10)
-                .padding(.bottom, 10)
             }
+            .padding(.horizontal, 10)
+            .padding(.bottom, 10)
         }
         .containerBackground(.clear, for: .widget)
     }
 }
 
-// MARK: - Medium Widget — full-bleed scene + right-side stats card
+// MARK: - Medium Widget
 
 struct MediumWidgetView: View {
     let entry: MiniMeEntry
 
     var body: some View {
-        GeometryReader { geo in
-            ZStack {
-                // Scene covers entire widget
-                SceneImageView(scene: entry.scene, activity: entry.activity)
+        ZStack(alignment: .bottomTrailing) {
+            // Full-bleed scene
+            SceneImageView(scene: entry.scene, activity: entry.activity)
 
-                // Right-side frosted stats panel — floats over scene
-                HStack {
-                    Spacer()
-                    VStack(alignment: .leading, spacing: 7) {
-                        // Task name
-                        Text(entry.taskName ?? "Free time")
-                            .font(.system(size: 13, weight: .bold, design: .rounded))
+            // Bottom gradient
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.5)],
+                startPoint: UnitPoint(x: 0.5, y: 0.4),
+                endPoint: .bottom
+            )
+
+            // Stats pill — bottom right
+            HStack(spacing: 10) {
+                // Progress ring
+                MiniProgressRing(value: entry.completionRate, size: 36)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(entry.taskName ?? entry.activityLabel)
+                        .font(.system(size: 12, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                    Text(entry.completionRate > 0
+                         ? "\(Int(entry.completionRate * 100))%  ·  \(entry.completedBlocks)/\(entry.totalBlocks)"
+                         : entry.categoryName?.uppercased() ?? "FREE TIME")
+                        .font(.system(size: 9, weight: .semibold, design: .rounded))
+                        .foregroundColor(.white.opacity(0.7))
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                if entry.coinsToday > 0 {
+                    HStack(spacing: 3) {
+                        Image(systemName: "star.fill")
+                            .font(.system(size: 9))
+                            .foregroundColor(Color(hex: "FFD54F"))
+                        Text("\(entry.coinsToday)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
-                            .lineLimit(1)
-
-                        // Category
-                        if let cat = entry.categoryName {
-                            Text(cat.uppercased())
-                                .font(.system(size: 9, weight: .heavy, design: .rounded))
-                                .foregroundColor(.white.opacity(0.6))
-                                .kerning(0.5)
-                        }
-
-                        Spacer()
-
-                        // Progress ring + fraction
-                        HStack(alignment: .bottom, spacing: 6) {
-                            MiniProgressRing(value: entry.completionRate, size: 32)
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("\(Int(entry.completionRate * 100))%")
-                                    .font(.system(size: 15, weight: .black, design: .rounded))
-                                    .foregroundColor(.white)
-                                Text("\(entry.completedBlocks)/\(entry.totalBlocks)")
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.white.opacity(0.65))
-                            }
-                        }
-
-                        // Coins
-                        if entry.coinsToday > 0 {
-                            HStack(spacing: 3) {
-                                Image(systemName: "star.fill")
-                                    .font(.system(size: 8))
-                                    .foregroundColor(Color(hex: "FFD54F"))
-                                Text("\(entry.coinsToday)")
-                                    .font(.system(size: 10, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                            }
-                        }
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 14)
-                    .frame(width: geo.size.width * 0.42)
-                    .background(
-                        // Dark translucent panel that blends with the scene
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(Color.black.opacity(0.45))
-                            .background(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .fill(.ultraThinMaterial)
-                                    .opacity(0.4)
-                            )
-                    )
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .padding(10)
                 }
             }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                LinearGradient(
+                    colors: [Color.black.opacity(0), Color.black.opacity(0.5)],
+                    startPoint: .top, endPoint: .bottom
+                )
+            )
         }
         .containerBackground(.clear, for: .widget)
     }
 }
 
-// MARK: - Scene image (full-bleed, pixel-perfect)
+// MARK: - Scene image (bottom-anchored so floor/character shows)
 
 struct SceneImageView: View {
     let scene: RoomType
@@ -130,32 +107,31 @@ struct SceneImageView: View {
         if let image = loadSceneSnapshot(scene: scene, activity: activity) {
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fill)
+                .scaledToFill()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                 .clipped()
         } else {
-            // Fallback gradient while snapshots bake
-            ZStack {
-                LinearGradient(
-                    colors: [
-                        Color(hex: "2D2040"),
-                        Color(hex: "4A3060")
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
-                VStack(spacing: 4) {
-                    Text("🏠")
-                        .font(.system(size: 28))
-                    Text(scene.displayName)
-                        .font(.system(size: 10, weight: .bold, design: .rounded))
-                        .foregroundColor(.white.opacity(0.6))
-                }
+            fallbackView
+        }
+    }
+
+    private var fallbackView: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color(hex: "1A1030"), Color(hex: "3D2860")],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+            VStack(spacing: 6) {
+                Text("🏠").font(.system(size: 32))
+                Text(scene.displayName)
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .foregroundColor(.white.opacity(0.5))
             }
         }
     }
 }
 
-// MARK: - Mini progress ring
+// MARK: - Progress ring
 
 struct MiniProgressRing: View {
     let value: Double
@@ -167,12 +143,9 @@ struct MiniProgressRing: View {
                 .stroke(Color.white.opacity(0.2), lineWidth: 3)
             Circle()
                 .trim(from: 0, to: value)
-                .stroke(
-                    Color(hex: "E8985E"),
-                    style: StrokeStyle(lineWidth: 3, lineCap: .round)
-                )
+                .stroke(Color(hex: "E8985E"),
+                        style: StrokeStyle(lineWidth: 3, lineCap: .round))
                 .rotationEffect(.degrees(-90))
-                .animation(.easeOut(duration: 0.5), value: value)
         }
         .frame(width: size, height: size)
     }
@@ -249,7 +222,7 @@ struct MiniMeProvider: TimelineProvider {
     }
 }
 
-// MARK: - Widget configuration
+// MARK: - Entry view + configuration
 
 struct MiniMeWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
