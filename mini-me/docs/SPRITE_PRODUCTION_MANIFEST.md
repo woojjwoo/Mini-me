@@ -256,183 +256,178 @@ OUTPUT: 192×320 PNG, transparent, feet aligned to bottom-center.
 
 ---
 
-## Scene Backgrounds — proportions reference (applies to prompts 6–9)
+## Scene Backgrounds — MODERN APARTMENT VISUAL SYSTEM (applies to prompts 6–9)
 
-All scene backgrounds must match the existing `room_bedroom_empty.png` reference:
+> Every scene background shares this shell. Copy the SHARED SYSTEM block into every ChatGPT prompt, then append the room-specific PROPS block below it.
 
-- **Canvas:** 246×246 px, transparent PNG
-- **Anchor:** bottom-center (the floor plane of the room rests on the bottom edge, centered horizontally)
-- **Projection:** isometric (2:1 pixel ratio for 30°-style iso), viewed from a cozy diagonal angle
-- **Composition:** an L-shaped floor in the foreground, two back walls receding upward-left and upward-right, lavender-tone hex frame border style consistent with `room_bedroom_empty.png`
-- **Floor:** wood-mid `#A06030` planks with wood-light `#C4874A` highlights and wood-deep `#6B3A18` joints
-- **Walls:** cream `#F5E6D3` with linen-mid `#C9B89A` shading, lavender `#9B7EC8`-style frame trim if used
-- **Activity slot:** leave the bottom-center floor area clear so the character sprite (192×320) can composite cleanly, anchored to bottom-center of the scene
-- **Light source:** top-left across all furniture, casting shadows down-right onto floor
+```
+SHARED SYSTEM — MODERN APARTMENT VISUAL SYSTEM
+Canvas: 246×246 px transparent PNG, bottom-center anchor, isometric 2:1 projection.
+Character slot: bottom-center floor area MUST stay fully clear for 192×320 sprite compositing.
+
+FEEL: Cozy modern apartment. Soft lo-fi evening atmosphere. Clean silhouettes. Restrained detail.
+Contemporary furniture — NOT rustic. More breathing room and negative space. Every room should feel
+like a neighboring corner of the same apartment.
+
+ARCHITECTURE (identical across all scenes):
+- L-shaped floor, two back walls receding up-left and up-right
+- Same wall height, same corner angle, same trim thickness across the set
+- Lavender hex-frame perimeter: #9B7EC8
+
+WALLS:
+- Primary wall: #F5E6D3 | Soft shade: #C9B89A | Lavender trim: #9B7EC8
+- Back-left wall slightly brighter than back-right
+- Keep walls quiet and uncluttered
+
+FLOOR:
+- Narrow-plank modern wood — #A06030 base, restrained #C4874A highlights, thin #6B3A18 joints
+- Avoid heavy rustic contrast — floor should feel flatter and cleaner
+
+PALETTE (LOCKED — 11 colors + lavender trim, no others):
+#F5E6D3 cream | #D4C0A0 cream-shadow | #E8985E warm orange | #FFD54F gold
+#5B8C5A sage | #C4874A wood-light | #A06030 wood-mid | #6B3A18 wood-deep
+#C9B89A linen-mid | #2D2040 outline+shadow | #9B7EC8 lavender trim only
+
+OUTLINES: #2D2040 only, 1 px, never pure black.
+
+LIGHTING: top-left source. Warm ambient room light. Soft cast shadows offset bottom-right,
+#2D2040 at ~60% pixel density. No dramatic spotlighting.
+
+MATERIAL LANGUAGE: slim furniture legs, thin shelves, floating storage, rounded modern objects,
+small plants/books/ceramics/soft textiles. Furniture feels lighter than rustic versions.
+
+COMPOSITION: furniture only along back walls and corners. Center floor visually open.
+No object intrudes into character slot. Balanced left/right density.
+
+DETAIL DENSITY: 3–5 focal props per room. Avoid over-decorating. Readable at small size.
+
+STYLE: Pixel art, nearest-neighbor, NO anti-aliasing, hard pixel edges. Cozy modern lo-fi diorama.
+Visual tone: PixelJoint #131408. Transparent PNG.
+
+OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center, center clear for compositing.
+```
 
 ---
 
-# 6. `room_study_empty.png` — pixel desk, chair, bookshelves, warm lamp, coffee mug
+# 6. `room_study_empty.png` — slim desk, floating shelf, warm lamp, ceramic mug
 
 **Filename:** `room_study_empty.png`
 **Dimensions:** 246×246 px transparent PNG
 **Anchor:** bottom-center
-**Activity mapping:** scene for `BlockCategory.work`, `learning`, `creative` (`RoomType.study`).
+**Activity mapping:** `BlockCategory.work`, `learning`, `creative` → `RoomType.study`
 
-**Description:** Cozy isometric study corner. Wooden desk against the back-right wall with a closed laptop and a steaming coffee mug, a bookshelf along the back-left wall with a few colored book spines, a small warm desk lamp glowing gold, and a sage-green potted plant on the floor.
+**Description:** A modern apartment study corner. Slim-legged desk against the back-right wall with a small laptop and a ceramic mug, a floating shelf on the back-left wall with a few book spines and a small ceramic, a warm arc lamp in the back-left corner, and a small potted plant on the floor.
 
-**Prompt to paste into `/art`:**
+**Prompt to paste into ChatGPT:**
 
 ```
-Pixel art isometric scene background, 246×246 transparent PNG, bottom-center anchor.
+Pixel art isometric scene background, 246×246 transparent PNG.
 
-SUBJECT: A cozy lo-fi isometric "study" room corner — empty of any character, will be composited with a 192×320 chibi character sprite anchored bottom-center of this scene.
+[PASTE THE SHARED SYSTEM BLOCK HERE]
 
-LAYOUT:
-- L-shaped wooden floor occupying the lower portion: wood-mid #A06030 planks, wood-light #C4874A plank highlights, wood-deep #6B3A18 joint lines
-- Two back walls receding upward-left and upward-right, cream #F5E6D3 with linen-mid #C9B89A subtle shading, lavender #9B7EC8-style hex frame trim consistent with room_bedroom_empty.png
-- Bottom-center floor area MUST be clear (no furniture) so a character sprite can stand there
-
-FURNITURE (placed against back walls and corners only, leaving the center floor open):
-- Wooden desk against the back-right wall: wood-light #C4874A top, wood-mid #A06030 side, wood-deep #6B3A18 underside; on top: a small closed cream #F5E6D3 laptop, and a cream #F5E6D3 coffee mug with a tiny sage #5B8C5A heart/leaf emblem and 2–3 cream-shadow #D4C0A0 steam pixels rising
-- Small warm desk lamp on the desk: wood-mid stem, gold #FFD54F bulb glow with a 1–2 pixel cream #F5E6D3 highlight halo
-- Bookshelf against the back-left wall: 3 shelves, wood-mid frame, with book spines in warm orange #E8985E, sage #5B8C5A, gold #FFD54F, and cream #F5E6D3 — varied heights, hand-placed feel
-- Small potted plant on the floor in the back-left corner: terracotta-tone pot using #C4874A + #A06030, leaves sage green #5B8C5A
-- A small wooden chair tucked partially under the desk (suggested, not blocking the center)
-
-PALETTE (LOCKED, 11 colors only):
-#F5E6D3, #D4C0A0, #E8985E, #FFD54F, #5B8C5A, #C4874A, #A06030, #6B3A18,
-#C9B89A, #2D2040 (outline + 60%-density cast shadows), and lavender frame accent in #9B7EC8 IF needed for trim consistency with room_bedroom_empty.png.
-
-LIGHTING: top-left light source. Back-left wall slightly brighter than back-right. Lamp bulb glows gold #FFD54F with subtle 1-pixel ambient warm tint on nearby desk surface. Cast shadows from each piece of furniture in #2D2040 at 60% pixel density, offset bottom-right onto floor.
-
-STYLE: Isometric (2:1 ratio), pixel art, nearest-neighbor, NO anti-aliasing. Outline #2D2040 only — never pure black. Cozy lo-fi album-cover diorama vibe; canonical reference PixelJoint #131408. Transparent PNG. Same proportions and frame style as room_bedroom_empty.png.
-
-OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center of canvas, center floor space clear for character compositing.
+PROPS — STUDY CORNER (place against back walls and corners only, center floor clear):
+- Slim-legged desk against back-right wall: thin legs in #2D2040, #C4874A desktop surface,
+  #A06030 side edge. On top: small closed cream #F5E6D3 laptop, ceramic mug in #C9B89A
+  with 2–3 #D4C0A0 steam pixels.
+- Slim arc floor lamp in back-left corner: thin #2D2040 stem curving overhead,
+  gold #FFD54F bulb with 1-pixel cream halo, soft warm tint on nearby surfaces.
+- Floating wall shelf on back-left wall: thin #A06030 shelf, no visible brackets,
+  3–4 book spines (#E8985E, #5B8C5A, #FFD54F, #F5E6D3) varied heights, one small
+  cream #F5E6D3 ceramic object.
+- Small potted plant on floor back-left corner: slim pot #C4874A + #A06030, sage #5B8C5A leaves.
+- Minimal wooden chair with slim legs tucked toward desk (partially suggested, not blocking center).
 ```
 
 ---
 
-# 7. `room_gym_empty.png` — small home gym corner: yoga mat, dumbbells, mirror, plant
+# 7. `room_gym_empty.png` — yoga mat, slim dumbbell rack, tall mirror, plant
 
 **Filename:** `room_gym_empty.png`
 **Dimensions:** 246×246 px transparent PNG
 **Anchor:** bottom-center
-**Activity mapping:** scene for `BlockCategory.exercise` (`RoomType.gym`).
+**Activity mapping:** `BlockCategory.exercise` → `RoomType.gym`
 
-**Description:** Tiny home-gym corner. Sage-green rolled-out yoga mat on the floor (clear of center), small wooden rack with two warm-orange dumbbells, a tall narrow wall mirror, and a leafy plant.
+**Description:** A modern home-gym corner of the apartment. Sage yoga mat along the back-right wall, a slim minimal dumbbell rack in the corner, a tall frameless-style mirror on the back-left wall, and a large leafy plant. Clean, calm, not a commercial gym.
 
-**Prompt to paste into `/art`:**
+**Prompt to paste into ChatGPT:**
 
 ```
-Pixel art isometric scene background, 246×246 transparent PNG, bottom-center anchor.
+Pixel art isometric scene background, 246×246 transparent PNG.
 
-SUBJECT: A cozy lo-fi isometric "home gym" corner — small, warm, lived-in (NOT a clinical commercial gym). Empty of any character, will be composited with a 192×320 chibi sprite anchored bottom-center of this scene.
+[PASTE THE SHARED SYSTEM BLOCK HERE]
 
-LAYOUT:
-- Same L-shaped wood floor as room_bedroom_empty.png: wood-mid #A06030 planks, wood-light #C4874A highlights, wood-deep #6B3A18 joints
-- Two back walls receding up-left and up-right, cream #F5E6D3 with linen-mid #C9B89A shading, lavender #9B7EC8-style hex frame trim
-- Bottom-center floor area MUST stay clear for character compositing
-
-FURNITURE (placed in corners and along walls only):
-- Sage green #5B8C5A rolled-out yoga mat on the floor along the back-right edge (parallel to the right wall, NOT under the center character slot); cream-shadow #D4C0A0 stripe details to suggest texture
-- Small wooden dumbbell rack tucked into the back-right corner: wood-mid #A06030 frame, two short dumbbells with warm-orange #E8985E weight plates and wood-deep #6B3A18 grips
-- Tall narrow wall mirror on the back-left wall: wood-mid #A06030 frame, mirror surface a soft cream #F5E6D3 with 1–2 linen-mid #C9B89A diagonal highlight streaks (no actual reflection of the character — keep generic)
-- Leafy potted plant on the floor in the back-left corner: terracotta pot in #C4874A + #A06030, big sage green #5B8C5A leaves
-- Optional: small folded cream #F5E6D3 towel on the dumbbell rack
-
-PALETTE (LOCKED, 11 colors only):
-#F5E6D3, #D4C0A0, #E8985E, #FFD54F, #5B8C5A, #C4874A, #A06030, #6B3A18,
-#C9B89A, #2D2040, plus #9B7EC8 lavender for frame trim only.
-
-LIGHTING: top-left light source. Mirror frame top-left highlight in #C4874A, dumbbell plates highlight on top-left of each plate. Cast shadows under mat, rack, plant in #2D2040 at 60% density, offset bottom-right.
-
-STYLE: Isometric (2:1), pixel art, nearest-neighbor, NO anti-aliasing. Outline #2D2040 only. Cozy lo-fi diorama vibe — reference PixelJoint #131408. Same frame and proportions as room_bedroom_empty.png. Transparent PNG.
-
-OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center, center stage clear for character compositing.
+PROPS — HOME GYM CORNER (place against back walls and corners only, center floor clear):
+- Sage #5B8C5A yoga mat rolled out along back-right wall edge (parallel to wall, NOT in
+  center slot); thin #D4C0A0 stripe lines for texture.
+- Slim minimal dumbbell rack in back-right corner: thin #2D2040 frame, two small dumbbells
+  with #E8985E weight ends and #6B3A18 grip bars.
+- Tall mirror on back-left wall: thin #A06030 frame or near-frameless, mirror surface
+  #F5E6D3 with 1–2 diagonal #C9B89A highlight streaks (no character reflection).
+- Large leafy plant on floor back-left corner: slim pot #C4874A + #A06030, generous
+  #5B8C5A leaves.
+- Optional: small folded #F5E6D3 towel on or near the rack.
 ```
 
 ---
 
-# 8. `room_kitchen_empty.png` — small kitchen counter with stove, fridge, hanging utensils
+# 8. `room_kitchen_empty.png` — slim counter, kettle, mini fridge, hanging utensils, herb
 
 **Filename:** `room_kitchen_empty.png`
 **Dimensions:** 246×246 px transparent PNG
 **Anchor:** bottom-center
-**Activity mapping:** scene for `BlockCategory.nutrition` (`RoomType.kitchen`).
+**Activity mapping:** `BlockCategory.nutrition` → `RoomType.kitchen`
 
-**Description:** A cozy lo-fi kitchen nook. A wooden counter along the back wall with a small stove and a kettle, a cream-colored fridge in the back-left corner, a few utensils hanging from a small wood rail, and a sage potted herb on the counter.
+**Description:** A modern apartment kitchen nook. Slim-profile counter along the back-right wall with a kettle and inset burners, a compact fridge in the back-left corner, a minimal utensil rail above the counter, and a small herb plant on the countertop.
 
-**Prompt to paste into `/art`:**
+**Prompt to paste into ChatGPT:**
 
 ```
-Pixel art isometric scene background, 246×246 transparent PNG, bottom-center anchor.
+Pixel art isometric scene background, 246×246 transparent PNG.
 
-SUBJECT: A cozy lo-fi isometric kitchen nook — small, warm, hand-built feel (NOT a sterile modern kitchen). Empty of any character, will be composited with a 192×320 chibi sprite anchored bottom-center.
+[PASTE THE SHARED SYSTEM BLOCK HERE]
 
-LAYOUT:
-- L-shaped wood floor: wood-mid #A06030 planks, wood-light #C4874A highlights, wood-deep #6B3A18 joints
-- Two back walls (cream #F5E6D3 with linen-mid #C9B89A shading), lavender #9B7EC8-style hex frame trim
-- Bottom-center floor MUST stay clear for character compositing
-
-FURNITURE (against back walls / in corners only):
-- Wooden counter spanning the back-right wall: wood-light #C4874A countertop face, wood-mid #A06030 side, wood-deep #6B3A18 underside, with a small cream #F5E6D3 cabinet door shape and a single gold #FFD54F handle
-- Small stove top inset into the counter: dark #2D2040 burner circles (2 burners), with a cream-shadow #D4C0A0 ring around each
-- Small kettle on the stove: warm-orange #E8985E body, gold #FFD54F handle, 2–3 pixels of cream-shadow #D4C0A0 steam rising
-- Cream-colored mini fridge in the back-left corner: cream #F5E6D3 body, cream-shadow #D4C0A0 side panel, gold #FFD54F handle, 1 small sage #5B8C5A magnet/sticker dot on the door
-- Tiny wood rail above the counter on the back wall (wood-mid #A06030) with 2–3 utensils hanging: a sage #5B8C5A spatula, a gold #FFD54F ladle, a wood-deep #6B3A18 spoon
-- Small terracotta pot of sage green herbs on the countertop (terracotta = #C4874A + #A06030, leaves #5B8C5A)
-
-PALETTE (LOCKED, 11 colors only):
-#F5E6D3, #D4C0A0, #E8985E, #FFD54F, #5B8C5A, #C4874A, #A06030, #6B3A18,
-#C9B89A, #2D2040, plus #9B7EC8 lavender for frame trim only.
-
-LIGHTING: top-left source. Top-left counter face brighter, cream fridge face top-left brightest. Cast shadows under counter, fridge, and herb pot in #2D2040 at 60% density, offset bottom-right.
-
-STYLE: Isometric (2:1), pixel art, nearest-neighbor, NO anti-aliasing. Outline #2D2040 only — never pure black. Cozy lo-fi diorama vibe, canonical reference PixelJoint #131408. Same frame and proportions as room_bedroom_empty.png. Transparent PNG.
-
-OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center, center stage clear for character compositing.
+PROPS — KITCHEN NOOK (place against back walls and corners only, center floor clear):
+- Slim counter along back-right wall: thin profile, #C4874A countertop, #A06030 front panel,
+  #6B3A18 base. Small inset stove: 2 dark #2D2040 burner circles with #D4C0A0 rings.
+  One slim cabinet door in #F5E6D3 with gold #FFD54F handle.
+- Kettle on counter: rounded #E8985E body, #FFD54F handle accent, 2–3 #D4C0A0 steam pixels.
+- Compact fridge back-left corner: #F5E6D3 body, #D4C0A0 side, #FFD54F slim handle,
+  one small #5B8C5A magnet dot.
+- Minimal utensil rail on back wall above counter: thin #A06030 rod,
+  2–3 hanging utensils (#5B8C5A spatula, #FFD54F ladle, #6B3A18 spoon).
+- Small herb pot on counter: #C4874A + #A06030 pot, #5B8C5A leaf sprigs.
 ```
 
 ---
 
-# 9. `room_coffeeshop_empty.png` — cozy café table, two chairs, hanging bulb light, plant
+# 9. `room_coffeeshop_empty.png` — round café table, two slim chairs, pendant light, plant
 
 **Filename:** `room_coffeeshop_empty.png`
 **Dimensions:** 246×246 px transparent PNG
 **Anchor:** bottom-center
-**Activity mapping:** scene for `BlockCategory.social` (`RoomType.coffeeShop`). This scene will host a friend's mini-me sprite alongside the user's during shared social blocks (v1.5), so the layout needs room for two chair positions.
+**Activity mapping:** `BlockCategory.social` → `RoomType.coffeeShop`
+**Note:** v1.5 will composite TWO mini-me sprites here during shared social blocks — leave enough floor space for two characters side by side near the table.
 
-**Description:** A cozy isometric café corner. A small round wooden table with TWO chairs (one facing 3/4 each side of the table) under a warm hanging-bulb pendant light, a sage potted plant in the back corner, and a chalkboard menu on the back wall.
+**Description:** A modern apartment café corner. A small round table mid-canvas with two slim chairs facing each other, a warm pendant bulb overhead, a tall plant in the back-left corner, and a small chalkboard menu on the back-right wall.
 
-**Prompt to paste into `/art`:**
+**Prompt to paste into ChatGPT:**
 
 ```
-Pixel art isometric scene background, 246×246 transparent PNG, bottom-center anchor.
+Pixel art isometric scene background, 246×246 transparent PNG.
 
-SUBJECT: A cozy lo-fi isometric café / coffee-shop corner — warm and intimate, NOT a busy commercial café. Empty of any character (the scene must accommodate up to two chibi sprites anchored near bottom-center, one user mini-me and one friend mini-me, in v1.5).
+[PASTE THE SHARED SYSTEM BLOCK HERE]
 
-LAYOUT:
-- L-shaped wood floor: wood-mid #A06030 planks, wood-light #C4874A highlights, wood-deep #6B3A18 joints
-- Two back walls cream #F5E6D3 with linen-mid #C9B89A shading, lavender #9B7EC8 hex frame trim
-- Bottom-center floor area MUST stay clear; the table is centered slightly UP-and-back from the bottom-center (placed mid-canvas) so two character sprites can stand on either side of it without overlap
-
-FURNITURE:
-- Small round café table near the visual center of the scene (NOT touching the bottom edge — leave bottom 1/3 of canvas clear for character compositing): wood-light #C4874A round top, wood-mid #A06030 pedestal, wood-deep #6B3A18 base
-- TWO small wooden chairs, one on the left side of the table and one on the right side, both 3/4-facing inward toward the table. Wood-mid #A06030 frames, wood-light #C4874A seat tops
-- On the table: two cream #F5E6D3 coffee mugs with cream-shadow #D4C0A0 rims and 2 pixels each of cream-shadow #D4C0A0 steam rising
-- Hanging pendant bulb light directly above the table: wood-mid #A06030 cord descending from the upper frame edge, gold #FFD54F bulb with a 1-pixel cream halo and faint warm-orange #E8985E glow tint on the table top below
-- Tall sage green plant in the back-left corner: terracotta pot #C4874A + #A06030, leaves #5B8C5A
-- Small chalkboard menu on the back-right wall: dark #2D2040 board, wood-mid #A06030 frame, 2–3 cream #F5E6D3 pixel-thin lines suggesting menu text, optional 1 gold #FFD54F dot price highlight
-
-PALETTE (LOCKED, 11 colors only):
-#F5E6D3, #D4C0A0, #E8985E, #FFD54F, #5B8C5A, #C4874A, #A06030, #6B3A18,
-#C9B89A, #2D2040, plus #9B7EC8 lavender for frame trim only.
-
-LIGHTING: top-left source PLUS warm pendant bulb glow over the table. Pendant casts a soft gold #FFD54F highlight on the table top and a faint warm-orange #E8985E ambient tint on the chairs nearby. Cast shadows under table, chairs, plant, chalkboard in #2D2040 at 60% density, offset bottom-right.
-
-STYLE: Isometric (2:1), pixel art, nearest-neighbor, NO anti-aliasing. Outline #2D2040 only. Cozy lo-fi album-cover diorama vibe, reference PixelJoint #131408. Same frame and proportions as room_bedroom_empty.png. Transparent PNG.
-
-OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center; bottom 1/3 of canvas clear of furniture so two character sprites can stand on either side of the centered table.
+PROPS — CAFÉ CORNER (bottom 1/3 of canvas must stay clear for TWO character sprites):
+- Small round café table placed mid-canvas (NOT near bottom edge): slim pedestal leg
+  #2D2040, #C4874A round top, #A06030 pedestal, #6B3A18 base.
+  On top: two small #F5E6D3 ceramic mugs, #D4C0A0 rims, 2px steam each.
+- TWO slim chairs — one left of table, one right, both angled 3/4 inward:
+  thin #2D2040 legs, #A06030 seat, #C4874A seat-top highlight.
+- Pendant bulb light above table: thin #2D2040 cord from upper frame,
+  #FFD54F bulb, 1px cream halo, faint #E8985E warm tint on tabletop below.
+- Tall plant back-left corner: slim #C4874A + #A06030 pot, tall #5B8C5A leaves.
+- Small chalkboard back-right wall: #2D2040 board, #A06030 slim frame,
+  2–3 thin #F5E6D3 lines for menu text, optional #FFD54F dot accent.
 ```
 
 ---
@@ -442,11 +437,11 @@ OUTPUT: 246×246 PNG, transparent, floor anchored to bottom-center; bottom 1/3 o
 Tick each sprite as it lands in `mini-me/Assets.xcassets/` (or wherever sprite assets live in the project) and is verified at runtime against the widget snapshot pipeline.
 
 ### Character Poses (192×320, transparent, bottom-center anchor)
-- [ ] 1. `minime_working.png` — sitting at desk, typing
-- [ ] 2. `minime_exercising.png` — mid jumping-jack
-- [ ] 3. `minime_eating.png` — sitting at table, fork raised
-- [ ] 4. `minime_reading.png` — sitting cross-legged with book
-- [ ] 5. `minime_socializing.png` — standing, gesturing in conversation
+- [x] 1. `minime_working.png` — sitting at desk, typing
+- [x] 2. `minime_exercising.png` — mid jumping-jack
+- [x] 3. `minime_eating.png` — sitting at table, fork raised
+- [x] 4. `minime_reading.png` — sitting cross-legged with book
+- [x] 5. `minime_socializing.png` — standing, gesturing in conversation
 
 ### Scene Backgrounds (246×246, transparent, bottom-center anchor)
 - [ ] 6. `room_study_empty.png` — desk, chair, bookshelves, lamp, mug
