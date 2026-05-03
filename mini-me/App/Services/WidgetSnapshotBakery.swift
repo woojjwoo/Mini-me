@@ -1,6 +1,7 @@
 import UIKit
 import SpriteKit
 import SwiftData
+import WidgetKit
 
 /// Pre-renders RoomScene snapshots for every (scene, activity) pair the user
 /// will encounter in their day, so the widget always has an up-to-date PNG
@@ -59,6 +60,10 @@ final class WidgetSnapshotBakery {
                 WidgetDataService.shared.saveSceneSnapshot(image, scene: scene, activity: activity)
             }
         }
+
+        // Tell iOS the widget timeline is stale so it re-renders immediately
+        // instead of waiting for the next 15-min natural refresh cycle.
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Render a single (scene, activity) pair off-screen. Public for testing.

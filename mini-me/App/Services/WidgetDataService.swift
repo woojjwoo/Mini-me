@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import WidgetKit
 
 /// Shares data between main app and widget via App Groups
 final class WidgetDataService {
@@ -114,6 +115,9 @@ final class WidgetDataService {
         )
         defaults?.set(resolved.scene.rawValue, forKey: Keys.activeScene)
         defaults?.set(resolved.activity.rawValue, forKey: Keys.activeActivity)
+
+        // Reload widget timeline so scene change reflects immediately on home screen.
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     /// Translate the current block category (or absence) into a (scene, activity) pair.
