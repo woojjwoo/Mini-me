@@ -73,15 +73,19 @@ struct MiniMeWidgetLiveActivity: Widget {
             DynamicIsland {
                 // Expanded (long-press)
                 DynamicIslandExpandedRegion(.leading) {
-                    if let image = loadSceneSnapshot(
-                        scene: context.state.scene,
-                        activity: context.state.activity) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: 44, height: 44)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .padding(.leading, 4)
+                    Group {
+                        if let image = loadSceneSnapshot(
+                            scene: context.state.scene,
+                            activity: context.state.activity) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 44, height: 44)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                                .padding(.leading, 4)
+                        } else {
+                            Color.clear.frame(width: 44, height: 44)
+                        }
                     }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
@@ -108,15 +112,18 @@ struct MiniMeWidgetLiveActivity: Widget {
                     .padding(.horizontal, 8)
                 }
             } compactLeading: {
-                // Tiny pill — left side
-                if let image = loadSceneSnapshot(
-                    scene: context.state.scene,
-                    activity: context.state.activity) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 20, height: 20)
-                        .clipShape(Circle())
+                Group {
+                    if let image = loadSceneSnapshot(
+                        scene: context.state.scene,
+                        activity: context.state.activity) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 20, height: 20)
+                            .clipShape(Circle())
+                    } else {
+                        Color.clear.frame(width: 20, height: 20)
+                    }
                 }
             } compactTrailing: {
                 // Tiny pill — right side: minutes remaining
@@ -124,14 +131,17 @@ struct MiniMeWidgetLiveActivity: Widget {
                     .font(.system(size: 11, weight: .bold, design: .rounded))
                     .foregroundColor(.white)
             } minimal: {
-                // Single dot view
-                if let image = loadSceneSnapshot(
-                    scene: context.state.scene,
-                    activity: context.state.activity) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .clipShape(Circle())
+                Group {
+                    if let image = loadSceneSnapshot(
+                        scene: context.state.scene,
+                        activity: context.state.activity) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .clipShape(Circle())
+                    } else {
+                        Color.clear
+                    }
                 }
             }
             .widgetURL(URL(string: "pixieme://today"))

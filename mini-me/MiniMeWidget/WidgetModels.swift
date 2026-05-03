@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 // MARK: - Enums (mirrored from main app — must match raw values exactly)
 
@@ -123,4 +124,17 @@ extension Color {
                   blue:    Double(b) / 255,
                   opacity: Double(a) / 255)
     }
+}
+
+// MARK: - Shared snapshot loader (used by both widget and Live Activity)
+
+func loadSceneSnapshot(scene: RoomType, activity: PetActivity) -> UIImage? {
+    let groupID = "group.com.woojjwoo.pixieme.shared"
+    guard let container = FileManager.default.containerURL(
+        forSecurityApplicationGroupIdentifier: groupID) else { return nil }
+    let specific = container.appendingPathComponent(
+        "room_diorama_\(scene.rawValue)_\(activity.rawValue).png")
+    if let img = UIImage(contentsOfFile: specific.path) { return img }
+    let fallback = container.appendingPathComponent("room_diorama.png")
+    return UIImage(contentsOfFile: fallback.path)
 }

@@ -2,19 +2,6 @@ import WidgetKit
 import SwiftUI
 import UIKit
 
-// MARK: - Snapshot loader
-
-private func loadSceneSnapshot(scene: RoomType, activity: PetActivity) -> UIImage? {
-    let groupID = "group.com.woojjwoo.pixieme.shared"
-    guard let container = FileManager.default.containerURL(
-        forSecurityApplicationGroupIdentifier: groupID) else { return nil }
-    let specific = container.appendingPathComponent(
-        "room_diorama_\(scene.rawValue)_\(activity.rawValue).png")
-    if let img = UIImage(contentsOfFile: specific.path) { return img }
-    let fallback = container.appendingPathComponent("room_diorama.png")
-    return UIImage(contentsOfFile: fallback.path)
-}
-
 // MARK: - Shared diorama view
 
 struct RoomDioramaView: View {
