@@ -62,6 +62,8 @@
 		3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */; };
 		3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D02F9EFE970041ED43 /* MilestoneService.swift */; };
 		3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */; };
+		EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490012F9EFE970041ED43 /* LiveActivityService.swift */; };
+		EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */; };
 		3BD991012FA7A2E20041ED43 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991002FA7A2E20041ED43 /* WidgetKit.framework */; };
 		3BD991032FA7A2E20041ED43 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991022FA7A2E20041ED43 /* SwiftUI.framework */; };
 		3BD991122FA7A2E40041ED43 /* MiniMeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -167,6 +169,8 @@
 		3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayService.swift; sourceTree = "<group>"; };
 		3BD990D02F9EFE970041ED43 /* MilestoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneService.swift; sourceTree = "<group>"; };
 		3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotBakery.swift; sourceTree = "<group>"; };
+		EEB490012F9EFE970041ED43 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
+		EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWidgetPromptView.swift; sourceTree = "<group>"; };
 		3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MiniMeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD991002FA7A2E20041ED43 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		3BD991022FA7A2E20041ED43 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -357,6 +361,7 @@
 			children = (
 				22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */,
 				22B49E1B2F78454E001FDADA /* OnboardingView.swift */,
+				EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */,
 			);
 			path = Onboarding;
 			sourceTree = "<group>";
@@ -457,6 +462,7 @@
 				22B49E3C2F78454E001FDADA /* StreakService.swift */,
 				22B49E3D2F78454E001FDADA /* WidgetDataService.swift */,
 				3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */,
+				EEB490012F9EFE970041ED43 /* LiveActivityService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -728,6 +734,8 @@
 				22B49E6C2F78454E001FDADA /* ShopView.swift in Sources */,
 				22B49E6D2F78454E001FDADA /* WidgetDataService.swift in Sources */,
 				3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */,
+				EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */,
+				EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */,
 				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
 				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
 				22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */,

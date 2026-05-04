@@ -119,7 +119,7 @@ final class WidgetSnapshotBakery {
             initialActivity: activity
         )
         roomScene.scaleMode = .aspectFill
-        roomScene.backgroundColor = SKColor(uiColor: ambient)
+        roomScene.backgroundColor = ambient  // SKColor is a typealias for UIColor
         skView.presentScene(roomScene)
 
         // One layout pass so the scene's didMove/setupRoom runs and textures load.

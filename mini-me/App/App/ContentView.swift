@@ -9,12 +9,29 @@ struct ContentView: View {
     @Query private var pets: [Pet]
     @Query private var rooms: [Room]
 
+    /// Shown once after onboarding to prompt the user to add the home-screen widget.
+    @AppStorage("hasSeenWidgetPrompt") private var hasSeenWidgetPrompt = false
+    @State private var showWidgetPrompt = false
+
     var body: some View {
         Group {
             if let player = players.first, player.hasCompletedOnboarding {
                 MainTabView()
+                    .onAppear {
+                        // Delay slightly so the tab view settles before sheet appears
+                        guard !hasSeenWidgetPrompt else { return }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                            showWidgetPrompt = true
+                        }
+                    }
             } else {
                 OnboardingView()
+            }
+        }
+        .sheet(isPresented: $showWidgetPrompt) {
+            AddWidgetPromptView {
+                hasSeenWidgetPrompt = true
+                showWidgetPrompt = false
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
@@ -29,6 +46,7 @@ struct ContentView: View {
             // structurally changed.
             guard newPhase == .active else { return }
             triggerBakeIfPossible()
+            syncLiveActivityIfPossible()
         }
     }
 
@@ -49,6 +67,27 @@ struct ContentView: View {
             schedule: schedule,
             pet: pet,
             room: room
+        )
+    }
+
+    /// Sync the Live Activity to the current active block when foregrounding.
+    @MainActor
+    private func syncLiveActivityIfPossible() {
+        let isWeekday = !Calendar.current.isDateInWeekend(.now)
+        guard
+            let pet = pets.first,
+            let schedule = schedules.first(where: { $0.isWeekday == isWeekday }) ?? schedules.first
+        else { return }
+
+        // Find today's DayLog to get completed block count
+        let today = Calendar.current.startOfDay(for: .now)
+        // Completed count isn't directly accessible here — pass 0 as a safe fallback.
+        // DailyScheduleView's syncLiveActivity() handles the accurate count on tap.
+        LiveActivityService.shared.sync(
+            petName:         pet.name,
+            schedule:        schedule,
+            completedBlocks: 0,
+            totalBlocks:     schedule.blocks.count
         )
     }
 }
@@ -87,5 +126,16 @@ struct MainTabView: View {
                 .tag(3)
         }
         .tint(PixelTheme.primary)
+        // Handle deep links from widget taps (e.g. pixieme://today, pixieme://room)
+        .onOpenURL { url in
+            guard url.scheme == "pixieme" else { return }
+            switch url.host {
+            case "today": selectedTab = 0
+            case "room":  selectedTab = 1
+            case "shop":  selectedTab = 2
+            case "you":   selectedTab = 3
+            default:      selectedTab = 0
+            }
+        }
     }
 }

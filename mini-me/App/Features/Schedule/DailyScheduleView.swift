@@ -282,6 +282,7 @@ struct DailyScheduleView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) { coinFloatVisible = false }
 
         updateWidget()
+        syncLiveActivity()
         NotificationCenter.default.post(name: NSNotification.Name("ShowCoinShower"), object: nil)
         if todayLog.completedBlockIDs.count == schedule.blocks.count {
             NotificationCenter.default.post(name: NSNotification.Name("ShowCelebration"), object: nil)
@@ -345,6 +346,18 @@ struct DailyScheduleView: View {
             )
         }
         #endif
+    }
+
+    /// Start / update / end the Live Activity to match the current block state.
+    /// Mirrors the same active-block logic used by updateWidget().
+    private func syncLiveActivity() {
+        guard let pet = pet, let schedule = todaySchedule else { return }
+        LiveActivityService.shared.sync(
+            petName:         pet.name,
+            schedule:        schedule,
+            completedBlocks: todayLog.completedBlockIDs.count,
+            totalBlocks:     schedule.blocks.count
+        )
     }
 
     private var dateString: String {

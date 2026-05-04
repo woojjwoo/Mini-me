@@ -32,6 +32,7 @@ struct SmallWidgetView: View {
             .padding(.horizontal, 10)
             .padding(.bottom, 10)
         }
+        .widgetURL(URL(string: "pixieme://today"))
         .containerBackground(.clear, for: .widget)
     }
 }
@@ -93,7 +94,65 @@ struct MediumWidgetView: View {
                 )
             )
         }
+        .widgetURL(URL(string: "pixieme://today"))
         .containerBackground(.clear, for: .widget)
+    }
+}
+
+// MARK: - Lock Screen: Circular
+
+struct CircularWidgetView: View {
+    let entry: MiniMeEntry
+
+    var body: some View {
+        ZStack {
+            MiniProgressRing(value: entry.completionRate, size: 44)
+            Text(entry.activityEmoji)
+                .font(.system(size: 18))
+        }
+        .widgetURL(URL(string: "pixieme://today"))
+    }
+}
+
+// MARK: - Lock Screen: Rectangular
+
+struct RectangularWidgetView: View {
+    let entry: MiniMeEntry
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(entry.taskName ?? entry.activityLabel)
+                .font(.system(size: 13, weight: .bold, design: .rounded))
+                .foregroundColor(.primary)
+                .lineLimit(1)
+
+            ProgressView(value: entry.completionRate)
+                .tint(Color(hex: "E8985E"))
+
+            Text(entry.totalBlocks > 0
+                 ? "\(entry.completedBlocks) of \(entry.totalBlocks) blocks done"
+                 : "Free time")
+                .font(.system(size: 10, weight: .medium, design: .rounded))
+                .foregroundColor(.secondary)
+        }
+        .widgetURL(URL(string: "pixieme://today"))
+    }
+}
+
+// MARK: - Lock Screen: Inline
+
+struct InlineWidgetView: View {
+    let entry: MiniMeEntry
+
+    var body: some View {
+        // Inline lock screen widgets: text + optional image.
+        // Keep it extremely short — space is ~20 characters.
+        Label {
+            Text(entry.taskName ?? entry.activityLabel)
+        } icon: {
+            Text(entry.activityEmoji)
+        }
+        .widgetURL(URL(string: "pixieme://today"))
     }
 }
 
@@ -193,6 +252,20 @@ struct MiniMeEntry: TimelineEntry {
         }
     }
 
+    /// Single emoji for compact lock-screen slots
+    var activityEmoji: String {
+        switch activity {
+        case .working:    "💻"
+        case .reading:    "📖"
+        case .eating:     "🍳"
+        case .stretching: "🏃"
+        case .sleeping:   "😴"
+        case .slacking:   "☕"
+        case .walking:    "🚶"
+        case .idling:     "✨"
+        }
+    }
+
     static let placeholder = MiniMeEntry(
         date: .now, petName: "Pixie", petMood: "focused",
         completedBlocks: 3, totalBlocks: 8, coinsToday: 40,
@@ -240,9 +313,12 @@ struct MiniMeWidgetEntryView: View {
 
     var body: some View {
         switch family {
-        case .systemSmall:  SmallWidgetView(entry: entry)
-        case .systemMedium: MediumWidgetView(entry: entry)
-        default:            SmallWidgetView(entry: entry)
+        case .systemSmall:          SmallWidgetView(entry: entry)
+        case .systemMedium:         MediumWidgetView(entry: entry)
+        case .accessoryCircular:    CircularWidgetView(entry: entry)
+        case .accessoryRectangular: RectangularWidgetView(entry: entry)
+        case .accessoryInline:      InlineWidgetView(entry: entry)
+        default:                    SmallWidgetView(entry: entry)
         }
     }
 }
@@ -256,6 +332,12 @@ struct MiniMeWidget: Widget {
         }
         .configurationDisplayName("Pixie Me")
         .description("Your day, on your home screen.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .supportedFamilies([
+            .systemSmall,
+            .systemMedium,
+            .accessoryCircular,
+            .accessoryRectangular,
+            .accessoryInline,
+        ])
     }
 }
