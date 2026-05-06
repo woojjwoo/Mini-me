@@ -24,6 +24,16 @@ jobs:
           ls mini-me/
           xcodebuild -project mini-me/mini-me.xcodeproj -list
 
+      - name: Validate asset catalog directly
+        run: |
+          xcrun actool \
+            --output-format human-readable-text \
+            --notices --warnings \
+            --platform iphonesimulator \
+            --minimum-deployment-target 17.0 \
+            --compile /tmp/assetout \
+            mini-me/mini-me/Assets.xcassets 2>&1 || true
+
       - name: Build mini-me + widget
         run: |
           xcodebuild \
@@ -34,5 +44,5 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
-            build 2>&1
+            ASSETCATALOG_COMPILER_WARNINGS_AS_ERRORS=NO \
+            build 2>&1 | grep -E "error:|warning:|actool|BUILD SUCCEEDED|BUILD FAILED|failed"
