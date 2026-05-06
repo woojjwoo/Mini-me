@@ -59,6 +59,26 @@ enum PetMood: String, Codable {
 
 // MARK: - DTOs (must match encoding in main app's WidgetDataService)
 
+/// Minimal schedule block representation shared via App Group.
+/// The main app pre-resolves scene + activity so the widget
+/// doesn't need to replicate the BlockCategory mapping logic.
+struct WidgetTimeBlock: Codable, Identifiable {
+    let id: UUID
+    let category: String       // BlockCategory rawValue
+    let label: String
+    let startHour: Int
+    let startMinute: Int
+    let durationMinutes: Int
+    let sortOrder: Int
+    let scene: String          // RoomType rawValue (pre-resolved)
+    let activity: String       // PetActivity rawValue (pre-resolved)
+
+    /// Minutes since midnight this block starts
+    var startMinuteOfDay: Int { startHour * 60 + startMinute }
+    /// Minutes since midnight this block ends
+    var endMinuteOfDay: Int { startMinuteOfDay + durationMinutes }
+}
+
 struct PetDTO: Codable {
     let name: String
     let color: String
@@ -114,6 +134,14 @@ final class WidgetDataService {
         let activity = PetActivity(rawValue: activityRaw) ?? .idling
         return (scene, activity)
     }
+
+    /// Returns today's schedule blocks sorted by start time.
+    /// Empty array if no blocks have been saved yet.
+    func readScheduleBlocks() -> [WidgetTimeBlock] {
+        guard let data = defaults?.data(forKey: "widget_schedule_blocks") else { return [] }
+        let blocks = (try? JSONDecoder().decode([WidgetTimeBlock].self, from: data)) ?? []
+        return blocks.sorted { $0.startMinuteOfDay < $1.startMinuteOfDay }
+    }
 }
 
 // MARK: - Color hex initializer
@@ -139,13 +167,38 @@ extension Color {
 
 // MARK: - Shared snapshot loader (used by both widget and Live Activity)
 
-func loadSceneSnapshot(scene: RoomType, activity: PetActivity) -> UIImage? {
+/// Number of frames per animated pose loop. Must match
+/// `WidgetSnapshotBakery.frameCount` in the main app.
+let widgetFrameCount: Int = 3
+
+/// Load the snapshot for a (scene, activity) pair, optionally for a specific
+/// animation frame. Cascade:
+///   1. `room_diorama_<scene>_<activity>_f<frame>.png` (animated frame)
+///   2. `room_diorama_<scene>_<activity>.png`          (base, no animation)
+///   3. `room_diorama.png`                             (generic fallback)
+///
+/// When `frame` is nil the first step is skipped — used by callers that don't
+/// care about animation (e.g. Live Activity static renders).
+///
+/// Critical property: even if zero frame variants have been baked yet, this
+/// loader returns the same base image for every frame index, so the timeline
+/// can request frames 1/2/3 without breaking — animation just doesn't visibly
+/// happen until the bakery actually produces variants.
+func loadSceneSnapshot(scene: RoomType, activity: PetActivity, frame: Int? = nil) -> UIImage? {
     let groupID = "group.com.woojjwoo.pixieme.shared"
     guard let container = FileManager.default.containerURL(
         forSecurityApplicationGroupIdentifier: groupID) else { return nil }
+
+    if let frame = frame {
+        let framed = container.appendingPathComponent(
+            "room_diorama_\(scene.rawValue)_\(activity.rawValue)_f\(frame).png")
+        if let img = UIImage(contentsOfFile: framed.path) { return img }
+    }
+
     let specific = container.appendingPathComponent(
         "room_diorama_\(scene.rawValue)_\(activity.rawValue).png")
     if let img = UIImage(contentsOfFile: specific.path) { return img }
+
     let fallback = container.appendingPathComponent("room_diorama.png")
     return UIImage(contentsOfFile: fallback.path)
 }

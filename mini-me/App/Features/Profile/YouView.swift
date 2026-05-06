@@ -17,6 +17,7 @@ struct YouView: View {
     @State private var showingCalendarSync = false
     @State private var showingResetAlert = false
     @State private var notificationsEnabled = false
+    @AppStorage(AmbientAudioService.userDefaultsKey) private var ambientMusicEnabled = false
 
     private var player: Player? { players.first }
     private var pet: Pet? { pets.first }
@@ -45,7 +46,10 @@ struct YouView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         characterHero
-                        statsSection
+                        // Stats only shown once the user has actual completions — empty charts look broken
+                        if dayLogs.contains(where: { !$0.completedBlockIDs.isEmpty }) {
+                            statsSection
+                        }
                         settingsSection
                     }
                     .padding(.horizontal, 16)
@@ -91,74 +95,103 @@ struct YouView: View {
     // MARK: - Character Hero
 
     private var characterHero: some View {
-        VStack(spacing: 16) {
-            // Sprite — 96×160pt
-            let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
-            if UIImage(named: spriteName) != nil {
-                Image(spriteName)
-                    .resizable()
-                    .interpolation(.none)
-                    .scaledToFit()
-                    .frame(width: 96, height: 160)
-            } else {
-                Text("🧑")
-                    .font(.system(size: 80))
-                    .frame(width: 96, height: 160, alignment: .bottom)
-            }
+        ZStack {
+            // Dark diorama background — matches Today tab hero aesthetic
+            RoundedRectangle(cornerRadius: 24)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(hex: "1A1030"), Color(hex: "2D1A50")],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 24)
+                        .stroke(Color.white.opacity(0.08), lineWidth: 1)
+                )
 
-            // Pet name — large
-            Text(pet?.name ?? "Pixel")
-                .font(PixelTheme.titleFont)
-                .foregroundColor(PixelTheme.text)
-
-            // Mood + streak — single pill
-            HStack(spacing: 8) {
-                Text(currentMood.displayEmoji)
-                Text(moodLabel)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
-                    .foregroundColor(PixelTheme.text.opacity(0.7))
-
-                if let streak = player?.currentStreak, streak > 0 {
-                    Text("·").foregroundColor(PixelTheme.text.opacity(0.3))
-                        .font(.system(size: 13))
-                    Text("\(streak)🔥")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundColor(PixelTheme.primary)
+            // Pixel scatter decoration
+            Canvas { context, size in
+                let pixel: CGFloat = 3
+                let palette: [Color] = [
+                    Color(hex: "5B3A8A"), Color(hex: "7B5CAA"),
+                    Color(hex: "E8985E"), Color(hex: "F5C484"), Color(hex: "3D2860")
+                ]
+                let positions: [(CGFloat, CGFloat, Int)] = [
+                    (0.05, 0.2, 0), (0.1, 0.5, 1), (0.15, 0.75, 2),
+                    (0.85, 0.15, 3), (0.9, 0.55, 0), (0.8, 0.8, 4),
+                    (0.5, 0.1, 1), (0.45, 0.88, 2), (0.7, 0.3, 3),
+                    (0.25, 0.35, 4), (0.6, 0.7, 0), (0.35, 0.6, 1)
+                ]
+                for (rx, ry, ci) in positions {
+                    let rect = CGRect(x: rx * size.width, y: ry * size.height, width: pixel * 2, height: pixel * 2)
+                    context.fill(Path(rect), with: .color(palette[ci % palette.count].opacity(0.45)))
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 8)
-            .background(PixelTheme.primary.opacity(0.10))
-            .cornerRadius(20)
+            .clipShape(RoundedRectangle(cornerRadius: 24))
 
-            // Action pills
-            HStack(spacing: 12) {
-                pillButton("Edit Mini Me", icon: "pencil") {
-                    HapticService.light()
-                    showingPetEditor = true
+            VStack(spacing: 16) {
+                // Sprite — 96×160pt
+                let spriteName = pet?.spriteName(for: currentMood) ?? "minime_idle"
+                if UIImage(named: spriteName) != nil {
+                    Image(spriteName)
+                        .resizable()
+                        .interpolation(.none)
+                        .scaledToFit()
+                        .frame(width: 96, height: 160)
+                } else {
+                    Text("🧑")
+                        .font(.system(size: 80))
+                        .frame(width: 96, height: 160, alignment: .bottom)
                 }
-                pillButton("Outfits", icon: "tshirt.fill") {
-                    HapticService.light()
-                    showingOutfitView = true
+
+                // Pet name — large
+                Text(pet?.name ?? "Pixel")
+                    .font(PixelTheme.titleFont)
+                    .foregroundColor(.white)
+
+                // Mood + streak — single pill
+                HStack(spacing: 8) {
+                    Text(currentMood.displayEmoji)
+                    Text(moodLabel)
+                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                        .foregroundColor(.white.opacity(0.7))
+
+                    if let streak = player?.currentStreak, streak > 0 {
+                        Text("·").foregroundColor(.white.opacity(0.3))
+                            .font(.system(size: 13))
+                        Text("\(streak)🔥")
+                            .font(.system(size: 13, weight: .semibold, design: .rounded))
+                            .foregroundColor(PixelTheme.coin)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(Color.white.opacity(0.10))
+                .cornerRadius(20)
+
+                // Action pills
+                HStack(spacing: 12) {
+                    pillButton("Edit Mini Me", icon: "pencil") {
+                        HapticService.light()
+                        showingPetEditor = true
+                    }
+                    pillButton("Outfits", icon: "tshirt.fill") {
+                        HapticService.light()
+                        showingOutfitView = true
+                    }
                 }
             }
+            .padding(.vertical, 28)
+            .padding(.horizontal, 20)
         }
-        .padding(.vertical, 24)
-        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .background(
-            LinearGradient(
-                colors: [PixelTheme.cardBackground, PixelTheme.primary.opacity(0.08)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        .cornerRadius(20)
+        .cornerRadius(24)
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(PixelTheme.cardBorder, lineWidth: 1)
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color.white.opacity(0.0), lineWidth: 0)
         )
-        .shadow(color: PixelTheme.shadowColor, radius: 8, y: 3)
+        .shadow(color: Color(hex: "1A1030").opacity(0.5), radius: 16, x: 0, y: 6)
         .padding(.top, 8)
     }
 
@@ -184,9 +217,8 @@ struct YouView: View {
             .foregroundColor(PixelTheme.primary)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
-            .background(PixelTheme.primary.opacity(0.12))
+            .background(PixelTheme.primary.opacity(0.18))
             .cornerRadius(20)
-            .shadow(color: PixelTheme.primary.opacity(0.2), radius: 6, y: 3)
         }
     }
 
@@ -331,6 +363,8 @@ struct YouView: View {
             settingsGroup {
                 notificationRow
                 Divider().padding(.leading, 58)
+                ambientMusicRow
+                Divider().padding(.leading, 58)
                 settingsRow(icon: "calendar", iconColor: PixelTheme.accent, label: "Calendar Sync",
                             detail: "Import events as blocks") {
                     HapticService.light(); showingCalendarSync = true
@@ -406,6 +440,35 @@ struct YouView: View {
                         }
                     } else {
                         NotificationService.shared.cancelAllNotifications()
+                    }
+                }
+        }
+        .padding(14)
+    }
+
+    private var ambientMusicRow: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "music.note")
+                .font(.title3)
+                .foregroundColor(PixelTheme.primary)
+                .frame(width: 44, height: 44)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Ambient Music")
+                    .font(PixelTheme.bodyFont)
+                    .foregroundColor(PixelTheme.text)
+                Text("Lo-fi loop while you work")
+                    .font(PixelTheme.captionFont)
+                    .foregroundColor(PixelTheme.text.opacity(0.5))
+            }
+            Spacer()
+            Toggle("", isOn: $ambientMusicEnabled)
+                .tint(PixelTheme.primary)
+                .onChange(of: ambientMusicEnabled) { _, enabled in
+                    HapticService.light()
+                    if enabled {
+                        AmbientAudioService.shared.startPlayback()
+                    } else {
+                        AmbientAudioService.shared.stopPlayback()
                     }
                 }
         }

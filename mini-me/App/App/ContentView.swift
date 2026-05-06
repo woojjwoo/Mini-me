@@ -8,6 +8,7 @@ struct ContentView: View {
     @Query private var schedules: [DailySchedule]
     @Query private var pets: [Pet]
     @Query private var rooms: [Room]
+    @Query(sort: \DayLog.date, order: .reverse) private var dayLogs: [DayLog]
 
     /// Shown once after onboarding to prompt the user to add the home-screen widget.
     @AppStorage("hasSeenWidgetPrompt") private var hasSeenWidgetPrompt = false
@@ -47,6 +48,11 @@ struct ContentView: View {
             guard newPhase == .active else { return }
             triggerBakeIfPossible()
             syncLiveActivityIfPossible()
+            pushScheduleToWidgetIfPossible()
+            // Resume lo-fi music if enabled — the service paused on background.
+            if UserDefaults.standard.bool(forKey: AmbientAudioService.userDefaultsKey) {
+                AmbientAudioService.shared.startPlayback()
+            }
         }
     }
 
@@ -79,15 +85,67 @@ struct ContentView: View {
             let schedule = schedules.first(where: { $0.isWeekday == isWeekday }) ?? schedules.first
         else { return }
 
-        // Find today's DayLog to get completed block count
+        // Look up today's actual completed block count from the DayLog store
         let today = Calendar.current.startOfDay(for: .now)
-        // Completed count isn't directly accessible here — pass 0 as a safe fallback.
-        // DailyScheduleView's syncLiveActivity() handles the accurate count on tap.
+        let completedCount = dayLogs
+            .first(where: { Calendar.current.isDate($0.date, inSameDayAs: today) })?
+            .completedBlockIDs.count ?? 0
+
         LiveActivityService.shared.sync(
             petName:         pet.name,
             schedule:        schedule,
-            completedBlocks: 0,
+            completedBlocks: completedCount,
             totalBlocks:     schedule.blocks.count
+        )
+    }
+
+    /// Push the current schedule blocks + active scene to the App Group on
+    /// every foreground so the widget always reflects the right day's blocks
+    /// even when the user hasn't touched the Today tab yet.
+    @MainActor
+    private func pushScheduleToWidgetIfPossible() {
+        let isWeekday = !Calendar.current.isDateInWeekend(.now)
+        guard
+            let pet = pets.first,
+            let schedule = schedules.first(where: { $0.isWeekday == isWeekday }) ?? schedules.first
+        else { return }
+
+        let today = Calendar.current.startOfDay(for: .now)
+        let completedCount = dayLogs
+            .first(where: { Calendar.current.isDate($0.date, inSameDayAs: today) })?
+            .completedBlockIDs.count ?? 0
+
+        let now = Date()
+        let currentMinutes = Calendar.current.component(.hour, from: now) * 60
+            + Calendar.current.component(.minute, from: now)
+        let currentBlock = schedule.sortedBlocks.first { block in
+            let start = block.startHour * 60 + block.startMinute
+            let end   = start + block.durationMinutes
+            return currentMinutes >= start && currentMinutes < end
+        }
+
+        let moodService = PetMoodService()
+        let mood = moodService.currentMood(
+            completedBlocks: completedCount,
+            totalBlocks: schedule.blocks.count,
+            wakeUpHour: schedule.sortedBlocks.first?.startHour ?? 7,
+            lastCompletionDate: .now,
+            manualStatus: nil,
+            currentActivity: currentBlock?.category
+        )
+
+        WidgetDataService.shared.updateWidgetData(
+            pet: pet,
+            mood: mood,
+            completedBlocks: completedCount,
+            totalBlocks: schedule.blocks.count,
+            coinsToday: dayLogs.first(where: {
+                Calendar.current.isDate($0.date, inSameDayAs: today)
+            })?.totalCoins ?? 0,
+            nextBlockLabel: nil,
+            currentTaskName: currentBlock?.label,
+            currentCategory: currentBlock?.category,
+            scheduleBlocks: schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
         )
     }
 }
@@ -118,12 +176,19 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
+            MemoriesView()
+                .tabItem {
+                    Image(systemName: "sparkles")
+                    Text("Memories")
+                }
+                .tag(3)
+
             YouView()
                 .tabItem {
                     Image(systemName: "person.crop.circle")
                     Text("You")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(PixelTheme.primary)
         // Handle deep links from widget taps (e.g. pixieme://today, pixieme://room)

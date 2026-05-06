@@ -29,6 +29,13 @@ class RoomScene: SKScene {
         return CGPoint(x: roomOrigin.x, y: roomOrigin.y - 20)
     }
 
+    /// Optional frame index for animated-widget pre-baking. When set, the
+    /// character sprite lookup tries `minime_<activity>_f<frameIndex>` first
+    /// before falling back to the unsuffixed sprite. Has no effect at runtime
+    /// inside the main app (always nil there); only used by WidgetSnapshotBakery
+    /// to produce per-frame snapshot variants.
+    private let spriteFrameIndex: Int?
+
     init(
         room: Room,
         pet: Pet?,
@@ -36,13 +43,15 @@ class RoomScene: SKScene {
         streakCount: Int,
         size: CGSize,
         sceneRoomType: RoomType? = nil,
-        initialActivity: PetActivity = .idling
+        initialActivity: PetActivity = .idling,
+        spriteFrameIndex: Int? = nil
     ) {
         self.room = room
         self.pet = pet
         self.currentMood = mood
         self.sceneRoomType = sceneRoomType ?? (RoomType(rawValue: room.roomTypeRaw) ?? .bedroom)
         self.currentActivity = initialActivity
+        self.spriteFrameIndex = spriteFrameIndex
         super.init(size: size)
     }
 
@@ -282,6 +291,14 @@ class RoomScene: SKScene {
         case .walking, .idling: preferred = "minime_idle"
         }
 
+        // If the bakery requested a specific frame variant for animation
+        // (e.g. `minime_working_f2`), try it first. Falls back gracefully
+        // to the base sprite when the variant hasn't been generated yet.
+        if let frame = spriteFrameIndex {
+            let framed = "\(preferred)_f\(frame)"
+            if UIImage(named: framed) != nil { return framed }
+        }
+
         // Try the preferred new-style name; fall back to legacy timestamped
         // name (still in xcassets) if the new sprite hasn't landed yet; final
         // fallback is the timestamped idle.
@@ -292,6 +309,23 @@ class RoomScene: SKScene {
         default: legacy = "minime_idle_1774711350053"
         }
         return legacy
+    }
+
+    /// Returns true when at least one frame variant exists for the given
+    /// activity (`minime_<activity>_f1` through `_f3`). Used by the bakery
+    /// to skip re-renders when a pose has no animation art yet.
+    static func hasFrameVariants(for activity: PetActivity) -> Bool {
+        let base: String
+        switch activity {
+        case .sleeping:                  base = "minime_sleeping"
+        case .working:                   base = "minime_working"
+        case .reading:                   base = "minime_reading"
+        case .eating:                    base = "minime_eating"
+        case .stretching:                base = "minime_exercising"
+        case .slacking:                  base = "minime_socializing"
+        case .walking, .idling:          base = "minime_idle"
+        }
+        return UIImage(named: "\(base)_f1") != nil
     }
 
     /// Public API: switch the character's activity (and pose) live.

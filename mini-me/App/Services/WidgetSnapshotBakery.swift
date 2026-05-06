@@ -22,6 +22,12 @@ final class WidgetSnapshotBakery {
     /// consistent after their own aspectFill.
     private let snapshotSize = CGSize(width: 280, height: 280)
 
+    /// Number of animation frames per active pose. The bakery produces this
+    /// many `_f<n>` variants when source sprite frames exist; the widget
+    /// timeline cycles through them in order. Keep at 3 for v1 — matches
+    /// the typing/eating/gesturing loops planned in WIDGET_SPEC.md.
+    let frameCount = 3
+
     private init() {}
 
     // MARK: - Public API
@@ -55,9 +61,33 @@ final class WidgetSnapshotBakery {
         }
 
         // Render each pair and persist.
+        // Bakes the base (unsuffixed) snapshot always — that's what the widget
+        // falls back to when no animation art exists yet.
+        // Additionally, for poses that have frame-variant sprites available
+        // (`minime_<activity>_f1` and friends), bakes per-frame variants so the
+        // widget timeline can cycle through them for an animated appearance.
         for (scene, activity) in pairs {
             if let image = render(scene: scene, activity: activity, pet: pet, room: room) {
                 WidgetDataService.shared.saveSceneSnapshot(image, scene: scene, activity: activity)
+            }
+
+            guard RoomScene.hasFrameVariants(for: activity) else { continue }
+
+            for frame in 1...frameCount {
+                if let frameImage = render(
+                    scene: scene,
+                    activity: activity,
+                    pet: pet,
+                    room: room,
+                    frameIndex: frame
+                ) {
+                    WidgetDataService.shared.saveSceneFrameSnapshot(
+                        frameImage,
+                        scene: scene,
+                        activity: activity,
+                        frame: frame
+                    )
+                }
             }
         }
 
@@ -81,11 +111,14 @@ final class WidgetSnapshotBakery {
     }
 
     /// Render a single (scene, activity) pair off-screen. Public for testing.
+    /// `frameIndex` (optional) selects the per-frame character sprite variant
+    /// for animated-widget snapshots — passed through to RoomScene.
     func render(
         scene: RoomType,
         activity: PetActivity,
         pet: Pet?,
-        room: Room
+        room: Room,
+        frameIndex: Int? = nil
     ) -> UIImage? {
         let ambient = ambientColor(for: scene)
         let frame = CGRect(origin: .zero, size: snapshotSize)
@@ -116,7 +149,8 @@ final class WidgetSnapshotBakery {
             streakCount: 0,
             size: snapshotSize,
             sceneRoomType: scene,
-            initialActivity: activity
+            initialActivity: activity,
+            spriteFrameIndex: frameIndex
         )
         roomScene.scaleMode = .aspectFill
         roomScene.backgroundColor = ambient  // SKColor is a typealias for UIColor

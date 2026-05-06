@@ -30,6 +30,7 @@
 		22B49E592F78454E001FDADA /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E3F2F78454E001FDADA /* Theme.swift */; };
 		22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E292F78454E001FDADA /* StatsView.swift */; };
 		22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E182F78454E001FDADA /* InsightsView.swift */; };
+		AA0000022FA7A2E20041ED43 /* MemoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000032FA7A2E20041ED43 /* MemoriesView.swift */; };
 		22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49DFF2F78454E001FDADA /* ContentView.swift */; };
 		22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E322F78454E001FDADA /* RoomSlot.swift */; };
 		22B49E602F78454E001FDADA /* OutfitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B49E1D2F78454E001FDADA /* OutfitView.swift */; };
@@ -62,11 +63,12 @@
 		3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */; };
 		3BD990D12F9EFE970041ED43 /* MilestoneService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D02F9EFE970041ED43 /* MilestoneService.swift */; };
 		3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */; };
-		EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490012F9EFE970041ED43 /* LiveActivityService.swift */; };
-		EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */; };
 		3BD991012FA7A2E20041ED43 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991002FA7A2E20041ED43 /* WidgetKit.framework */; };
 		3BD991032FA7A2E20041ED43 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD991022FA7A2E20041ED43 /* SwiftUI.framework */; };
 		3BD991122FA7A2E40041ED43 /* MiniMeWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490012F9EFE970041ED43 /* LiveActivityService.swift */; };
+		AA0000012FA7A2E20041ED43 /* AmbientAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000002FA7A2E20041ED43 /* AmbientAudioService.swift */; };
+		EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,6 +134,7 @@
 		22B49E152F78454E001FDADA /* room_base_1774707985306.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_1774707985306.png; sourceTree = "<group>"; };
 		22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_lofi_v2_1774708398444.png; sourceTree = "<group>"; };
 		22B49E182F78454E001FDADA /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
+		AA0000032FA7A2E20041ED43 /* MemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoriesView.swift; sourceTree = "<group>"; };
 		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
@@ -169,11 +172,12 @@
 		3BD990CE2F9EFE8E0041ED43 /* TimeOfDayService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeOfDayService.swift; sourceTree = "<group>"; };
 		3BD990D02F9EFE970041ED43 /* MilestoneService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneService.swift; sourceTree = "<group>"; };
 		3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotBakery.swift; sourceTree = "<group>"; };
-		EEB490012F9EFE970041ED43 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
-		EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWidgetPromptView.swift; sourceTree = "<group>"; };
+		AA0000002FA7A2E20041ED43 /* AmbientAudioService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientAudioService.swift; sourceTree = "<group>"; };
 		3BD990FE2FA7A2E20041ED43 /* MiniMeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MiniMeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD991002FA7A2E20041ED43 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		3BD991022FA7A2E20041ED43 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		EEB490012F9EFE970041ED43 /* LiveActivityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityService.swift; sourceTree = "<group>"; };
+		EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddWidgetPromptView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -352,6 +356,7 @@
 			isa = PBXGroup;
 			children = (
 				22B49E182F78454E001FDADA /* InsightsView.swift */,
+				AA0000032FA7A2E20041ED43 /* MemoriesView.swift */,
 			);
 			path = Insights;
 			sourceTree = "<group>";
@@ -463,6 +468,7 @@
 				22B49E3D2F78454E001FDADA /* WidgetDataService.swift */,
 				3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */,
 				EEB490012F9EFE970041ED43 /* LiveActivityService.swift */,
+				AA0000002FA7A2E20041ED43 /* AmbientAudioService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -716,6 +722,7 @@
 				22B49E592F78454E001FDADA /* Theme.swift in Sources */,
 				22B49E5C2F78454E001FDADA /* StatsView.swift in Sources */,
 				22B49E5D2F78454E001FDADA /* InsightsView.swift in Sources */,
+				AA0000022FA7A2E20041ED43 /* MemoriesView.swift in Sources */,
 				22B49E5E2F78454E001FDADA /* ContentView.swift in Sources */,
 				3BD990CF2F9EFE8E0041ED43 /* TimeOfDayService.swift in Sources */,
 				22B49E5F2F78454E001FDADA /* RoomSlot.swift in Sources */,
@@ -735,6 +742,7 @@
 				22B49E6D2F78454E001FDADA /* WidgetDataService.swift in Sources */,
 				3BD990D32F9EFE970041ED44 /* WidgetSnapshotBakery.swift in Sources */,
 				EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */,
+				AA0000012FA7A2E20041ED43 /* AmbientAudioService.swift in Sources */,
 				EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */,
 				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
 				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
@@ -919,21 +927,15 @@
 		22B49DEF2F7844BC001FDADA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DJ8S97LM9B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Pixie Me";
-				INFOPLIST_KEY_CFBundleIconName = AppIcon;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -954,21 +956,15 @@
 		22B49DF02F7844BC001FDADA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "mini-me/mini-me.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DJ8S97LM9B;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Pixie Me";
-				INFOPLIST_KEY_CFBundleIconName = AppIcon;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1073,9 +1069,9 @@
 		3BD991142FA7A2E40041ED43 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "MiniMeWidget/MiniMeWidgetExtension.entitlements";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MiniMeWidget/MiniMeWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DJ8S97LM9B;
@@ -1104,9 +1100,9 @@
 		3BD991152FA7A2E40041ED43 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "MiniMeWidget/MiniMeWidgetExtension.entitlements";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = MiniMeWidget/MiniMeWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DJ8S97LM9B;

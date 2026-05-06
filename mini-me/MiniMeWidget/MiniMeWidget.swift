@@ -9,7 +9,7 @@ struct SmallWidgetView: View {
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            SceneImageView(scene: entry.scene, activity: entry.activity)
+            SceneImageView(scene: entry.scene, activity: entry.activity, frame: entry.animationFrame)
 
             // Vignette so text is readable
             LinearGradient(
@@ -45,7 +45,7 @@ struct MediumWidgetView: View {
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             // Full-bleed scene
-            SceneImageView(scene: entry.scene, activity: entry.activity)
+            SceneImageView(scene: entry.scene, activity: entry.activity, frame: entry.animationFrame)
 
             // Bottom gradient
             LinearGradient(
@@ -161,6 +161,15 @@ struct InlineWidgetView: View {
 struct SceneImageView: View {
     let scene: RoomType
     let activity: PetActivity
+    /// Optional animation frame (1...widgetFrameCount). When nil the loader
+    /// uses the unsuffixed base snapshot — same as pre-animation behavior.
+    let frame: Int?
+
+    init(scene: RoomType, activity: PetActivity, frame: Int? = nil) {
+        self.scene = scene
+        self.activity = activity
+        self.frame = frame
+    }
 
     var body: some View {
         ZStack {
@@ -169,7 +178,7 @@ struct SceneImageView: View {
             sceneAmbientColor
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            if let image = loadSceneSnapshot(scene: scene, activity: activity) {
+            if let image = loadSceneSnapshot(scene: scene, activity: activity, frame: frame) {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
@@ -233,6 +242,10 @@ struct MiniMeEntry: TimelineEntry {
     let categoryName: String?
     let scene: RoomType
     let activity: PetActivity
+    /// Animation frame index (1...widgetFrameCount). Cycles 1→2→3→1... within
+    /// each block window so the widget appears to animate. nil = no animation
+    /// (e.g. idle/sleep states), in which case the base snapshot is used.
+    let animationFrame: Int?
 
     var completionRate: Double {
         guard totalBlocks > 0 else { return 0 }
@@ -270,7 +283,8 @@ struct MiniMeEntry: TimelineEntry {
         date: .now, petName: "Pixie", petMood: "focused",
         completedBlocks: 3, totalBlocks: 8, coinsToday: 40,
         taskName: "Deep Work", categoryName: "Work",
-        scene: .study, activity: .working)
+        scene: .study, activity: .working,
+        animationFrame: nil)
 }
 
 struct MiniMeProvider: TimelineProvider {
@@ -280,10 +294,123 @@ struct MiniMeProvider: TimelineProvider {
         completion(context.isPreview ? .placeholder : currentEntry())
     }
 
+    /// Time between animation frames within an active block. 3 frames × 1.5s
+    /// = 4.5s per loop cycle, which reads as continuous motion to the eye.
+    private let frameInterval: TimeInterval = 1.5
+
+    /// How far into the future we plan animated entries. iOS will request a
+    /// fresh timeline at the end of this window. Trade-off: longer window =
+    /// fewer reloads but more entries; shorter = more reloads but tighter
+    /// memory. 3 minutes ≈ 120 entries, well within WidgetKit's comfort zone.
+    private let animationWindow: TimeInterval = 180
+
     func getTimeline(in context: Context, completion: @escaping (Timeline<MiniMeEntry>) -> Void) {
-        let entry = currentEntry()
-        let next  = Calendar.current.date(byAdding: .minute, value: 15, to: .now)!
-        completion(Timeline(entries: [entry], policy: .after(next)))
+        let svc      = WidgetDataService.shared
+        let pet      = svc.readPetData()
+        let progress = svc.readDayProgress()
+        let blocks   = svc.readScheduleBlocks()
+
+        let calendar = Calendar.current
+        let now      = Date.now
+        let today    = calendar.startOfDay(for: now)
+
+        // Helper: build one MiniMeEntry for a (date, block?, frame?) tuple.
+        func makeEntry(date: Date, block: WidgetTimeBlock?, frame: Int?) -> MiniMeEntry {
+            let scene    = block.flatMap { RoomType(rawValue: $0.scene) }    ?? .bedroom
+            let activity = block.flatMap { PetActivity(rawValue: $0.activity) } ?? .idling
+            return MiniMeEntry(
+                date: date,
+                petName:         pet?.name ?? "Pixie",
+                petMood:         pet?.mood ?? "neutral",
+                completedBlocks: progress?.completedBlocks ?? 0,
+                totalBlocks:     progress?.totalBlocks ?? 0,
+                coinsToday:      progress?.coinsToday ?? 0,
+                taskName:        block?.label,
+                categoryName:    block?.category,
+                scene:           scene,
+                activity:        activity,
+                animationFrame:  frame)
+        }
+
+        // Find which block (if any) covers a given moment in time.
+        // Returns nil for "between blocks" / idle gaps.
+        func block(at date: Date) -> WidgetTimeBlock? {
+            let minutes = calendar.component(.hour, from: date) * 60
+                + calendar.component(.minute, from: date)
+            return blocks.first { b in
+                minutes >= b.startMinuteOfDay && minutes < b.endMinuteOfDay
+            }
+        }
+
+        // Should this activity get frame cycling? Idle/sleeping don't animate
+        // — they're meant to be quiet states, and saving widget cycles for
+        // active poses keeps the motion meaningful.
+        func shouldAnimate(_ block: WidgetTimeBlock?) -> Bool {
+            guard let b = block else { return false }
+            guard let activity = PetActivity(rawValue: b.activity) else { return false }
+            switch activity {
+            case .idling, .sleeping: return false
+            default:                  return true
+            }
+        }
+
+        guard !blocks.isEmpty else {
+            // No schedule — idle entry, refresh in 15 min
+            let entry = makeEntry(date: now, block: nil, frame: nil)
+            let next  = calendar.date(byAdding: .minute, value: 15, to: now)!
+            completion(Timeline(entries: [entry], policy: .after(next)))
+            return
+        }
+
+        // Strategy: walk forward in `frameInterval` ticks across the
+        // animationWindow. At each tick figure out which block (if any)
+        // is active, and assign a cycling frame index when animation applies.
+        // This naturally handles block boundaries — when we tick past one,
+        // the active block changes and so does the (scene, activity) pair.
+        var entries: [MiniMeEntry] = []
+        let windowEnd = now.addingTimeInterval(animationWindow)
+
+        // Always add a "right now" entry so the widget has something to show
+        // even if the first natural tick is a moment in the future.
+        let nowBlock = block(at: now)
+        entries.append(makeEntry(
+            date: now,
+            block: nowBlock,
+            frame: shouldAnimate(nowBlock) ? 1 : nil))
+
+        var tick = now.addingTimeInterval(frameInterval)
+        var frameCounter = 1
+        while tick < windowEnd {
+            let activeBlock = block(at: tick)
+            let frame: Int?
+            if shouldAnimate(activeBlock) {
+                frameCounter = (frameCounter % widgetFrameCount) + 1
+                frame = frameCounter
+            } else {
+                frame = nil
+                frameCounter = 1   // reset cycle for next active block
+            }
+            // Skip emitting a duplicate-state entry that doesn't change scene,
+            // activity, OR frame from the previous one — keeps the entry list
+            // tight when we're idle for a long stretch.
+            if let last = entries.last,
+               last.scene == (activeBlock.flatMap { RoomType(rawValue: $0.scene) } ?? .bedroom),
+               last.activity == (activeBlock.flatMap { PetActivity(rawValue: $0.activity) } ?? .idling),
+               last.animationFrame == frame {
+                tick = tick.addingTimeInterval(frameInterval)
+                continue
+            }
+            entries.append(makeEntry(date: tick, block: activeBlock, frame: frame))
+            tick = tick.addingTimeInterval(frameInterval)
+        }
+
+        // Reload policy: ask iOS to refresh at the end of the animation
+        // window so we can compute the next window's entries. Capped at
+        // midnight so we always pick up tomorrow's schedule.
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: today)!
+        let reloadAt = min(windowEnd, tomorrow)
+
+        completion(Timeline(entries: entries, policy: .after(reloadAt)))
     }
 
     private func currentEntry() -> MiniMeEntry {
@@ -301,7 +428,8 @@ struct MiniMeProvider: TimelineProvider {
             taskName:        progress?.currentTaskName,
             categoryName:    progress?.currentCategory,
             scene:           active.scene,
-            activity:        active.activity)
+            activity:        active.activity,
+            animationFrame:  nil)
     }
 }
 

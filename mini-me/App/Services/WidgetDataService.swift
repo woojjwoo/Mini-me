@@ -41,6 +41,20 @@ final class WidgetDataService {
         try? data.write(to: fileURL)
     }
 
+    /// Frame-variant snapshot for animated widgets. Saved as
+    /// `room_diorama_<scene>_<activity>_f<frame>.png`. The widget reads
+    /// these in sequence (cycling f1 → f2 → f3) to produce the appearance
+    /// of continuous motion within a block.
+    func saveSceneFrameSnapshot(_ image: UIImage, scene: RoomType, activity: PetActivity, frame: Int) {
+        guard let data = image.pngData(),
+              let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Self.appGroupID) else {
+            return
+        }
+        let filename = "room_diorama_\(scene.rawValue)_\(activity.rawValue)_f\(frame).png"
+        let fileURL = container.appendingPathComponent(filename)
+        try? data.write(to: fileURL)
+    }
+
     /// Resolve the URL the widget should load for a given (scene, activity) pair.
     /// Returns the scene-specific URL if it exists on disk, else falls back to the
     /// generic `room_diorama.png`. Returns nil if neither exists.
@@ -66,6 +80,7 @@ final class WidgetDataService {
         /// schedule. Lets `triggerBakeIfScheduleChanged()` skip re-baking when
         /// the structural set of pairs hasn't shifted.
         static let lastBakedPairsHash = "widget_last_baked_pairs_hash"
+        static let scheduleBlocks = "widget_schedule_blocks"
     }
 
     // MARK: - Write (from main app)
@@ -115,6 +130,26 @@ final class WidgetDataService {
         )
         defaults?.set(resolved.scene.rawValue, forKey: Keys.activeScene)
         defaults?.set(resolved.activity.rawValue, forKey: Keys.activeActivity)
+
+        // Persist schedule blocks with pre-resolved scene + activity so the widget
+        // can build a per-block timeline without needing the full BlockCategory logic.
+        let widgetBlocks = scheduleBlocks.map { dto -> WidgetTimeBlockStorage in
+            let cat = BlockCategory(rawValue: dto.category) ?? .custom
+            return WidgetTimeBlockStorage(
+                id: dto.id,
+                category: dto.category,
+                label: dto.label,
+                startHour: dto.startHour,
+                startMinute: dto.startMinute,
+                durationMinutes: dto.durationMinutes,
+                sortOrder: dto.sortOrder,
+                scene: cat.sceneRoomType.rawValue,
+                activity: cat.sceneActivity.rawValue
+            )
+        }
+        if let blocksJSON = try? JSONEncoder().encode(widgetBlocks) {
+            defaults?.set(blocksJSON, forKey: Keys.scheduleBlocks)
+        }
 
         // Reload widget timeline so scene change reflects immediately on home screen.
         WidgetCenter.shared.reloadAllTimelines()
@@ -218,6 +253,21 @@ final class WidgetDataService {
         }
         return seen.sorted().joined(separator: "|")
     }
+}
+
+/// Codable representation of a schedule block written to the App Group
+/// by the main app and read by the widget to build its per-block timeline.
+/// Must stay in sync with `WidgetTimeBlock` in MiniMeWidget/WidgetModels.swift.
+private struct WidgetTimeBlockStorage: Codable {
+    let id: UUID
+    let category: String
+    let label: String
+    let startHour: Int
+    let startMinute: Int
+    let durationMinutes: Int
+    let sortOrder: Int
+    let scene: String    // RoomType rawValue
+    let activity: String // PetActivity rawValue
 }
 
 struct WidgetDayProgress: Codable {
