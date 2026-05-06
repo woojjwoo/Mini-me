@@ -26,7 +26,6 @@ jobs:
 
       - name: Build mini-me + widget
         run: |
-          set -o pipefail
           xcodebuild \
             -project mini-me/mini-me.xcodeproj \
             -scheme mini-me \
@@ -35,6 +34,5 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGN_IDENTITY="" \
             CODE_SIGNING_REQUIRED=NO \
-            build 2>&1 | tee build.log | \
-            grep -E "error:|warning:|BUILD SUCCEEDED|BUILD FAILED" || \
-            (tail -50 build.log && exit 1)
+            ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
+            build 2>&1
