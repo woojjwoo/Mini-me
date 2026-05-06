@@ -19,12 +19,22 @@ jobs:
         with:
           xcode-version: '16.0'
 
+      - name: Show project info
+        run: |
+          ls mini-me/
+          xcodebuild -project mini-me/mini-me.xcodeproj -list
+
       - name: Build mini-me + widget
         run: |
+          set -o pipefail
           xcodebuild \
             -project mini-me/mini-me.xcodeproj \
             -scheme mini-me \
             -destination "generic/platform=iOS Simulator" \
             -configuration Debug \
-            build \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            build 2>&1 | tee build.log | \
+            grep -E "error:|warning:|BUILD SUCCEEDED|BUILD FAILED" || \
+            (tail -50 build.log && exit 1)
