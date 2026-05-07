@@ -16,6 +16,7 @@ struct IsometricRoomView: View {
     
     @State private var wallpaperColor: Color = .clear
     @State private var currentScene: RoomScene?
+    @State private var friendService = FriendPresenceService.shared
 
     private var activeRoom: Room? {
         if let selected = selectedRoomID {
@@ -143,6 +144,25 @@ struct IsometricRoomView: View {
                             }
                             .onChange(of: currentActivity) { old, new in
                                 currentScene?.updateForActivity(new)
+                                currentScene?.updateFriends(
+                                    friendService.friends,
+                                    isSocialBlock: new == .slacking
+                                )
+                            }
+                            .onChange(of: friendService.friends.count) { _, _ in
+                                currentScene?.updateFriends(
+                                    friendService.friends,
+                                    isSocialBlock: currentActivity == .slacking
+                                )
+                                // Re-bake widget snapshot so friends appear on home screen
+                                if currentActivity == .slacking {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        currentScene?.takeWidgetSnapshot()
+                                    }
+                                }
+                            }
+                            .onAppear {
+                                friendService.refreshFriends()
                             }
                     }
 

@@ -20,7 +20,13 @@ final class PetMoodService {
         if category.contains("eat") || category.contains("meal") || category.contains("cooking") {
             return .eating
         }
-        
+        if category.contains("social") || category.contains("friend") || category.contains("hang") {
+            return .slacking
+        }
+        if category.contains("exercise") || category.contains("gym") || category.contains("workout") || category.contains("run") {
+            return .stretching
+        }
+
         return .idling
     }
 
