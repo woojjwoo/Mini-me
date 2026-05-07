@@ -593,6 +593,7 @@ struct ScheduleEditorSheet: View {
                 } else {
                     List {
                         ForEach(blocks) { block in
+                            let isActive = isActiveNow(block)
                             HStack(spacing: 12) {
                                 Image(systemName: block.blockCategory.icon)
                                     .font(.title3)
@@ -600,9 +601,16 @@ struct ScheduleEditorSheet: View {
                                     .frame(width: 32)
 
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(block.label)
-                                        .font(PixelTheme.bodyFont)
-                                        .foregroundColor(PixelTheme.text)
+                                    HStack(spacing: 6) {
+                                        Text(block.label)
+                                            .font(PixelTheme.bodyFont)
+                                            .foregroundColor(PixelTheme.text)
+                                        if isActive {
+                                            Text("• Active now")
+                                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                                .foregroundColor(PixelTheme.coin)
+                                        }
+                                    }
                                     Text("\(block.startTimeString) · \(block.durationMinutes)min")
                                         .font(PixelTheme.captionFont)
                                         .foregroundColor(PixelTheme.text.opacity(0.5))
@@ -618,7 +626,12 @@ struct ScheduleEditorSheet: View {
                                     .background(block.blockCategory.color.opacity(0.12))
                                     .cornerRadius(8)
                             }
-                            .listRowBackground(PixelTheme.cardBackground)
+                            .listRowBackground(
+                                isActive
+                                    ? PixelTheme.coin.opacity(0.10)
+                                    : PixelTheme.cardBackground
+                            )
+                            .deleteDisabled(isActive)
                         }
                         .onDelete { offsets in deleteBlocks(at: offsets) }
                     }
@@ -649,9 +662,30 @@ struct ScheduleEditorSheet: View {
 
     private func refreshBlocks() { blocks = schedule.sortedBlocks }
 
+    /// True when "now" falls inside this block's start..start+duration window.
+    /// Mirrors the same time-math used by IsometricRoomView/PetMoodService so
+    /// the editor agrees with the rest of the app on what "active" means.
+    private func isActiveNow(_ block: TimeBlock) -> Bool {
+        // Only mark active on the schedule that actually drives today
+        // (weekday vs. weekend) to avoid double-highlighting in the other editor.
+        let weekday = Calendar.current.component(.weekday, from: .now)
+        let isTodayWeekday = weekday >= 2 && weekday <= 6
+        guard schedule.isWeekday == isTodayWeekday else { return false }
+
+        let now = Date.now
+        let comps = Calendar.current.dateComponents([.hour, .minute], from: now)
+        let nowMinutes = (comps.hour ?? 0) * 60 + (comps.minute ?? 0)
+        let start = block.startHour * 60 + block.startMinute
+        let end = start + block.durationMinutes
+        return nowMinutes >= start && nowMinutes < end
+    }
+
     private func deleteBlocks(at offsets: IndexSet) {
         for index in offsets {
             let block = blocks[index]
+            // Defense-in-depth: even though the row sets .deleteDisabled when
+            // active, never delete a running block — the widget is still using it.
+            if isActiveNow(block) { continue }
             schedule.blocks.removeAll { $0.id == block.id }
             modelContext.delete(block)
         }

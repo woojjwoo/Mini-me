@@ -71,7 +71,9 @@ final class LiveActivityService {
             )
         } catch {
             // Activity rejected (e.g. already 5 running, device not supported)
-            print("LiveActivity start failed: \(error.localizedDescription)")
+            #if DEBUG
+            print("[LiveActivity] start failed: \(error.localizedDescription)")
+            #endif
         }
     }
 

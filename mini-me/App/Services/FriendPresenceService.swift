@@ -1,5 +1,6 @@
 import CloudKit
 import Foundation
+import UIKit
 
 /// Manages friend pairing and presence sync via CloudKit public database.
 ///
@@ -183,12 +184,12 @@ final class FriendPresenceService {
         let pred = NSPredicate(format: "inviteCode == %@", code)
         let query = CKQuery(recordType: recordType, predicate: pred)
 
-        db.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: 1) { [weak self] result in
+        fetchWithRetry(query: query, limit: 1) { [weak self] result in
             guard let self else { return }
             switch result {
             case .failure:
                 DispatchQueue.main.async { completion(.failure(.networkError)) }
-            case .success(let (matchResults, _)):
+            case .success(let matchResults):
                 guard let (_, recordResult) = matchResults.first,
                       case .success(let record) = recordResult,
                       let presence = FriendPresence(record: record)
@@ -229,14 +230,14 @@ final class FriendPresenceService {
         let pred = NSPredicate(format: "userID IN %@", ids)
         let query = CKQuery(recordType: recordType, predicate: pred)
 
-        db.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: 50) { [weak self] result in
+        fetchWithRetry(query: query, limit: 50) { [weak self] result in
             guard let self else { return }
             DispatchQueue.main.async {
                 self.isLoading = false
                 switch result {
                 case .failure(let err):
                     self.errorMessage = err.localizedDescription
-                case .success(let (matchResults, _)):
+                case .success(let matchResults):
                     self.friends = matchResults.compactMap { _, recordResult in
                         guard case .success(let record) = recordResult else { return nil }
                         return FriendPresence(record: record)
@@ -244,6 +245,60 @@ final class FriendPresenceService {
                     .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
                 }
             }
+        }
+    }
+
+    // MARK: - Retry helper
+
+    /// Per-call result type for the retry helper. Hides CKQueryCursor since
+    /// neither caller paginates beyond the first 50 records.
+    private typealias QueryMatches = [(CKRecord.ID, Result<CKRecord, Error>)]
+
+    /// Wrap a CKQuery fetch in a small exponential-backoff retry. Transient
+    /// errors (network blip, rate-limited, zone busy) get up to 3 tries;
+    /// permanent errors (auth, permission) fail fast so the user can act.
+    /// Backoff: 0.5s → 1s → 2s. Total worst-case latency: ~3.5s.
+    private func fetchWithRetry(
+        query: CKQuery,
+        limit: Int,
+        attempt: Int = 1,
+        completion: @escaping (Result<QueryMatches, Error>) -> Void
+    ) {
+        db.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: limit) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let (matchResults, _)):
+                completion(.success(matchResults))
+            case .failure(let error):
+                let nextAttempt = attempt + 1
+                if Self.shouldRetry(error), nextAttempt <= 3 {
+                    let delay = pow(2.0, Double(attempt - 1)) * 0.5 // 0.5, 1, 2
+                    DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+                        self.fetchWithRetry(
+                            query: query,
+                            limit: limit,
+                            attempt: nextAttempt,
+                            completion: completion
+                        )
+                    }
+                } else {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// True for transient CKErrors that have a real chance of recovering on
+    /// retry. Permanent errors (auth, permission, bad container) fail-fast.
+    private static func shouldRetry(_ error: Error) -> Bool {
+        guard let ck = error as? CKError else { return false }
+        switch ck.code {
+        case .networkFailure, .networkUnavailable,
+             .requestRateLimited, .zoneBusy, .serviceUnavailable,
+             .internalError:
+            return true
+        default:
+            return false
         }
     }
 }
@@ -285,6 +340,27 @@ struct FriendPresence: Identifiable {
         case .coffeeShop: return "☕"
         case .rooftop:    return "🌆"
         }
+    }
+
+    /// Resolve a UIImage for the friend's current activity sprite.
+    /// Cascades: new name → legacy timestamp → idle fallback. Mirrors the
+    /// resolution logic in RoomScene.textureNameForActivity so what shows
+    /// in the friends list matches what shows in the room.
+    var sprite: UIImage? {
+        let preferred: String
+        switch activity {
+        case .sleeping:  preferred = "minime_sleeping"
+        case .working:   preferred = "minime_working"
+        case .reading:   preferred = "minime_reading"
+        case .eating:    preferred = "minime_eating"
+        case .stretching: preferred = "minime_exercising"
+        case .slacking:  preferred = "minime_socializing"
+        case .walking, .idling: preferred = "minime_idle"
+        }
+        if let img = UIImage(named: preferred) { return img }
+        // Legacy fallbacks for assets that haven't been re-exported yet.
+        if activity == .sleeping, let img = UIImage(named: "minime_sleeping_1774711364657") { return img }
+        return UIImage(named: "minime_idle_1774711350053")
     }
 
     var lastSeenLabel: String {

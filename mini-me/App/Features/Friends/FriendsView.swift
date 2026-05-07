@@ -284,12 +284,25 @@ private struct FriendRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Scene emoji badge
-            Text(friend.sceneEmoji)
-                .font(.system(size: 28))
-                .frame(width: 48, height: 48)
-                .background(Color(hex: "#2A1E0F"))
-                .cornerRadius(10)
+            // Mini-me sprite (full replacement of scene emoji).
+            // Their character, doing their current activity, scaled small —
+            // the social moat is "their mini-me is visibly theirs."
+            ZStack {
+                if let sprite = friend.sprite {
+                    Image(uiImage: sprite)
+                        .interpolation(.none)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 44, height: 44)
+                } else {
+                    // Final-final fallback if even idle is missing
+                    Text(friend.sceneEmoji)
+                        .font(.system(size: 24))
+                }
+            }
+            .frame(width: 56, height: 56)
+            .background(Color(hex: "#2A1E0F"))
+            .cornerRadius(12)
 
             VStack(alignment: .leading, spacing: 3) {
                 Text(friend.displayName)

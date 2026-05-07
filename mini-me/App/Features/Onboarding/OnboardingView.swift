@@ -74,7 +74,9 @@ struct OnboardingView: View {
                 room: room
             )
         } catch {
-            print("❌ Onboarding save failed: \(error)")
+            #if DEBUG
+            print("[Onboarding] save failed: \(error)")
+            #endif
         }
     }
 }

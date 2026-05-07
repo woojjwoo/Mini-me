@@ -66,9 +66,21 @@ struct MemoriesView: View {
             }
 
             if todayScenes.isEmpty {
-                HStack(spacing: 10) {
-                    Text("🛏️")
-                        .font(.system(size: 28))
+                HStack(spacing: 14) {
+                    // Sleeping mini-me sprite — uses already-landed asset.
+                    // The base `minime_sleeping` sits in xcassets as a
+                    // timestamped name; Image(_:) resolves either form.
+                    Image(uiImage:
+                        UIImage(named: "minime_sleeping")
+                        ?? UIImage(named: "minime_sleeping_1774711364657")
+                        ?? UIImage(named: "minime_idle_1774711350053")
+                        ?? UIImage()
+                    )
+                        .interpolation(.none) // keep crisp pixel edges
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 56, height: 56)
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Still home")
                             .font(PixelTheme.bodyFont)

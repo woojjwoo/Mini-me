@@ -19,15 +19,8 @@ class RoomScene: SKScene {
     private var shadowNode = SKShapeNode()
     private var speechBubble: SKNode?
 
-    // Friend Nodes — keyed by userID, shown during social blocks
-    private var friendNodes: [String: SKNode] = [:]
-
-    /// Up to 3 friend slot offsets relative to roomOrigin (isometric floor positions)
-    private let friendSlotOffsets: [CGPoint] = [
-        CGPoint(x: 62, y: 6),
-        CGPoint(x: 108, y: -8),
-        CGPoint(x: -58, y: 6)
-    ]
+    // Visiting-friend nodes — owned by FriendNodeManager (extracted)
+    private var friendManager: FriendNodeManager?
 
     // Lighting
     private var lastAppliedHour: Int = -1
@@ -397,25 +390,20 @@ class RoomScene: SKScene {
         guard let touch = touches.first else { return }
         let loc = touch.location(in: self)
         let tappedNodes = nodes(at: loc)
-        for node in tappedNodes {
-            // Own pet tap
-            if node.name == "pet" {
-                visualNode.run(SKAction.sequence([
-                    SKAction.scale(to: petBaseScale * 1.2, duration: 0.1),
-                    SKAction.scale(to: petBaseScale, duration: 0.1)
-                ]))
-                return
-            }
-            // Friend tap — name is "friend_<userID>"
-            if let name = node.name, name.hasPrefix("friend_") {
-                let userID = String(name.dropFirst("friend_".count))
-                // Walk up to the container node
-                let containerNode = friendNodes[userID] ?? node
-                if let friend = friendPresence(for: userID) {
-                    showFriendReaction(for: friend, node: containerNode)
-                }
-                return
-            }
+
+        // Own pet tap
+        for node in tappedNodes where node.name == "pet" {
+            visualNode.run(SKAction.sequence([
+                SKAction.scale(to: petBaseScale * 1.2, duration: 0.1),
+                SKAction.scale(to: petBaseScale, duration: 0.1)
+            ]))
+            return
+        }
+
+        // Friend tap — delegate to manager
+        if let hit = friendManager?.tappedFriend(at: tappedNodes),
+           let friend = FriendPresenceService.shared.friends.first(where: { $0.userID == hit.userID }) {
+            friendManager?.showReaction(for: friend, on: hit.node)
         }
     }
     #endif
@@ -449,104 +437,24 @@ class RoomScene: SKScene {
         }
     }
 
-    // MARK: - Friend Presence
+    // MARK: - Friend Presence (delegates to FriendNodeManager)
 
-    /// Call this whenever friend presence or current activity changes.
-    /// Shows up to 3 friends' mini-mes in the scene during social blocks,
-    /// removes them all otherwise.
+    /// Forward presence updates to the manager. Lazily creates the manager
+    /// once the world layer + roomOrigin are known.
     func updateFriends(_ friends: [FriendPresence], isSocialBlock: Bool) {
-        // Remove nodes for friends no longer present
-        let incomingIDs = Set(isSocialBlock ? friends.prefix(3).map(\.userID) : [])
-        for (uid, node) in friendNodes where !incomingIDs.contains(uid) {
-            node.run(SKAction.sequence([
-                SKAction.fadeOut(withDuration: 0.3),
-                SKAction.removeFromParent()
-            ]))
-            friendNodes.removeValue(forKey: uid)
-        }
-
-        guard isSocialBlock else { return }
-
-        let slots = friendSlotOffsets
-        for (index, friend) in friends.prefix(3).enumerated() {
-            guard friendNodes[friend.userID] == nil else { continue }
-
-            let offset = slots[index]
-            let pos = CGPoint(
-                x: roomOrigin.x + offset.x * assetScale,
-                y: roomOrigin.y + offset.y * assetScale
+        if friendManager == nil {
+            friendManager = FriendNodeManager(
+                parentLayer: worldLayer,
+                roomOrigin: roomOrigin,
+                assetScale: assetScale,
+                petBaseScale: petBaseScale
             )
-
-            let container = SKNode()
-            container.position = pos
-            container.name = "friend_\(friend.userID)"
-            container.alpha = 0
-
-            // Sprite
-            let spriteName = UIImage(named: "minime_socializing") != nil ? "minime_socializing" : "minime_idle_1774711350053"
-            let sprite = SKSpriteNode(texture: loadTexture(named: spriteName))
-            sprite.setScale(petBaseScale * 0.9)
-            sprite.anchorPoint = CGPoint(x: 0.5, y: 0)
-            sprite.name = "friend_\(friend.userID)"
-            container.addChild(sprite)
-
-            // Name label
-            let label = SKLabelNode(text: friend.displayName)
-            label.fontName = "Menlo-Bold"
-            label.fontSize = 8
-            label.fontColor = SKColor(red: 0.97, green: 0.90, blue: 0.83, alpha: 1)
-            label.position = CGPoint(x: 0, y: sprite.size.height * petBaseScale * 0.9 + 6)
-            label.name = "friend_\(friend.userID)"
-            container.addChild(label)
-
-            // Gentle breathe
-            let breathe = SKAction.repeatForever(SKAction.sequence([
-                SKAction.scaleX(to: petBaseScale * 0.9 * 1.01, y: petBaseScale * 0.9 * 0.99, duration: 1.8),
-                SKAction.scaleX(to: petBaseScale * 0.9 * 0.99, y: petBaseScale * 0.9 * 1.01, duration: 1.8)
-            ]))
-            sprite.run(breathe, withKey: "breathe")
-
-            worldLayer.addChild(container)
-            container.run(SKAction.fadeIn(withDuration: 0.4))
-            friendNodes[friend.userID] = container
+        } else {
+            // Origin can shift if the scene is rebuilt for a different room
+            friendManager?.roomOrigin = roomOrigin
+            friendManager?.assetScale = assetScale
         }
-    }
-
-    /// Show a floating "Hi!" reaction above a friend's sprite.
-    private func showFriendReaction(for friend: FriendPresence, node: SKNode) {
-        let bubble = SKNode()
-        let label = SKLabelNode(text: "Hi from \(friend.displayName)! 👋")
-        label.fontName = "Menlo-Bold"
-        label.fontSize = 9
-        label.fontColor = .black
-        let bg = SKShapeNode(
-            rectOf: CGSize(width: label.frame.width + 14, height: 18),
-            cornerRadius: 5
-        )
-        bg.fillColor = SKColor(red: 1.0, green: 0.95, blue: 0.78, alpha: 1)
-        bg.strokeColor = SKColor(red: 0.18, green: 0.12, blue: 0.04, alpha: 0.8)
-        bg.lineWidth = 1
-        bubble.addChild(bg)
-        bubble.addChild(label)
-        bubble.position = CGPoint(x: 0, y: 44)
-        node.addChild(bubble)
-        bubble.run(SKAction.sequence([
-            SKAction.wait(forDuration: 2.5),
-            SKAction.fadeOut(withDuration: 0.3),
-            SKAction.removeFromParent()
-        ]))
-        // Bounce the friend sprite
-        if let sprite = node.children.first(where: { $0.name?.hasPrefix("friend_") == true }) as? SKSpriteNode {
-            sprite.run(SKAction.sequence([
-                SKAction.scale(to: petBaseScale * 0.9 * 1.15, duration: 0.1),
-                SKAction.scale(to: petBaseScale * 0.9, duration: 0.1)
-            ]))
-        }
-    }
-
-    /// Convenience: find a FriendPresence by userID from the live service.
-    private func friendPresence(for userID: String) -> FriendPresence? {
-        FriendPresenceService.shared.friends.first { $0.userID == userID }
+        friendManager?.update(friends: friends, isSocialBlock: isSocialBlock)
     }
 
     /// Capture the scene's current state as a UIImage and write it to the App
