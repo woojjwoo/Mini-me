@@ -817,15 +817,15 @@ Tick each sprite as it lands in `mini-me/Assets.xcassets/` (or wherever sprite a
 - [ ] 13a. `minime_reading_f1.png` — both hands on book (≈ base)
 - [ ] 13b. `minime_reading_f2.png` — page-turn hand raised
 - [ ] 13c. `minime_reading_f3.png` — duplicate of f1 (no new art needed)
-- [ ] 14a. `minime_socializing_f1.png` — neutral gesture (≈ base)
-- [ ] 14b. `minime_socializing_f2.png` — emphatic point, hand raised
-- [ ] 14c. `minime_socializing_f3.png` — listening lean, hand lowered
+- [x] 14a. `minime_socializing_f1.png` — neutral gesture (≈ base)
+- [x] 14b. `minime_socializing_f2.png` — emphatic point, hand raised
+- [x] 14c. `minime_socializing_f3.png` — listening lean, hand lowered
 
 ### Scene Backgrounds (246×246, transparent, bottom-center anchor)
-- [ ] 6. `room_study_empty.png` — desk, chair, bookshelves, lamp, mug
+- [x] 6. `room_study_empty.png` — desk, chair, bookshelves, lamp, mug
 - [ ] 7. `room_gym_empty.png` — yoga mat, dumbbells, mirror, plant
 - [ ] 8. `room_kitchen_empty.png` — counter, stove, fridge, utensils
-- [ ] 9. `room_coffeeshop_empty.png` — café table, two chairs, pendant light, plant
+- [x] 9. `room_coffeeshop_empty.png` — café table, two chairs, pendant light, plant
 
 ### Definition of Done (per sprite)
 - [ ] File saved to the correct asset folder with the exact filename above
