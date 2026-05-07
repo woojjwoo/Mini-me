@@ -131,6 +131,15 @@ final class WidgetDataService {
         defaults?.set(resolved.scene.rawValue, forKey: Keys.activeScene)
         defaults?.set(resolved.activity.rawValue, forKey: Keys.activeActivity)
 
+        // Publish own presence to CloudKit so friends can see your current
+        // scene + activity. Privacy contract honored: only displayName, scene,
+        // activity, lastSeen ever leave the device — never schedule details.
+        FriendPresenceService.shared.publishPresence(
+            displayName: pet.name,
+            scene: resolved.scene,
+            activity: resolved.activity
+        )
+
         // Persist schedule blocks with pre-resolved scene + activity so the widget
         // can build a per-block timeline without needing the full BlockCategory logic.
         let widgetBlocks = scheduleBlocks.map { dto -> WidgetTimeBlockStorage in

@@ -33,6 +33,9 @@ final class FriendPresenceService {
     var isLoading = false
     /// Last error message — shown in FriendsView if non-nil.
     var errorMessage: String?
+    /// Last presence-publish error (network, quota, account). Shown as a
+    /// non-blocking toast in FriendsView. Cleared on next successful publish.
+    var lastPublishError: String?
     /// True when iCloud account is available.
     var iCloudAvailable = false
 
@@ -71,8 +74,8 @@ final class FriendPresenceService {
 
     @discardableResult
     func regenerateInviteCode() -> String {
-        let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" // no I/O/0/1 — easy to type
-        let code = String((0..<6).map { _ in chars.randomElement()! })
+        let chars = Array("ABCDEFGHJKLMNPQRSTUVWXYZ23456789") // no I/O/0/1 — easy to type
+        let code = String((0..<6).compactMap { _ in chars.randomElement() })
         UserDefaults.standard.set(code, forKey: Keys.inviteCode)
         return code
     }
@@ -119,8 +122,46 @@ final class FriendPresenceService {
 
         let op = CKModifyRecordsOperation(recordsToSave: [record])
         op.savePolicy = .allKeys
-        op.modifyRecordsResultBlock = { _ in } // fire-and-forget
+        op.modifyRecordsResultBlock = { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                switch result {
+                case .success:
+                    // Clear any previous error on success
+                    self.lastPublishError = nil
+                case .failure(let error):
+                    // Surface the error so FriendsView can show a toast.
+                    // Common cases: account temporarily unavailable, quota
+                    // exceeded, network blip, permission revoked.
+                    let ck = error as? CKError
+                    self.lastPublishError = Self.publishErrorMessage(for: ck) ?? error.localizedDescription
+                    #if DEBUG
+                    print("[FriendPresence] publish failed: \(error)")
+                    #endif
+                }
+            }
+        }
         db.add(op)
+    }
+
+    /// Map common CKError codes to user-friendly messages. Returns nil for
+    /// unknown codes — caller falls back to `error.localizedDescription`.
+    private static func publishErrorMessage(for error: CKError?) -> String? {
+        guard let error else { return nil }
+        switch error.code {
+        case .networkFailure, .networkUnavailable:
+            return "Couldn't reach iCloud. Check your connection."
+        case .notAuthenticated, .accountTemporarilyUnavailable:
+            return "Sign into iCloud in Settings to share your presence."
+        case .quotaExceeded:
+            return "iCloud storage is full. Free up space to keep syncing."
+        case .permissionFailure:
+            return "Couldn't sync — iCloud Drive permission is off."
+        case .requestRateLimited, .zoneBusy, .serviceUnavailable:
+            return nil // transient; don't bother the user
+        default:
+            return nil
+        }
     }
 
     // MARK: - Pairing via invite code

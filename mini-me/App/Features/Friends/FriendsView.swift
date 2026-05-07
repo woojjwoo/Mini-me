@@ -20,6 +20,9 @@ struct FriendsView: View {
                     if !service.iCloudAvailable {
                         iCloudBanner
                     }
+                    if service.lastPublishError != nil {
+                        publishErrorToast
+                    }
                     if service.isLoading {
                         ProgressView()
                             .tint(Color(hex: "#FFD54F"))
@@ -77,18 +80,69 @@ struct FriendsView: View {
     }
 
     private var iCloudBanner: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "icloud.slash")
-                .foregroundStyle(Color(hex: "#E8985E"))
-            Text("Sign in to iCloud in Settings to see friends.")
-                .font(.system(size: 12))
-                .foregroundStyle(Color(hex: "#C8A882"))
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 10) {
+                Image(systemName: "icloud.slash")
+                    .foregroundStyle(Color(hex: "#E8985E"))
+                Text("Sign in to iCloud in Settings to see friends.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(Color(hex: "#C8A882"))
+            }
+
+            Button {
+                openICloudSettings()
+            } label: {
+                Label("Open Settings", systemImage: "arrow.up.right.square")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Color(hex: "#FFD54F"))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color(hex: "#FFD54F").opacity(0.5), lineWidth: 1))
+            }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(hex: "#2A1E0F"))
         .cornerRadius(10)
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(hex: "#E8985E").opacity(0.4), lineWidth: 1))
+    }
+
+    /// Deep link to the iOS Settings app at the iCloud account pane.
+    /// Falls back to the root Settings page if the deep link is rejected.
+    private func openICloudSettings() {
+        // App-prefs:CASTLE works on most iOS versions; if rejected, the
+        // generic UIApplication.openSettingsURLString is the safe fallback.
+        if let url = URL(string: "App-prefs:CASTLE"), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        } else if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    /// Inline non-blocking toast shown when `lastPublishError` is non-nil.
+    /// Tapping the toast dismisses it (and clears the error).
+    private var publishErrorToast: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .foregroundStyle(Color(hex: "#E8985E"))
+            Text(service.lastPublishError ?? "")
+                .font(.system(size: 12))
+                .foregroundStyle(Color(hex: "#C8A882"))
+                .lineLimit(2)
+            Spacer()
+            Button {
+                service.lastPublishError = nil
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundStyle(Color(hex: "#9E8B72"))
+                    .font(.system(size: 11, weight: .medium))
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity)
+        .background(Color(hex: "#2A1E0F"))
+        .cornerRadius(10)
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color(hex: "#E8985E").opacity(0.35), lineWidth: 1))
     }
 
     private var emptyState: some View {

@@ -32,6 +32,65 @@
 
 ---
 
+## ⚠️ HARDENED PROMPT PREAMBLE — paste this block at the END of every prompt below
+
+ChatGPT/DALL-E has been failing on this project in four specific ways: (1) generating contact sheets with multiple frames in one image when asked for animations, (2) leaking soft anti-aliasing into pixel edges, (3) filling the background instead of leaving it transparent, (4) introducing colors outside the locked 11-color palette. The block below is engineered specifically to block those failure modes. **Copy it verbatim and paste it after every prompt.**
+
+```
+=== CRITICAL CONSTRAINTS (DO NOT VIOLATE) ===
+
+OUTPUT FORMAT:
+- Output exactly ONE PNG file. Single image. Single pose. Single moment in time.
+- This is NOT a contact sheet, NOT a sprite sheet, NOT a frame-progression grid.
+- Do NOT show "before/after" or "step 1 / step 2 / step 3" comparisons.
+- If this is an animation frame (e.g. `_f2`), generate ONLY that frame. Do not include the other frames in the same image.
+
+PIXEL FIDELITY:
+- Pixel art with hard edges. Zero anti-aliasing. Zero gradient blending on any silhouette.
+- Every single pixel is either 100% opaque (alpha = 255) OR 100% transparent (alpha = 0).
+- No partial-alpha pixels. No "soft" or "feathered" edges. No motion blur.
+- Use only solid color blocks. Pixels that touch are either the same color or have a hard color boundary.
+
+BACKGROUND:
+- The background is FULLY TRANSPARENT (alpha = 0).
+- Do NOT render rooms, walls, floors, windows, skies, gradients, or any background scenery.
+- The only non-transparent pixels are: the character + props they hold + an optional ground shadow ellipse.
+- Do not add a colored fill, even white or off-white. Empty space = transparent.
+
+PALETTE:
+- Use ONLY the 11 hex values listed in the manifest header. ZERO other colors.
+- Specifically: NO pure black `#000000`, NO pure white `#FFFFFF`, NO browns or greys outside the 11.
+- The `#2D2040` outline color also serves as the shadow color (used at lower density for cast shadows).
+
+ANIMATION FRAMES (if this prompt is `_f1`, `_f2`, or `_f3`):
+- This is ONE frame of a multi-frame loop. Generate ONLY this frame.
+- Motion magnitude between frames is SUBTLE: 2–3 pixels of difference total. Not 4+. Not "obvious."
+- Only ONE element changes between adjacent frames (e.g. only the cursor on the laptop screen, only the fork's Y position, only the hand height). Every other pixel is identical to the other frames.
+- The character at 80 pt widget size will only show the change if it's clean and isolated. Multiple simultaneous changes look like a different character, not motion.
+
+SIZE & ANCHOR:
+- Character sprites: 192 × 320 pixels, character anchored to bottom-center of the canvas, feet touching the bottom edge of the visible character bounds.
+- Scene backgrounds: 246 × 246 pixels, isometric perspective, bottom 80 pixels of canvas clear of furniture (character spawns there).
+- Do not crop the character. Do not include extra padding above the head.
+- This sprite will be displayed at 80 pt on the iOS home-screen widget — silhouette must read clearly at that size.
+
+REFERENCE:
+- Cozy lo-fi pixel diorama (PixelJoint #131408). Warm, handcrafted, lived-in.
+- Stardew Valley interior + lo-fi YouTube room thumbnail aesthetic.
+- If your output looks clean / corporate / clinical / minimalist-flat-design, you've drifted. Make it warmer.
+```
+
+**Verification before saving the PNG:**
+1. Open the file in Preview or an image viewer.
+2. Confirm: dimensions exactly 192×320 (character) or 246×246 (scene).
+3. Toggle the transparency-checker background — confirm only character pixels exist, no white fill.
+4. Color-pick 5 random pixels — every one must match a locked-palette hex value exactly.
+5. For animation frames: open `_f1` and `_f2` side by side — they should look 95% identical, with one small element shifted by 2–3 px.
+
+If ANY check fails, regenerate with a more explicit prompt. Do NOT save partially-correct sprites — they'll mix with correct ones at runtime and the widget will look inconsistent.
+
+---
+
 ## Mini Me Avatar — proportions reference (applies to prompts 1–5)
 
 All character poses must match the existing `minime_idle.png` reference:

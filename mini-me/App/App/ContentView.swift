@@ -53,6 +53,10 @@ struct ContentView: View {
             if UserDefaults.standard.bool(forKey: AmbientAudioService.userDefaultsKey) {
                 AmbientAudioService.shared.startPlayback()
             }
+            // Refresh friend presence list on foreground. Own presence is
+            // republished by pushScheduleToWidgetIfPossible() above (it calls
+            // updateWidgetData which now also calls publishPresence).
+            FriendPresenceService.shared.refreshFriends()
         }
     }
 
