@@ -80,8 +80,20 @@ final class WidgetDataService {
         /// schedule. Lets `triggerBakeIfScheduleChanged()` skip re-baking when
         /// the structural set of pairs hasn't shifted.
         static let lastBakedPairsHash = "widget_last_baked_pairs_hash"
+        /// Version string tracking the BUNDLED sprite art set. Bumped manually
+        /// whenever we land new sprite/scene PNGs. If this differs from the
+        /// last-baked version, the bakery force-rebakes so existing users see
+        /// new art on their widget without needing a schedule change.
+        static let lastBakedArtVersion = "widget_last_baked_art_version"
         static let scheduleBlocks = "widget_schedule_blocks"
     }
+
+    /// Version of the bundled sprite art. Bump this manually whenever new
+    /// PNGs land in `Assets.xcassets` (new pose, new scene, new frame variant).
+    /// Format: `YYYY.MM.DD-<descriptor>` so it sorts and reads at a glance.
+    /// History:
+    ///   - 2026.05.07-coffeeshop+socializing_f123: coffee shop scene + 3 frames
+    static let bundledArtVersion = "2026.05.07-coffeeshop+socializing_f123"
 
     // MARK: - Write (from main app)
 
@@ -210,8 +222,11 @@ final class WidgetDataService {
     // MARK: - Pre-bake orchestration
 
     /// Trigger an off-screen pre-bake of every unique (scene, activity)
-    /// snapshot the user will encounter today, BUT only if the pair set
-    /// has changed since the last bake. Cheap to call from anywhere.
+    /// snapshot the user will encounter today. Re-bakes when EITHER:
+    ///   1. The (scene, activity) pair set has changed (user edited schedule), OR
+    ///   2. The bundled sprite art has changed (we shipped new PNGs).
+    ///
+    /// Cheap to call from anywhere; the bakery itself dedupes per-frame work.
     ///
     /// Call this from:
     /// - DailyScheduleView when blocks are added/edited/removed
@@ -225,7 +240,11 @@ final class WidgetDataService {
     ) {
         let hash = uniquePairsHash(for: schedule)
         let lastHash = defaults?.string(forKey: Keys.lastBakedPairsHash)
-        guard hash != lastHash else { return }
+        let lastArtVersion = defaults?.string(forKey: Keys.lastBakedArtVersion)
+        let artVersionChanged = lastArtVersion != Self.bundledArtVersion
+
+        // Skip only when BOTH structure AND art version match the last bake.
+        guard hash != lastHash || artVersionChanged else { return }
 
         WidgetSnapshotBakery.shared.bakeRequiredSnapshots(
             for: schedule,
@@ -233,6 +252,7 @@ final class WidgetDataService {
             room: room
         )
         defaults?.set(hash, forKey: Keys.lastBakedPairsHash)
+        defaults?.set(Self.bundledArtVersion, forKey: Keys.lastBakedArtVersion)
     }
 
     /// Force a re-bake regardless of hash. Use after the user customizes
@@ -250,6 +270,7 @@ final class WidgetDataService {
             room: room
         )
         defaults?.set(uniquePairsHash(for: schedule), forKey: Keys.lastBakedPairsHash)
+        defaults?.set(Self.bundledArtVersion, forKey: Keys.lastBakedArtVersion)
     }
 
     /// Stable hash of the unique (scene, activity) pairs derived from a

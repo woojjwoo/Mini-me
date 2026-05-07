@@ -8,7 +8,7 @@ struct OnboardingView: View {
     @State private var wakeUpHour = 7
     @State private var selectedCategory: BlockCategory? = nil
 
-    private let totalSteps = 4
+    private let totalSteps = 5
 
     var body: some View {
         ZStack {
@@ -25,8 +25,20 @@ struct OnboardingView: View {
                 OnboardingWakeStep(wakeUpHour: $wakeUpHour, onNext: { withAnimation(.easeInOut(duration: 0.35)) { currentStep = 3 } })
                     .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
             case 3:
-                OnboardingHabitStep(selectedCategory: $selectedCategory, petName: petName, onFinish: completeOnboarding)
-                    .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .opacity))
+                OnboardingHabitStep(
+                    selectedCategory: $selectedCategory,
+                    petName: petName,
+                    // Habit step now advances to the widget tutorial instead of finishing.
+                    onFinish: { withAnimation(.easeInOut(duration: 0.35)) { currentStep = 4 } }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
+            case 4:
+                OnboardingWidgetStep(
+                    petName: petName,
+                    category: selectedCategory,
+                    onFinish: { _ in completeOnboarding() }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .opacity))
             default:
                 EmptyView()
             }
