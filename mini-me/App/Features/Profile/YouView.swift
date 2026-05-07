@@ -361,6 +361,36 @@ struct YouView: View {
             }
 
             settingsGroup {
+                NavigationLink {
+                    FriendsView()
+                } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "person.2.fill")
+                            .font(.title3)
+                            .foregroundColor(Color(hex: "#5B8C5A"))
+                            .frame(width: 44, height: 44)
+                        Text("Friends")
+                            .font(PixelTheme.bodyFont)
+                            .foregroundColor(PixelTheme.text)
+                        Spacer()
+                        let count = FriendPresenceService.shared.friendIDs.count
+                        if count > 0 {
+                            Text("\(count)")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(PixelTheme.pending)
+                                .padding(.trailing, 4)
+                        }
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(PixelTheme.pending)
+                    }
+                    .padding(.vertical, 4)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+
+            settingsGroup {
                 notificationRow
                 Divider().padding(.leading, 58)
                 ambientMusicRow

@@ -1,0 +1,277 @@
+import CloudKit
+import Foundation
+
+/// Manages friend pairing and presence sync via CloudKit public database.
+///
+/// Privacy contract: only (displayName, currentScene, currentActivity, lastSeen)
+/// are ever written to the cloud — never schedule details, location, or Apple ID.
+///
+/// Architecture:
+///   - Each user has ONE `FriendPresence` record keyed by a stable local UUID.
+///   - Pairing uses a 6-character invite code. User A shares their code; User B
+///     enters it to look up A's record and link the two profiles.
+///   - Friend list stored locally in UserDefaults as JSON [String] of userIDs.
+///   - No push notifications in v1 — presence refreshes on app foreground.
+///
+/// CloudKit record type: `FriendPresence`
+///   userID          String   — stable UUID (not Apple ID)
+///   inviteCode      String   — 6-char alphanumeric, regeneratable
+///   displayName     String   — pet name shown to friends
+///   currentScene    String   — RoomType rawValue
+///   currentActivity String   — PetActivity rawValue
+///   lastSeen        Date
+
+@Observable
+final class FriendPresenceService {
+    static let shared = FriendPresenceService()
+
+    // MARK: - Published state
+
+    /// Friends whose presence has been fetched. Refreshed on foreground.
+    var friends: [FriendPresence] = []
+    /// True while any CloudKit operation is in flight.
+    var isLoading = false
+    /// Last error message — shown in FriendsView if non-nil.
+    var errorMessage: String?
+    /// True when iCloud account is available.
+    var iCloudAvailable = false
+
+    // MARK: - Private
+
+    private let container = CKContainer(identifier: "iCloud.com.woojjwoo.pixieme")
+    private var db: CKDatabase { container.publicCloudDatabase }
+
+    private enum Keys {
+        static let userID     = "fp_user_id"
+        static let inviteCode = "fp_invite_code"
+        static let friendIDs  = "fp_friend_ids"
+    }
+
+    private let recordType = "FriendPresence"
+
+    private init() {
+        checkiCloudStatus()
+    }
+
+    // MARK: - Identity
+
+    /// Stable local UUID — generated once, never changes.
+    var myUserID: String {
+        if let existing = UserDefaults.standard.string(forKey: Keys.userID) { return existing }
+        let new = UUID().uuidString
+        UserDefaults.standard.set(new, forKey: Keys.userID)
+        return new
+    }
+
+    /// 6-char invite code — persisted locally, can be regenerated.
+    var myInviteCode: String {
+        if let existing = UserDefaults.standard.string(forKey: Keys.inviteCode) { return existing }
+        return regenerateInviteCode()
+    }
+
+    @discardableResult
+    func regenerateInviteCode() -> String {
+        let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" // no I/O/0/1 — easy to type
+        let code = String((0..<6).map { _ in chars.randomElement()! })
+        UserDefaults.standard.set(code, forKey: Keys.inviteCode)
+        return code
+    }
+
+    // MARK: - Friend list (local)
+
+    var friendIDs: [String] {
+        get {
+            guard let data = UserDefaults.standard.data(forKey: Keys.friendIDs),
+                  let ids = try? JSONDecoder().decode([String].self, from: data)
+            else { return [] }
+            return ids
+        }
+        set {
+            UserDefaults.standard.set(try? JSONEncoder().encode(newValue), forKey: Keys.friendIDs)
+        }
+    }
+
+    // MARK: - iCloud availability
+
+    private func checkiCloudStatus() {
+        container.accountStatus { [weak self] status, _ in
+            DispatchQueue.main.async {
+                self?.iCloudAvailable = (status == .available)
+            }
+        }
+    }
+
+    // MARK: - Write own presence
+
+    /// Push the current (scene, activity, displayName) to CloudKit.
+    /// Called by WidgetDataService.updateWidgetData and on app foreground.
+    func publishPresence(displayName: String, scene: RoomType, activity: PetActivity) {
+        guard iCloudAvailable else { return }
+
+        let recordID = CKRecord.ID(recordName: myUserID)
+        let record = CKRecord(recordType: recordType, recordID: recordID)
+        record["userID"]          = myUserID as CKRecordValue
+        record["inviteCode"]      = myInviteCode as CKRecordValue
+        record["displayName"]     = displayName as CKRecordValue
+        record["currentScene"]    = scene.rawValue as CKRecordValue
+        record["currentActivity"] = activity.rawValue as CKRecordValue
+        record["lastSeen"]        = Date() as CKRecordValue
+
+        let op = CKModifyRecordsOperation(recordsToSave: [record])
+        op.savePolicy = .allKeys
+        op.modifyRecordsResultBlock = { _ in } // fire-and-forget
+        db.add(op)
+    }
+
+    // MARK: - Pairing via invite code
+
+    /// Look up a friend by their 6-char invite code and add them.
+    /// Calls completion on main thread with a success/failure result.
+    func addFriend(inviteCode: String, completion: @escaping (Result<FriendPresence, FriendError>) -> Void) {
+        guard iCloudAvailable else {
+            completion(.failure(.iCloudUnavailable)); return
+        }
+        let code = inviteCode.uppercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        guard code.count == 6 else {
+            completion(.failure(.invalidCode)); return
+        }
+        guard code != myInviteCode else {
+            completion(.failure(.ownCode)); return
+        }
+
+        let pred = NSPredicate(format: "inviteCode == %@", code)
+        let query = CKQuery(recordType: recordType, predicate: pred)
+
+        db.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: 1) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .failure:
+                DispatchQueue.main.async { completion(.failure(.networkError)) }
+            case .success(let (matchResults, _)):
+                guard let (_, recordResult) = matchResults.first,
+                      case .success(let record) = recordResult,
+                      let presence = FriendPresence(record: record)
+                else {
+                    DispatchQueue.main.async { completion(.failure(.notFound)) }
+                    return
+                }
+                // Persist friend locally
+                var ids = self.friendIDs
+                if !ids.contains(presence.userID) { ids.append(presence.userID) }
+                self.friendIDs = ids
+
+                DispatchQueue.main.async {
+                    if !self.friends.contains(where: { $0.userID == presence.userID }) {
+                        self.friends.append(presence)
+                    }
+                    completion(.success(presence))
+                }
+            }
+        }
+    }
+
+    func removeFriend(userID: String) {
+        friendIDs = friendIDs.filter { $0 != userID }
+        friends   = friends.filter   { $0.userID != userID }
+    }
+
+    // MARK: - Fetch friends' presence
+
+    /// Refresh all friends' current scene/activity from CloudKit.
+    func refreshFriends() {
+        let ids = friendIDs
+        guard !ids.isEmpty, iCloudAvailable else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        let pred = NSPredicate(format: "userID IN %@", ids)
+        let query = CKQuery(recordType: recordType, predicate: pred)
+
+        db.fetch(withQuery: query, inZoneWith: nil, desiredKeys: nil, resultsLimit: 50) { [weak self] result in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                self.isLoading = false
+                switch result {
+                case .failure(let err):
+                    self.errorMessage = err.localizedDescription
+                case .success(let (matchResults, _)):
+                    self.friends = matchResults.compactMap { _, recordResult in
+                        guard case .success(let record) = recordResult else { return nil }
+                        return FriendPresence(record: record)
+                    }
+                    .sorted { ($0.lastSeen ?? .distantPast) > ($1.lastSeen ?? .distantPast) }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - FriendPresence model
+
+struct FriendPresence: Identifiable {
+    let id: String          // same as userID
+    let userID: String
+    let displayName: String
+    let scene: RoomType
+    let activity: PetActivity
+    let lastSeen: Date?
+
+    init?(record: CKRecord) {
+        guard
+            let userID      = record["userID"]      as? String,
+            let name        = record["displayName"] as? String,
+            let sceneRaw    = record["currentScene"]    as? String,
+            let activityRaw = record["currentActivity"] as? String,
+            let scene       = RoomType(rawValue: sceneRaw),
+            let activity    = PetActivity(rawValue: activityRaw)
+        else { return nil }
+
+        self.id          = userID
+        self.userID      = userID
+        self.displayName = name
+        self.scene       = scene
+        self.activity    = activity
+        self.lastSeen    = record["lastSeen"] as? Date
+    }
+
+    var sceneEmoji: String {
+        switch scene {
+        case .bedroom:    return "🛏️"
+        case .study:      return "💻"
+        case .kitchen:    return "🍳"
+        case .gym:        return "🏃"
+        case .coffeeShop: return "☕"
+        case .rooftop:    return "🌆"
+        }
+    }
+
+    var lastSeenLabel: String {
+        guard let date = lastSeen else { return "Unknown" }
+        let diff = Date.now.timeIntervalSince(date)
+        if diff < 60        { return "Just now" }
+        if diff < 3600      { return "\(Int(diff / 60))m ago" }
+        if diff < 86400     { return "\(Int(diff / 3600))h ago" }
+        return "\(Int(diff / 86400))d ago"
+    }
+}
+
+// MARK: - Errors
+
+enum FriendError: LocalizedError {
+    case iCloudUnavailable
+    case invalidCode
+    case ownCode
+    case notFound
+    case networkError
+
+    var errorDescription: String? {
+        switch self {
+        case .iCloudUnavailable: return "Sign into iCloud in Settings to add friends."
+        case .invalidCode:       return "Invite codes are 6 characters."
+        case .ownCode:           return "That's your own invite code!"
+        case .notFound:          return "No mini-me found with that code. Double-check and try again."
+        case .networkError:      return "Couldn't reach the server. Check your connection."
+        }
+    }
+}

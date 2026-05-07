@@ -69,6 +69,9 @@
 		EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490012F9EFE970041ED43 /* LiveActivityService.swift */; };
 		AA0000012FA7A2E20041ED43 /* AmbientAudioService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000002FA7A2E20041ED43 /* AmbientAudioService.swift */; };
 		EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB490032F9EFE970041ED43 /* AddWidgetPromptView.swift */; };
+		AA0000052FA7A2E20041ED43 /* FriendPresenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000042FA7A2E20041ED43 /* FriendPresenceService.swift */; };
+		AA0000092FA7A2E20041ED43 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000072FA7A2E20041ED43 /* FriendsView.swift */; };
+		AA00000B2FA7A2E20041ED43 /* FriendInviteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -135,6 +138,9 @@
 		22B49E162F78454E001FDADA /* room_base_lofi_v2_1774708398444.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = room_base_lofi_v2_1774708398444.png; sourceTree = "<group>"; };
 		22B49E182F78454E001FDADA /* InsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InsightsView.swift; sourceTree = "<group>"; };
 		AA0000032FA7A2E20041ED43 /* MemoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoriesView.swift; sourceTree = "<group>"; };
+		AA0000042FA7A2E20041ED43 /* FriendPresenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendPresenceService.swift; sourceTree = "<group>"; };
+		AA0000072FA7A2E20041ED43 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
+		AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendInviteSheet.swift; sourceTree = "<group>"; };
 		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
@@ -424,6 +430,7 @@
 		22B49E2B2F78454E001FDADA /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				AA0000062FA7A2E20041ED43 /* Friends */,
 				22B49E192F78454E001FDADA /* Insights */,
 				22B49E1C2F78454E001FDADA /* Onboarding */,
 				22B49E1E2F78454E001FDADA /* Outfits */,
@@ -435,6 +442,15 @@
 				22B49E2A2F78454E001FDADA /* Stats */,
 			);
 			path = Features;
+			sourceTree = "<group>";
+		};
+		AA0000062FA7A2E20041ED43 /* Friends */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000072FA7A2E20041ED43 /* FriendsView.swift */,
+				AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */,
+			);
+			path = Friends;
 			sourceTree = "<group>";
 		};
 		22B49E352F78454E001FDADA /* Models */ = {
@@ -469,6 +485,7 @@
 				3BD990D22F9EFE970041ED44 /* WidgetSnapshotBakery.swift */,
 				EEB490012F9EFE970041ED43 /* LiveActivityService.swift */,
 				AA0000002FA7A2E20041ED43 /* AmbientAudioService.swift */,
+				AA0000042FA7A2E20041ED43 /* FriendPresenceService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -744,6 +761,9 @@
 				EEB490022F9EFE970041ED43 /* LiveActivityService.swift in Sources */,
 				AA0000012FA7A2E20041ED43 /* AmbientAudioService.swift in Sources */,
 				EEB490042F9EFE970041ED43 /* AddWidgetPromptView.swift in Sources */,
+				AA0000052FA7A2E20041ED43 /* FriendPresenceService.swift in Sources */,
+				AA0000092FA7A2E20041ED43 /* FriendsView.swift in Sources */,
+				AA00000B2FA7A2E20041ED43 /* FriendInviteSheet.swift in Sources */,
 				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
 				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
 				22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */,
