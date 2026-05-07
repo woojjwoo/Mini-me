@@ -824,7 +824,7 @@ Tick each sprite as it lands in `mini-me/Assets.xcassets/` (or wherever sprite a
 ### Scene Backgrounds (246×246, transparent, bottom-center anchor)
 - [x] 6. `room_study_empty.png` — desk, chair, bookshelves, lamp, mug
 - [ ] 7. `room_gym_empty.png` — yoga mat, dumbbells, mirror, plant
-- [ ] 8. `room_kitchen_empty.png` — counter, stove, fridge, utensils
+- [x] 8. `room_kitchen_empty.png` — counter, stove, fridge, utensils
 - [x] 9. `room_coffeeshop_empty.png` — café table, two chairs, pendant light, plant
 
 ### Definition of Done (per sprite)

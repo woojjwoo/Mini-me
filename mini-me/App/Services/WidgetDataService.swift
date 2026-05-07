@@ -93,7 +93,8 @@ final class WidgetDataService {
     /// Format: `YYYY.MM.DD-<descriptor>` so it sorts and reads at a glance.
     /// History:
     ///   - 2026.05.07-coffeeshop+socializing_f123: coffee shop scene + 3 frames
-    static let bundledArtVersion = "2026.05.07-coffeeshop+socializing_f123"
+    ///   - 2026.05.07-kitchen: kitchen scene
+    static let bundledArtVersion = "2026.05.07-kitchen"
 
     // MARK: - Write (from main app)
 
