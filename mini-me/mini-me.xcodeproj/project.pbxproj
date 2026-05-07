@@ -72,6 +72,7 @@
 		AA0000052FA7A2E20041ED43 /* FriendPresenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000042FA7A2E20041ED43 /* FriendPresenceService.swift */; };
 		AA0000092FA7A2E20041ED43 /* FriendsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000072FA7A2E20041ED43 /* FriendsView.swift */; };
 		AA00000B2FA7A2E20041ED43 /* FriendInviteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */; };
+		AA00000D2FA7A2E20041ED43 /* FriendsPermissionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA00000C2FA7A2E20041ED43 /* FriendsPermissionSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,6 +142,7 @@
 		AA0000042FA7A2E20041ED43 /* FriendPresenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendPresenceService.swift; sourceTree = "<group>"; };
 		AA0000072FA7A2E20041ED43 /* FriendsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsView.swift; sourceTree = "<group>"; };
 		AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendInviteSheet.swift; sourceTree = "<group>"; };
+		AA00000C2FA7A2E20041ED43 /* FriendsPermissionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsPermissionSheet.swift; sourceTree = "<group>"; };
 		22B49E1A2F78454E001FDADA /* OnboardingSteps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingSteps.swift; sourceTree = "<group>"; };
 		22B49E1B2F78454E001FDADA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		22B49E1D2F78454E001FDADA /* OutfitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutfitView.swift; sourceTree = "<group>"; };
@@ -449,6 +451,7 @@
 			children = (
 				AA0000072FA7A2E20041ED43 /* FriendsView.swift */,
 				AA0000082FA7A2E20041ED43 /* FriendInviteSheet.swift */,
+				AA00000C2FA7A2E20041ED43 /* FriendsPermissionSheet.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -764,6 +767,7 @@
 				AA0000052FA7A2E20041ED43 /* FriendPresenceService.swift in Sources */,
 				AA0000092FA7A2E20041ED43 /* FriendsView.swift in Sources */,
 				AA00000B2FA7A2E20041ED43 /* FriendInviteSheet.swift in Sources */,
+				AA00000D2FA7A2E20041ED43 /* FriendsPermissionSheet.swift in Sources */,
 				22B49E6E2F78454E001FDADA /* DayLog.swift in Sources */,
 				22B49E6F2F78454E001FDADA /* CalendarSyncService.swift in Sources */,
 				22B49E702F78454E001FDADA /* PetMoodService.swift in Sources */,

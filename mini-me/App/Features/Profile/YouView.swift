@@ -18,6 +18,8 @@ struct YouView: View {
     @State private var showingResetAlert = false
     @State private var notificationsEnabled = false
     @AppStorage(AmbientAudioService.userDefaultsKey) private var ambientMusicEnabled = false
+    @State private var showingPrivacySheet = false
+    @State private var showingFriends = false
 
     private var player: Player? { players.first }
     private var pet: Pet? { pets.first }
@@ -361,8 +363,13 @@ struct YouView: View {
             }
 
             settingsGroup {
-                NavigationLink {
-                    FriendsView()
+                Button {
+                    HapticService.light()
+                    if FriendsPermissionSheet.hasAccepted {
+                        showingFriends = true
+                    } else {
+                        showingPrivacySheet = true
+                    }
                 } label: {
                     HStack(spacing: 12) {
                         Image(systemName: "person.2.fill")
@@ -388,6 +395,16 @@ struct YouView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .navigationDestination(isPresented: $showingFriends) {
+                    FriendsView()
+                }
+                .sheet(isPresented: $showingPrivacySheet) {
+                    FriendsPermissionSheet {
+                        showingFriends = true
+                    }
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+                }
             }
 
             settingsGroup {
