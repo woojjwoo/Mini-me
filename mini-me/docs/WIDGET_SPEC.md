@@ -42,11 +42,11 @@ Each is 246×246 isometric, transparent PNG, same proportions as `room_bedroom_e
 
 | Scene asset | Used for | Status |
 |---|---|---|
-| `room_bedroom_empty.png` | rest, idle, default | ✅ Have |
-| `room_study_empty.png` | work, learning, creative | 🔴 Need |
+| `room_bedroom_empty.png` | rest, idle, default | ⚠️ No dedicated asset — falls back to legacy `room_base_lofi_v2` |
+| `room_study_empty.png` | work, learning, creative | ✅ Landed (246x246) |
 | `room_gym_empty.png` | exercise | 🔴 Need |
-| `room_kitchen_empty.png` | nutrition | 🔴 Need |
-| `room_coffeeshop_empty.png` | social | 🔴 Need |
+| `room_kitchen_empty.png` | nutrition | ✅ Landed (246x246) |
+| `room_coffeeshop_empty.png` | social | ✅ Landed (246x246) |
 
 All scenes follow:
 - Light source: top-left
@@ -61,14 +61,24 @@ Character is rendered at 192×320 to match `minime_idle.png`. All poses transpar
 
 | Pose asset | Activity | Description | Status |
 |---|---|---|---|
-| `minime_idle.png` | default | Standing, hands at side | ✅ Have |
-| `minime_happy.png` | celebrating | Arms up, smiling | ⚠️ Placeholder, regenerate |
-| `minime_sleeping.png` | rest | Lying down with Zzz | ⚠️ Placeholder, regenerate |
-| `minime_working.png` | work | Sitting at desk, typing | 🔴 Need |
-| `minime_exercising.png` | exercise | Mid-jumping-jack or yoga pose | 🔴 Need |
-| `minime_eating.png` | nutrition | Sitting at table, fork raised | 🔴 Need |
-| `minime_reading.png` | learning, creative | Sitting cross-legged with book | 🔴 Need |
-| `minime_socializing.png` | social | Standing chatting, gesture | 🔴 Need |
+| `minime_idle.png` | default | Standing, hands at side | ⚠️ Legacy (77x182, wrong dimensions — needs 192x320 regeneration) |
+| `minime_happy.png` | celebrating | Arms up, smiling | ⚠️ Legacy (246x246, wrong dimensions — needs 192x320 regeneration) |
+| `minime_sleeping.png` | rest | Lying down with Zzz | ⚠️ Legacy (246x246, wrong dimensions — needs 192x320 regeneration) |
+| `minime_working.png` | work | Sitting at desk, typing | ✅ Landed (192x320) |
+| `minime_exercising.png` | exercise | Mid-jumping-jack | ✅ Landed (192x320) |
+| `minime_eating.png` | nutrition | Sitting at table, fork raised | ✅ Landed (192x320) |
+| `minime_reading.png` | learning, creative | Sitting cross-legged with book | ✅ Landed (192x320) |
+| `minime_socializing.png` | social | Standing chatting, gesture | ✅ Landed (192x320) |
+
+### Animation Frames (widget cycling, 3 frames per activity)
+
+| Frame set | Status |
+|---|---|
+| `minime_socializing_f1/f2/f3` | ✅ Landed (192x320) — ⚠️ Style mismatch with base pose |
+| `minime_working_f1/f2/f3` | 🔴 Need |
+| `minime_exercising_f1/f2/f3` | 🔴 Need |
+| `minime_eating_f1/f2/f3` | 🔴 Need |
+| `minime_reading_f1/f2/f3` | 🔴 Need |
 
 ---
 

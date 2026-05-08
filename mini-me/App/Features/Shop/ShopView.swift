@@ -95,7 +95,9 @@ struct ShopView: View {
 
     private var filteredItems: [ShopItem] {
         let base = furnitureFilter != nil ? ItemCatalog.items(in: furnitureFilter!) : ItemCatalog.allItems
-        return base.filter { $0.price > 0 }  // hide free starter items (mattress_floor)
+        return base
+            .filter { $0.price > 0 }  // hide free starter items (mattress_floor)
+            .filter { UIImage(named: $0.spriteName) != nil }  // hide items without sprite assets
     }
 
     private var furnitureGrid: some View {
