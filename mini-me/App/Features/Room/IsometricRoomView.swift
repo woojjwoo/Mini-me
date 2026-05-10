@@ -16,6 +16,7 @@ struct IsometricRoomView: View {
     
     @State private var wallpaperColor: Color = .clear
     @State private var currentScene: RoomScene?
+    @State private var sceneCache: [UUID: RoomScene] = [:]
 
     private var activeRoom: Room? {
         if let selected = selectedRoomID {
@@ -46,20 +47,31 @@ struct IsometricRoomView: View {
     private var currentActivity: PetActivity {
         let moodService = PetMoodService()
         let schedule = currentDaySchedule
-        
+
         let now = Date.now
         let components = Calendar.current.dateComponents([.hour, .minute], from: now)
         let currentMinutes = (components.hour ?? 0) * 60 + (components.minute ?? 0)
-        
+
         var currentCategory: String? = nil
+        var currentBlock: TimeBlock? = nil
         if let blocks = schedule?.blocks {
             for block in blocks {
                 let start = block.startHour * 60 + block.startMinute
                 let end = start + block.durationMinutes
                 if currentMinutes >= start && currentMinutes < end {
                     currentCategory = block.category
+                    currentBlock = block
                     break
                 }
+            }
+        }
+
+        if let block = currentBlock {
+            let cat = block.category.lowercased()
+            let isWorkType = cat.contains("work") || cat.contains("study") || cat.contains("learn")
+            let isCompleted = todayLog?.completedBlockIDs.contains(block.id) ?? false
+            if isWorkType && !isCompleted {
+                return .slacking
             }
         }
 
@@ -208,15 +220,20 @@ struct IsometricRoomView: View {
     }
 
     private func makeScene(room: Room) -> RoomScene {
+        if let cached = sceneCache[room.id] {
+            self.currentScene = cached
+            return cached
+        }
         let scene = RoomScene(
-            room: room, 
-            pet: pets.first, 
+            room: room,
+            pet: pets.first,
             mood: currentMood,
             streakCount: player?.currentStreak ?? 0,
             size: CGSize(width: 400, height: 400)
         )
         scene.scaleMode = .aspectFit
         scene.backgroundColor = SKColor.clear
+        sceneCache[room.id] = scene
         self.currentScene = scene
         return scene
     }

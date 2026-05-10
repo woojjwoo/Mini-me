@@ -10,10 +10,13 @@ class RoomScene: SKScene {
     private var assetScale: CGFloat = 1.2
     
     // Character Nodes
-    private var petNode = SKNode() 
-    private var visualNode = SKSpriteNode() 
+    private var petNode = SKNode()
+    private var visualNode = SKSpriteNode()
     private var shadowNode = SKShapeNode()
     private var speechBubble: SKNode?
+    private var legsNode: SKNode?
+    private var phoneNode: SKLabelNode?
+    private var sittingYOffset: CGFloat = 0
     
     // Physical Constants
     private let petBaseScale: CGFloat = 0.22
@@ -164,18 +167,132 @@ class RoomScene: SKScene {
     }
 
     private func applyActivityPose(_ activity: PetActivity) {
+        hideSittingLegs()
+        hidePhoneSlacking()
+
         visualNode.removeAllActions()
         startLifeAnimations()
 
+        let isCafe = room.roomType == .coffeeShop
+
         switch activity {
         case .working:
-            // Uniform subtle squash
-            visualNode.run(SKAction.scaleX(to: petBaseScale * 1.05, y: petBaseScale * 0.9, duration: 0.3))
+            if isCafe {
+                showSittingLegs()
+            } else {
+                visualNode.run(SKAction.scaleX(to: petBaseScale * 1.05, y: petBaseScale * 0.9, duration: 0.3))
+            }
+        case .reading where isCafe:
+            showSittingLegs()
+        case .idling where isCafe:
+            showSittingLegs()
+        case .slacking:
+            if isCafe { showSittingLegs() }
+            showPhoneSlacking()
         case .sleeping:
             visualNode.run(SKAction.scaleX(to: petBaseScale * 1.1, y: petBaseScale * 0.8, duration: 0.3))
         default:
             visualNode.run(SKAction.scale(to: petBaseScale, duration: 0.3))
         }
+    }
+
+    // MARK: - Cute Overlay Animations
+
+    private func showSittingLegs() {
+        legsNode?.removeFromParent()
+
+        // Raise character to look seated on furniture
+        sittingYOffset = 18
+        petNode.position.y += sittingYOffset
+
+        let container = SKNode()
+
+        let skinColor = UIColor(red: 0.91, green: 0.60, blue: 0.37, alpha: 1)
+        let shoeColor = UIColor(red: 0.25, green: 0.18, blue: 0.12, alpha: 1)
+
+        for side: CGFloat in [-1, 1] {
+            let leg = SKShapeNode(rectOf: CGSize(width: 5, height: 14), cornerRadius: 2)
+            leg.fillColor = skinColor
+            leg.strokeColor = .clear
+            leg.position = CGPoint(x: side * 7, y: 0)
+            container.addChild(leg)
+
+            let foot = SKShapeNode(rectOf: CGSize(width: 8, height: 4), cornerRadius: 2)
+            foot.fillColor = shoeColor
+            foot.strokeColor = .clear
+            foot.position = CGPoint(x: side * 7, y: -10)
+            container.addChild(foot)
+        }
+
+        container.position = CGPoint(x: 0, y: -12)
+        petNode.addChild(container)
+        legsNode = container
+
+        // Gentle pendulum dangle
+        let swing = SKAction.repeatForever(SKAction.sequence([
+            SKAction.rotate(byAngle: 0.12, duration: 0.7),
+            SKAction.rotate(byAngle: -0.12, duration: 0.7)
+        ]))
+        container.run(swing, withKey: "dangle")
+
+        // Occasional bigger kick
+        let kick = SKAction.sequence([
+            SKAction.wait(forDuration: Double.random(in: 3...7)),
+            SKAction.rotate(byAngle: 0.4, duration: 0.18),
+            SKAction.rotate(byAngle: -0.4, duration: 0.25),
+            SKAction.rotate(toAngle: 0, duration: 0.18)
+        ])
+        container.run(SKAction.repeatForever(kick), withKey: "kick")
+    }
+
+    private func hideSittingLegs() {
+        guard legsNode != nil else { return }
+        legsNode?.removeFromParent()
+        legsNode = nil
+        petNode.position.y -= sittingYOffset
+        sittingYOffset = 0
+    }
+
+    private func showPhoneSlacking() {
+        phoneNode?.removeFromParent()
+
+        let phone = SKLabelNode(text: "📱")
+        phone.fontSize = 12
+        phone.position = CGPoint(x: 18, y: 20)
+        petNode.addChild(phone)
+        phoneNode = phone
+
+        // Character tilts toward phone
+        visualNode.run(SKAction.rotate(toAngle: -0.15, duration: 0.3))
+
+        // Idle phone bob
+        let bob = SKAction.repeatForever(SKAction.sequence([
+            SKAction.moveBy(x: 0, y: 2, duration: 1.0),
+            SKAction.moveBy(x: 0, y: -2, duration: 1.0)
+        ]))
+        phone.run(bob, withKey: "bob")
+
+        // Periodic "put away / pick up" cycle
+        let putAway = SKAction.sequence([
+            SKAction.wait(forDuration: Double.random(in: 8...14)),
+            SKAction.fadeOut(withDuration: 0.3),
+            SKAction.run { [weak self] in
+                self?.visualNode.run(SKAction.rotate(toAngle: 0, duration: 0.3))
+            },
+            SKAction.wait(forDuration: 2.0),
+            SKAction.fadeIn(withDuration: 0.3),
+            SKAction.run { [weak self] in
+                self?.visualNode.run(SKAction.rotate(toAngle: -0.15, duration: 0.3))
+            }
+        ])
+        phone.run(SKAction.repeatForever(putAway), withKey: "cycle")
+    }
+
+    private func hidePhoneSlacking() {
+        guard phoneNode != nil else { return }
+        phoneNode?.removeFromParent()
+        phoneNode = nil
+        visualNode.run(SKAction.rotate(toAngle: 0, duration: 0.2))
     }
 
     private func startLifeAnimations() {
