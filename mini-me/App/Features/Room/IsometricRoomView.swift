@@ -1,6 +1,7 @@
 import SwiftUI
 import SpriteKit
 import SwiftData
+import Combine
 
 struct IsometricRoomView: View {
     @Environment(\.modelContext) private var modelContext
@@ -164,7 +165,7 @@ struct IsometricRoomView: View {
                             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowCelebration"))) { _ in
                                 currentScene?.showCelebration()
                             }
-                            .onChange(of: currentActivity) { old, new in
+                            .onChange(of: currentActivity) { _, new in
                                 currentScene?.updateForActivity(new)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                                     currentScene?.takeWidgetSnapshot()
