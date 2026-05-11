@@ -18,6 +18,8 @@ struct IsometricRoomView: View {
     @State private var currentScene: RoomScene?
     @State private var sceneCache: [UUID: RoomScene] = [:]
 
+    private let activityTimer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+
     private var activeRoom: Room? {
         if let selected = selectedRoomID {
             return rooms.first { $0.id == selected }
@@ -147,6 +149,15 @@ struct IsometricRoomView: View {
                             .cornerRadius(16)
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
+                            .onAppear {
+                                currentScene?.updateForActivity(currentActivity)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    currentScene?.takeWidgetSnapshot()
+                                }
+                            }
+                            .onReceive(activityTimer) { _ in
+                                currentScene?.updateForActivity(currentActivity)
+                            }
                             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowCoinShower"))) { _ in
                                 currentScene?.showCoinShower()
                             }
@@ -155,6 +166,9 @@ struct IsometricRoomView: View {
                             }
                             .onChange(of: currentActivity) { old, new in
                                 currentScene?.updateForActivity(new)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    currentScene?.takeWidgetSnapshot()
+                                }
                             }
                     }
 

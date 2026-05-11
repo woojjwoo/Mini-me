@@ -353,6 +353,21 @@ struct SettingsView: View {
                             if granted, let schedule = weekdaySchedule, let pet = pet {
                                 let blocks = schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
                                 NotificationService.shared.scheduleBlockReminders(blocks: blocks, petName: pet.name)
+                                NotificationService.shared.scheduleMorningGreeting(
+                                    wakeUpHour: schedule.sortedBlocks.first?.startHour ?? 7,
+                                    petName: pet.name
+                                )
+                                NotificationService.shared.scheduleMidDayNudge(
+                                    completedCount: 0,
+                                    totalCount: schedule.blocks.count,
+                                    petName: pet.name
+                                )
+                                if let streak = player?.currentStreak, streak > 0 {
+                                    NotificationService.shared.scheduleStreakWarning(
+                                        currentStreak: streak,
+                                        petName: pet.name
+                                    )
+                                }
                             } else {
                                 notificationsEnabled = false
                             }

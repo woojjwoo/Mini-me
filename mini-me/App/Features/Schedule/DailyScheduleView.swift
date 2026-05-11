@@ -1,5 +1,8 @@
 import SwiftUI
 import SwiftData
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 struct DailyScheduleView: View {
     @Environment(\.modelContext) private var modelContext
@@ -227,11 +230,12 @@ struct DailyScheduleView: View {
             completedBlocks: todayLog.completedBlockIDs.count,
             totalBlocks: schedule.blocks.count,
             coinsToday: todayLog.totalCoins,
-            nextBlockLabel: "", 
+            nextBlockLabel: "",
             currentTaskName: currentBlock?.label,
             currentCategory: currentBlock?.category,
             scheduleBlocks: schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
         )
+        WidgetCenter.shared.reloadAllTimelines()
         #endif
     }
 

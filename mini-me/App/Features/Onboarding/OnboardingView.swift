@@ -132,6 +132,17 @@ struct OnboardingView: View {
         modelContext.insert(dayLog)
 
         try? modelContext.save()
+
+        let resolvedPetName = petName.isEmpty ? "Pixel" : petName
+        Task {
+            let granted = await NotificationService.shared.requestPermission()
+            if granted {
+                NotificationService.shared.scheduleMorningGreeting(
+                    wakeUpHour: wakeUpHour,
+                    petName: resolvedPetName
+                )
+            }
+        }
     }
 }
 
