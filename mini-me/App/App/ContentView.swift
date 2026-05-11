@@ -40,13 +40,6 @@ struct MainTabView: View {
                 }
                 .tag(2)
 
-            InsightsView()
-                .tabItem {
-                    Image(systemName: "chart.bar.fill")
-                    Text("Insights")
-                }
-                .tag(3)
-
             NavigationStack {
                 SettingsView()
             }
@@ -54,7 +47,7 @@ struct MainTabView: View {
                 Image(systemName: "gearshape.fill")
                 Text("Settings")
             }
-            .tag(4)
+            .tag(3)
         }
         .tint(PixelTheme.primary)
     }

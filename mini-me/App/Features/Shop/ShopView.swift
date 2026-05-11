@@ -6,38 +6,10 @@ struct ShopView: View {
     @Query private var players: [Player]
     @Query private var rooms: [Room]
 
-    @State private var selectedCategory: ShopTab = .furniture
     @State private var purchaseAnimation: String?
 
     private var player: Player? { players.first }
     private var room: Room? { rooms.first }
-
-    enum ShopTab: String, CaseIterable, Identifiable {
-        case furniture
-        case outfits
-        case seasonal
-        case rooms
-
-        var id: String { rawValue }
-
-        var displayName: String {
-            switch self {
-            case .furniture: "Room Items"
-            case .outfits: "Outfits"
-            case .seasonal: "Seasonal"
-            case .rooms: "Rooms"
-            }
-        }
-
-        var icon: String {
-            switch self {
-            case .furniture: "square.grid.2x2.fill"
-            case .outfits: "tshirt.fill"
-            case .seasonal: "leaf.fill"
-            case .rooms: "house.fill"
-            }
-        }
-    }
 
     var body: some View {
         NavigationStack {
@@ -64,31 +36,9 @@ struct ShopView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                    // Tab selector
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(ShopTab.allCases) { tab in
-                                CategoryPill(name: tab.displayName, isSelected: selectedCategory == tab) {
-                                    selectedCategory = tab
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                    }
-
-                    // Content
+                    // Furniture grid
                     ScrollView {
-                        switch selectedCategory {
-                        case .furniture:
-                            furnitureGrid
-                        case .outfits:
-                            outfitGrid
-                        case .seasonal:
-                            seasonalGrid
-                        case .rooms:
-                            roomShop
-                        }
+                        furnitureGrid
                     }
                 }
             }

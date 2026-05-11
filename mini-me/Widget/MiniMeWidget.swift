@@ -1,4 +1,3 @@
-#if !APP
 import WidgetKit
 import SwiftUI
 
@@ -6,44 +5,48 @@ import SwiftUI
 
 struct RoomDioramaView: View {
     let taskName: String?
-    
+
     var body: some View {
         ZStack {
-            // Load the rendered snapshot from the App Group container
             if let image = loadSnapshot() {
                 Image(uiImage: image)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
             } else {
-                // Fallback if no snapshot exists yet
-                Color.gray.opacity(0.2)
-                Text("Room Loading...")
-                    .font(.caption2)
-            }
-            
-            // Task Overlay
-            VStack {
-                Spacer()
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(taskName ?? "Free Time")
-                            .font(.system(size: 10, weight: .bold, design: .rounded))
-                            .foregroundColor(.white)
-                        Text("Active Now")
-                            .font(.system(size: 7, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.black.opacity(0.6))
-                    .cornerRadius(6)
-                    Spacer()
+                Color(red: 0.96, green: 0.90, blue: 0.83)
+                VStack(spacing: 8) {
+                    Text("🏠")
+                        .font(.system(size: 32))
+                    Text("Room Loading...")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
                 }
-                .padding(8)
+            }
+
+            if let taskName = taskName {
+                VStack {
+                    Spacer()
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(taskName)
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .foregroundColor(.white)
+                            Text("Active Now")
+                                .font(.system(size: 7, weight: .medium))
+                                .foregroundColor(.white.opacity(0.8))
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.black.opacity(0.6))
+                        .cornerRadius(6)
+                        Spacer()
+                    }
+                    .padding(8)
+                }
             }
         }
     }
-    
+
     private func loadSnapshot() -> UIImage? {
         let groupID = "group.com.woojjwoo.pixieme.shared"
         guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
@@ -70,30 +73,28 @@ struct MediumWidgetView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Left: The Room Snapshot
             RoomDioramaView(taskName: entry.taskName)
                 .frame(width: 150)
-            
-            // Right: Productivity Stats
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(entry.taskName ?? "Relaxing")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .lineLimit(1)
-                
-                Text(entry.categoryName ?? "No Task")
+
+                Text(entry.categoryName ?? "Free Time")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.secondary)
-                
+
                 Divider()
-                
+
                 HStack {
                     ProgressView(value: entry.completionRate)
                         .tint(.green)
                     Text("\(Int(entry.completionRate * 100))%")
                         .font(.system(size: 10, weight: .bold))
                 }
-                
-                Text("\(entry.completedBlocks)/\(entry.totalBlocks) items done")
+
+                Text("\(entry.completedBlocks)/\(entry.totalBlocks) done")
                     .font(.system(size: 9))
                     .foregroundStyle(.secondary)
             }
@@ -103,7 +104,7 @@ struct MediumWidgetView: View {
     }
 }
 
-// MARK: - Provider & Logic
+// MARK: - Provider
 
 struct MiniMeProvider: TimelineProvider {
     func placeholder(in context: Context) -> MiniMeEntry {
@@ -121,10 +122,9 @@ struct MiniMeProvider: TimelineProvider {
     }
 
     private func currentEntry() -> MiniMeEntry {
-        let widgetService = WidgetDataService.shared
-        let pet = widgetService.readPetData()
-        let progress = widgetService.readDayProgress()
-
+        let service = WidgetDataService.shared
+        let pet = service.readPetData()
+        let progress = service.readDayProgress()
         return MiniMeEntry(
             date: .now,
             petName: pet?.name ?? "Pixie",
@@ -138,6 +138,8 @@ struct MiniMeProvider: TimelineProvider {
     }
 }
 
+// MARK: - Entry
+
 struct MiniMeEntry: TimelineEntry {
     let date: Date
     let petName: String
@@ -147,10 +149,6 @@ struct MiniMeEntry: TimelineEntry {
     let coinsToday: Int
     let taskName: String?
     let categoryName: String?
-
-    var mood: PetMood {
-        PetMood(rawValue: petMood) ?? .neutral
-    }
 
     var completionRate: Double {
         guard totalBlocks > 0 else { return 0 }
@@ -169,18 +167,7 @@ struct MiniMeEntry: TimelineEntry {
     )
 }
 
-struct MiniMeWidget: Widget {
-    let kind: String = "MiniMeWidget"
-
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: MiniMeProvider()) { entry in
-            MiniMeWidgetEntryView(entry: entry)
-        }
-        .configurationDisplayName("Pixie Me")
-        .description("Your tiny friend living their best life.")
-        .supportedFamilies([.systemSmall, .systemMedium])
-    }
-}
+// MARK: - Widget Entry View
 
 struct MiniMeWidgetEntryView: View {
     @Environment(\.widgetFamily) var family
@@ -194,4 +181,25 @@ struct MiniMeWidgetEntryView: View {
         }
     }
 }
-#endif
+
+// MARK: - Widget + Bundle
+
+struct MiniMeWidget: Widget {
+    let kind: String = "MiniMeWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: MiniMeProvider()) { entry in
+            MiniMeWidgetEntryView(entry: entry)
+        }
+        .configurationDisplayName("Pixie Me")
+        .description("Your Mini Me living their best life.")
+        .supportedFamilies([.systemSmall, .systemMedium])
+    }
+}
+
+@main
+struct MiniMeWidgetBundle: WidgetBundle {
+    var body: some Widget {
+        MiniMeWidget()
+    }
+}

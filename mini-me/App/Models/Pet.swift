@@ -78,19 +78,39 @@ enum PetColor: String, Codable, CaseIterable, Identifiable {
 final class Pet {
     @Attribute(.unique) var id: UUID
     var name: String
-    var colorRaw: String // PetColor rawValue
+    var colorRaw: String // PetColor rawValue (kept for backward compat / widget)
     var accessoryIDs: [String]
+
+    // Character creator options (MapleStory-style)
+    var hairStyleRaw: String
+    var hairColorRaw: String
+    var skinToneRaw: String
+    var eyeSizeRaw: String
+    var outfitStyleRaw: String
+    var faceShapeRaw: String
 
     init(
         id: UUID = UUID(),
         name: String = "Pixel",
         color: PetColor = .orangeTabby,
+        hairStyle: HairStyle = .short,
+        hairColor: HairColor = .black,
+        skinTone: SkinTone = .fair,
+        eyeSize: EyeSize = .medium,
+        outfitStyle: OutfitStyle = .casual,
+        faceShape: FaceShape = .round,
         accessoryIDs: [String] = [],
         equippedOutfitIDs: [String] = []
     ) {
         self.id = id
         self.name = name
         self.colorRaw = color.rawValue
+        self.hairStyleRaw = hairStyle.rawValue
+        self.hairColorRaw = hairColor.rawValue
+        self.skinToneRaw = skinTone.rawValue
+        self.eyeSizeRaw = eyeSize.rawValue
+        self.outfitStyleRaw = outfitStyle.rawValue
+        self.faceShapeRaw = faceShape.rawValue
         self.accessoryIDs = accessoryIDs
         self.equippedOutfitIDs = equippedOutfitIDs
     }
@@ -98,6 +118,31 @@ final class Pet {
     var color: PetColor {
         get { PetColor(rawValue: colorRaw) ?? .orangeTabby }
         set { colorRaw = newValue.rawValue }
+    }
+
+    var hairStyle: HairStyle {
+        get { HairStyle(rawValue: hairStyleRaw) ?? .short }
+        set { hairStyleRaw = newValue.rawValue }
+    }
+    var hairColor: HairColor {
+        get { HairColor(rawValue: hairColorRaw) ?? .black }
+        set { hairColorRaw = newValue.rawValue }
+    }
+    var skinTone: SkinTone {
+        get { SkinTone(rawValue: skinToneRaw) ?? .fair }
+        set { skinToneRaw = newValue.rawValue }
+    }
+    var eyeSize: EyeSize {
+        get { EyeSize(rawValue: eyeSizeRaw) ?? .medium }
+        set { eyeSizeRaw = newValue.rawValue }
+    }
+    var characterOutfitStyle: OutfitStyle {
+        get { OutfitStyle(rawValue: outfitStyleRaw) ?? .casual }
+        set { outfitStyleRaw = newValue.rawValue }
+    }
+    var faceShape: FaceShape {
+        get { FaceShape(rawValue: faceShapeRaw) ?? .round }
+        set { faceShapeRaw = newValue.rawValue }
     }
 
     // v2: Equipped outfit per slot

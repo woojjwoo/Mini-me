@@ -9,8 +9,15 @@ struct OnboardingView: View {
     @State private var morningBlocks: [OnboardingBlock] = []
     @State private var afternoonBlocks: [OnboardingBlock] = []
     @State private var eveningBlocks: [OnboardingBlock] = []
+
+    // Character creator state
     @State private var petName = ""
-    @State private var petColor: PetColor = .orangeTabby
+    @State private var hairStyle: HairStyle = .medium
+    @State private var hairColor: HairColor = .brown
+    @State private var skinTone: SkinTone = .fair
+    @State private var eyeSize: EyeSize = .medium
+    @State private var faceShape: FaceShape = .round
+    @State private var outfitStyle: OutfitStyle = .casual
 
     private let totalSteps = 6
 
@@ -28,9 +35,8 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.top, 20)
-                .padding(.bottom, 30)
+                .padding(.bottom, 16)
 
-                // Step content
                 TabView(selection: $currentStep) {
                     WelcomeStep(onNext: nextStep)
                         .tag(0)
@@ -67,7 +73,12 @@ struct OnboardingView: View {
 
                     PetSetupStep(
                         petName: $petName,
-                        petColor: $petColor,
+                        hairStyle: $hairStyle,
+                        hairColor: $hairColor,
+                        skinTone: $skinTone,
+                        eyeSize: $eyeSize,
+                        faceShape: $faceShape,
+                        outfitStyle: $outfitStyle,
                         onFinish: completeOnboarding
                     )
                     .tag(5)
@@ -87,7 +98,6 @@ struct OnboardingView: View {
     }
 
     private func completeOnboarding() {
-        // Create schedule from selected blocks
         let schedule = DailySchedule(isWeekday: true, name: "Weekday")
         var sortOrder = 0
         var currentHour = wakeUpHour
@@ -117,12 +127,17 @@ struct OnboardingView: View {
         addBlocks(afternoonBlocks)
         addBlocks(eveningBlocks)
 
-        // Create player, pet, room
         let player = Player(hasCompletedOnboarding: true)
-        let pet = Pet(name: petName.isEmpty ? "Pixel" : petName, color: petColor)
+        let pet = Pet(
+            name: petName.isEmpty ? "Pixel" : petName,
+            hairStyle: hairStyle,
+            hairColor: hairColor,
+            skinTone: skinTone,
+            eyeSize: eyeSize,
+            outfitStyle: outfitStyle,
+            faceShape: faceShape
+        )
         let room = Room()
-
-        // Create today's day log
         let dayLog = DayLog()
 
         modelContext.insert(schedule)
@@ -133,13 +148,13 @@ struct OnboardingView: View {
 
         try? modelContext.save()
 
-        let resolvedPetName = petName.isEmpty ? "Pixel" : petName
+        let resolvedName = petName.isEmpty ? "Pixel" : petName
         Task {
             let granted = await NotificationService.shared.requestPermission()
             if granted {
                 NotificationService.shared.scheduleMorningGreeting(
                     wakeUpHour: wakeUpHour,
-                    petName: resolvedPetName
+                    petName: resolvedName
                 )
             }
         }
@@ -152,7 +167,7 @@ struct OnboardingBlock: Identifiable, Equatable {
     let id = UUID()
     let category: BlockCategory
     let label: String
-    let duration: Int // minutes
+    let duration: Int
 
     static func == (lhs: OnboardingBlock, rhs: OnboardingBlock) -> Bool {
         lhs.id == rhs.id

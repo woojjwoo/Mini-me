@@ -9,21 +9,28 @@ struct WelcomeStep: View {
         VStack(spacing: 24) {
             Spacer()
 
-            // Placeholder for pixel art logo/cat
-            RoundedRectangle(cornerRadius: 20)
-                .fill(PixelTheme.primary.opacity(0.15))
-                .frame(width: 160, height: 160)
-                .overlay {
-                    Text("🧑")
-                        .font(.system(size: 80))
-                }
+            ZStack {
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(PixelTheme.primary.opacity(0.12))
+                    .frame(width: 180, height: 220)
+                    .shadow(color: PixelTheme.shadowColor, radius: 8, y: 4)
+
+                MiniMeAvatarView(
+                    hairStyle: .medium,
+                    hairColor: .brown,
+                    skinTone: .fair,
+                    eyeSize: .large,
+                    outfitStyle: .casual
+                )
+                .scaleEffect(1.2)
+            }
 
             Text("Let's design your ideal day.")
                 .font(PixelTheme.titleFont)
                 .foregroundColor(PixelTheme.text)
                 .multilineTextAlignment(.center)
 
-            Text("Build the daily routine you actually want to follow — your Mini Me lives in a pixel room that grows as you stick to it.")
+            Text("Build the routine you actually want to follow — your Mini Me lives in a pixel room that grows as you stick to it.")
                 .font(PixelTheme.bodyFont)
                 .foregroundColor(PixelTheme.text.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -105,8 +112,6 @@ struct BlockPickerStep: View {
     let suggestedCategories: [BlockCategory]
     let onNext: () -> Void
 
-    @State private var showingCustomSheet = false
-
     var body: some View {
         VStack(spacing: 16) {
             Text(title)
@@ -118,7 +123,6 @@ struct BlockPickerStep: View {
                 .font(PixelTheme.captionFont)
                 .foregroundColor(PixelTheme.text.opacity(0.6))
 
-            // Selected blocks preview
             if !selectedBlocks.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
@@ -133,12 +137,8 @@ struct BlockPickerStep: View {
                 .frame(height: 44)
             }
 
-            // Category grid
             ScrollView {
-                LazyVGrid(columns: [
-                    GridItem(.flexible()),
-                    GridItem(.flexible()),
-                ], spacing: 12) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                     ForEach(suggestedCategories) { category in
                         CategoryBlockButton(category: category) {
                             let block = OnboardingBlock(
@@ -171,13 +171,10 @@ struct SelectedBlockChip: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: block.category.icon)
-                .font(.caption)
-            Text(block.label)
-                .font(PixelTheme.captionFont)
+            Image(systemName: block.category.icon).font(.caption)
+            Text(block.label).font(PixelTheme.captionFont)
             Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.caption2)
+                Image(systemName: "xmark.circle.fill").font(.caption2)
             }
         }
         .padding(.horizontal, 10)
@@ -213,70 +210,369 @@ struct CategoryBlockButton: View {
     }
 }
 
-// MARK: - Step 6: Pet Setup
+// MARK: - Step 6: Character Creator (MapleStory-style)
+
+enum CharacterCreatorTab: CaseIterable {
+    case hairStyle, hairColor, skinTone, eyeSize, faceShape, outfit
+
+    var label: String {
+        switch self {
+        case .hairStyle:  "Hair"
+        case .hairColor:  "Color"
+        case .skinTone:   "Skin"
+        case .eyeSize:    "Eyes"
+        case .faceShape:  "Face"
+        case .outfit:     "Outfit"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .hairStyle:  "scissors"
+        case .hairColor:  "paintpalette.fill"
+        case .skinTone:   "person.fill"
+        case .eyeSize:    "eye.fill"
+        case .faceShape:  "person.crop.circle"
+        case .outfit:     "bag.fill"
+        }
+    }
+}
 
 struct PetSetupStep: View {
     @Binding var petName: String
-    @Binding var petColor: PetColor
+    @Binding var hairStyle: HairStyle
+    @Binding var hairColor: HairColor
+    @Binding var skinTone: SkinTone
+    @Binding var eyeSize: EyeSize
+    @Binding var faceShape: FaceShape
+    @Binding var outfitStyle: OutfitStyle
     let onFinish: () -> Void
 
-    var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
+    @State private var activeTab: CharacterCreatorTab = .hairStyle
+    @State private var previewBounce = false
+    @FocusState private var nameFieldFocused: Bool
 
+    var body: some View {
+        VStack(spacing: 0) {
             Text("Create your Mini Me!")
                 .font(PixelTheme.titleFont)
                 .foregroundColor(PixelTheme.text)
+                .padding(.top, 4)
+                .padding(.bottom, 12)
 
-            // Placeholder for pixel cat preview
-            RoundedRectangle(cornerRadius: 20)
-                .fill(petColor == .orangeTabby ? Color(hex: "FFD180") :
-                      petColor == .black ? Color(hex: "4A4A4A") :
-                      Color(hex: "F5F5F5"))
-                .frame(width: 120, height: 120)
-                .overlay {
-                    Text("🧑")
-                        .font(.system(size: 60))
-                }
+            // ── Character Preview ──────────────────────────────────────
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(PixelTheme.primary.opacity(0.10))
+                    .frame(width: 180, height: 210)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .strokeBorder(PixelTheme.primary.opacity(0.25), lineWidth: 2)
+                    )
 
-            // Color picker
-            HStack(spacing: 16) {
-                ForEach(PetColor.allCases) { color in
-                    VStack(spacing: 4) {
-                        Circle()
-                            .fill(color == .orangeTabby ? Color(hex: "FFB74D") :
-                                  color == .black ? Color(hex: "4A4A4A") :
-                                  Color(hex: "FAFAFA"))
-                            .frame(width: 48, height: 48)
-                            .overlay {
-                                Circle()
-                                    .stroke(petColor == color ? PixelTheme.primary : Color.clear, lineWidth: 3)
-                            }
-                            .shadow(color: PixelTheme.shadowColor, radius: 2)
+                MiniMeAvatarView(
+                    hairStyle: hairStyle,
+                    hairColor: hairColor,
+                    skinTone: skinTone,
+                    eyeSize: eyeSize,
+                    outfitStyle: outfitStyle,
+                    faceShape: faceShape
+                )
+                .scaleEffect(previewBounce ? 1.06 : 1.0)
+                .animation(.spring(response: 0.3, dampingFraction: 0.55), value: previewBounce)
+            }
+            .padding(.bottom, 16)
 
-                        Text(color.displayName)
-                            .font(PixelTheme.captionFont)
-                            .foregroundColor(PixelTheme.text.opacity(0.7))
+            // ── Tab Strip ─────────────────────────────────────────────
+            HStack(spacing: 4) {
+                ForEach(CharacterCreatorTab.allCases, id: \.self) { tab in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) { activeTab = tab }
+                    } label: {
+                        VStack(spacing: 3) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 14))
+                            Text(tab.label)
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(activeTab == tab ? .white : PixelTheme.text.opacity(0.6))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 7)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(activeTab == tab ? PixelTheme.primary : Color.clear)
+                        )
                     }
-                    .onTapGesture { petColor = color }
                 }
             }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 10)
 
-            // Name field
+            // ── Option Selector ───────────────────────────────────────
+            Group {
+                switch activeTab {
+                case .hairStyle:
+                    HairStylePicker(selected: $hairStyle, onChange: bounce)
+                case .hairColor:
+                    ColorDotPicker(
+                        options: HairColor.allCases.map { ($0.displayName, $0.color, $0.rawValue) },
+                        selectedID: hairColor.rawValue
+                    ) { id in
+                        if let c = HairColor(rawValue: id) { hairColor = c; bounce() }
+                    }
+                case .skinTone:
+                    ColorDotPicker(
+                        options: SkinTone.allCases.map { ($0.displayName, $0.color, $0.rawValue) },
+                        selectedID: skinTone.rawValue
+                    ) { id in
+                        if let s = SkinTone(rawValue: id) { skinTone = s; bounce() }
+                    }
+                case .eyeSize:
+                    EyeSizePicker(selected: $eyeSize, onChange: bounce)
+                case .faceShape:
+                    FaceShapePicker(selected: $faceShape, onChange: bounce)
+                case .outfit:
+                    OutfitPicker(selected: $outfitStyle, onChange: bounce)
+                }
+            }
+            .frame(height: 80)
+            .padding(.horizontal, 16)
+
+            // ── Name Field ────────────────────────────────────────────
             TextField("Name your Mini Me...", text: $petName)
                 .font(PixelTheme.bodyFont)
-                .padding(14)
+                .multilineTextAlignment(.center)
+                .padding(12)
                 .background(PixelTheme.cardBackground)
                 .cornerRadius(12)
-                .padding(.horizontal, 40)
-                .multilineTextAlignment(.center)
+                .padding(.horizontal, 32)
+                .padding(.top, 12)
+                .focused($nameFieldFocused)
 
-            Spacer()
+            Spacer(minLength: 12)
 
             OnboardingButton(title: "Start My Ideal Day!", action: onFinish)
-                .padding(.bottom, 40)
+                .padding(.bottom, 32)
         }
-        .padding(.horizontal, 24)
+        .contentShape(Rectangle())
+        .onTapGesture { nameFieldFocused = false }
+    }
+
+    private func bounce() {
+        previewBounce = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) { previewBounce = false }
+    }
+}
+
+// MARK: - Hair Style Picker
+
+struct HairStylePicker: View {
+    @Binding var selected: HairStyle
+    let onChange: () -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(HairStyle.allCases) { style in
+                    Button {
+                        selected = style
+                        HapticService.light()
+                        onChange()
+                    } label: {
+                        VStack(spacing: 5) {
+                            Image(systemName: style.icon)
+                                .font(.system(size: 18))
+                                .foregroundColor(selected == style ? .white : PixelTheme.text)
+                                .frame(width: 44, height: 44)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(selected == style ? PixelTheme.primary : PixelTheme.cardBackground)
+                                        .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+                                )
+                            Text(style.displayName)
+                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                                .foregroundColor(selected == style ? PixelTheme.primary : PixelTheme.text.opacity(0.6))
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 8)
+        }
+    }
+}
+
+// MARK: - Color Dot Picker (hair color + skin tone)
+
+struct ColorDotPicker: View {
+    let options: [(name: String, color: Color, id: String)]
+    let selectedID: String
+    let onSelect: (String) -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(options, id: \.id) { opt in
+                    Button { onSelect(opt.id); HapticService.light() } label: {
+                        VStack(spacing: 5) {
+                            Circle()
+                                .fill(opt.color)
+                                .frame(width: 40, height: 40)
+                                .overlay(
+                                    Circle()
+                                        .strokeBorder(
+                                            selectedID == opt.id ? PixelTheme.primary : Color.clear,
+                                            lineWidth: 3
+                                        )
+                                )
+                                .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+                            Text(opt.name)
+                                .font(.system(size: 9, weight: .medium, design: .rounded))
+                                .foregroundColor(PixelTheme.text.opacity(0.6))
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 8)
+        }
+    }
+}
+
+// MARK: - Eye Size Picker
+
+struct EyeSizePicker: View {
+    @Binding var selected: EyeSize
+    let onChange: () -> Void
+
+    private let eyeIcons = [EyeSize.small: "eye", .medium: "eye.fill", .large: "eye.trianglebadge.exclamationmark"]
+
+    var body: some View {
+        HStack(spacing: 16) {
+            ForEach(EyeSize.allCases) { size in
+                Button {
+                    selected = size
+                    HapticService.light()
+                    onChange()
+                } label: {
+                    VStack(spacing: 6) {
+                        // Visual eye size preview
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(selected == size ? PixelTheme.primary : PixelTheme.cardBackground)
+                                .frame(width: 70, height: 50)
+                                .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+
+                            let dotSize: CGFloat = size == .small ? 6 : size == .medium ? 10 : 15
+                            HStack(spacing: size == .small ? 12 : 8) {
+                                Capsule()
+                                    .fill(selected == size ? Color.white : PixelTheme.text)
+                                    .frame(width: dotSize, height: dotSize)
+                                Capsule()
+                                    .fill(selected == size ? Color.white : PixelTheme.text)
+                                    .frame(width: dotSize, height: dotSize)
+                            }
+                        }
+                        Text(size.displayName)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundColor(selected == size ? PixelTheme.primary : PixelTheme.text.opacity(0.6))
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - Outfit Picker
+
+struct OutfitPicker: View {
+    @Binding var selected: OutfitStyle
+    let onChange: () -> Void
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(OutfitStyle.allCases) { style in
+                    Button {
+                        selected = style
+                        HapticService.light()
+                        onChange()
+                    } label: {
+                        VStack(spacing: 5) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(selected == style ? PixelTheme.primary : PixelTheme.cardBackground)
+                                    .frame(width: 50, height: 44)
+                                    .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+                                // Color swatch for the shirt/pants
+                                VStack(spacing: 2) {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(style.shirtColor)
+                                        .frame(width: 28, height: 16)
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(style.pantsColor)
+                                        .frame(width: 28, height: 10)
+                                }
+                            }
+                            Text(style.displayName)
+                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                                .foregroundColor(selected == style ? PixelTheme.primary : PixelTheme.text.opacity(0.6))
+                        }
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 8)
+        }
+    }
+}
+
+// MARK: - Face Shape Picker
+
+struct FaceShapePicker: View {
+    @Binding var selected: FaceShape
+    let onChange: () -> Void
+
+    var body: some View {
+        HStack(spacing: 16) {
+            ForEach(FaceShape.allCases) { shape in
+                Button {
+                    selected = shape
+                    HapticService.light()
+                    onChange()
+                } label: {
+                    VStack(spacing: 6) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(selected == shape ? PixelTheme.primary : PixelTheme.cardBackground)
+                                .frame(width: 70, height: 50)
+                                .shadow(color: PixelTheme.shadowColor, radius: 2, y: 1)
+                            faceShapeIcon(shape, selected: selected == shape)
+                        }
+                        Text(shape.displayName)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundColor(selected == shape ? PixelTheme.primary : PixelTheme.text.opacity(0.6))
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private func faceShapeIcon(_ shape: FaceShape, selected: Bool) -> some View {
+        let c: Color = selected ? .white : PixelTheme.text
+        switch shape {
+        case .round:
+            Circle().fill(c).frame(width: 28, height: 28)
+        case .angular:
+            Rectangle().fill(c).frame(width: 26, height: 28).cornerRadius(3)
+        case .soft:
+            Ellipse().fill(c).frame(width: 22, height: 32)
+        }
     }
 }
 

@@ -171,6 +171,14 @@ struct IsometricRoomView: View {
                                     currentScene?.takeWidgetSnapshot()
                                 }
                             }
+                            // Re-render character whenever any customization field changes
+                            .onChange(of: pets.first?.hairStyleRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.hairColorRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.skinToneRaw)   { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.eyeSizeRaw)    { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.outfitStyleRaw){ _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.faceShapeRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.equippedOutfitIDs) { _, _ in refreshCharacter() }
                     }
 
                     // Slot buttons (scrollable grid)
@@ -232,6 +240,11 @@ struct IsometricRoomView: View {
                 }
             }
         }
+    }
+
+    private func refreshCharacter() {
+        guard let pet = pets.first else { return }
+        currentScene?.updateCharacter(pet: pet, mood: currentMood)
     }
 
     private func makeScene(room: Room) -> RoomScene {
