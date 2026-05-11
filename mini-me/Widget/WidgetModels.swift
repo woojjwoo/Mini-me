@@ -1,37 +1,15 @@
 import Foundation
 import SwiftUI
 
-// MARK: - Shared types for Widget target
-// These mirror the main app types so the widget can decode the shared UserDefaults data.
-
-#if !APP
 enum PetMood: String, Codable {
     case sleeping, happy, neutral, bored, sad, celebrating, focused, eating, walking
-
-    var displayEmoji: String {
-        switch self {
-        case .sleeping: "😴"
-        case .happy: "😊"
-        case .neutral: "😐"
-        case .bored: "🥱"
-        case .sad: "😢"
-        case .celebrating: "🎉"
-        case .focused: "💻"
-        case .eating: "🍎"
-        case .walking: "🚶"
-        }
-    }
 }
-#endif
 
-#if !APP
 enum PetColor: String, Codable, CaseIterable, Identifiable {
     case orangeTabby, black, white
     var id: String { rawValue }
 }
-#endif
 
-#if !APP
 struct PetDTO: Codable {
     let name: String
     let color: String
@@ -48,17 +26,16 @@ struct WidgetDayProgress: Codable {
     let currentTaskName: String?
     let currentCategory: String?
     let date: Date
+
+    var completionRate: Double {
+        guard totalBlocks > 0 else { return 0 }
+        return Double(completedBlocks) / Double(totalBlocks)
+    }
 }
-#endif
 
-// MARK: - Widget Data Service (read-only for widget)
-
-#if !APP
 final class WidgetDataService {
     static let shared = WidgetDataService()
-
     static let appGroupID = "group.com.woojjwoo.pixieme.shared"
-
     private let defaults: UserDefaults?
 
     private init() {
@@ -75,10 +52,6 @@ final class WidgetDataService {
         return try? JSONDecoder().decode(WidgetDayProgress.self, from: data)
     }
 }
-#endif
-
-#if !APP
-// MARK: - Color hex initializer
 
 extension Color {
     init(hex: String) {
@@ -87,20 +60,10 @@ extension Color {
         Scanner(string: hex).scanHexInt64(&int)
         let a, r, g, b: UInt64
         switch hex.count {
-        case 6:
-            (a, r, g, b) = (255, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
-        case 8:
-            (a, r, g, b) = ((int >> 24) & 0xFF, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (255, 0, 0, 0)
+        case 6: (a, r, g, b) = (255, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
+        case 8: (a, r, g, b) = ((int >> 24) & 0xFF, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
+        default: (a, r, g, b) = (255, 0, 0, 0)
         }
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue: Double(b) / 255,
-            opacity: Double(a) / 255
-        )
+        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: Double(a) / 255)
     }
 }
-#endif

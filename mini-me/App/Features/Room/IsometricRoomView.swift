@@ -1,6 +1,7 @@
 import SwiftUI
 import SpriteKit
 import SwiftData
+import Combine
 
 struct IsometricRoomView: View {
     @Environment(\.modelContext) private var modelContext
@@ -16,6 +17,9 @@ struct IsometricRoomView: View {
     
     @State private var wallpaperColor: Color = .clear
     @State private var currentScene: RoomScene?
+    @State private var sceneCache: [UUID: RoomScene] = [:]
+
+    private let activityTimer = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
 
     private var activeRoom: Room? {
         if let selected = selectedRoomID {
@@ -46,20 +50,31 @@ struct IsometricRoomView: View {
     private var currentActivity: PetActivity {
         let moodService = PetMoodService()
         let schedule = currentDaySchedule
-        
+
         let now = Date.now
         let components = Calendar.current.dateComponents([.hour, .minute], from: now)
         let currentMinutes = (components.hour ?? 0) * 60 + (components.minute ?? 0)
-        
+
         var currentCategory: String? = nil
+        var currentBlock: TimeBlock? = nil
         if let blocks = schedule?.blocks {
             for block in blocks {
                 let start = block.startHour * 60 + block.startMinute
                 let end = start + block.durationMinutes
                 if currentMinutes >= start && currentMinutes < end {
                     currentCategory = block.category
+                    currentBlock = block
                     break
                 }
+            }
+        }
+
+        if let block = currentBlock {
+            let cat = block.category.lowercased()
+            let isWorkType = cat.contains("work") || cat.contains("study") || cat.contains("learn")
+            let isCompleted = todayLog?.completedBlockIDs.contains(block.id) ?? false
+            if isWorkType && !isCompleted {
+                return .slacking
             }
         }
 
@@ -135,15 +150,35 @@ struct IsometricRoomView: View {
                             .cornerRadius(16)
                             .padding(.horizontal, 16)
                             .padding(.top, 8)
+                            .onAppear {
+                                currentScene?.updateForActivity(currentActivity)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                    currentScene?.takeWidgetSnapshot()
+                                }
+                            }
+                            .onReceive(activityTimer) { _ in
+                                currentScene?.updateForActivity(currentActivity)
+                            }
                             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowCoinShower"))) { _ in
                                 currentScene?.showCoinShower()
                             }
                             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowCelebration"))) { _ in
                                 currentScene?.showCelebration()
                             }
-                            .onChange(of: currentActivity) { old, new in
+                            .onChange(of: currentActivity) { _, new in
                                 currentScene?.updateForActivity(new)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    currentScene?.takeWidgetSnapshot()
+                                }
                             }
+                            // Re-render character whenever any customization field changes
+                            .onChange(of: pets.first?.hairStyleRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.hairColorRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.skinToneRaw)   { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.eyeSizeRaw)    { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.outfitStyleRaw){ _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.faceShapeRaw)  { _, _ in refreshCharacter() }
+                            .onChange(of: pets.first?.equippedOutfitIDs) { _, _ in refreshCharacter() }
                     }
 
                     // Slot buttons (scrollable grid)
@@ -207,16 +242,26 @@ struct IsometricRoomView: View {
         }
     }
 
+    private func refreshCharacter() {
+        guard let pet = pets.first else { return }
+        currentScene?.updateCharacter(pet: pet, mood: currentMood)
+    }
+
     private func makeScene(room: Room) -> RoomScene {
+        if let cached = sceneCache[room.id] {
+            self.currentScene = cached
+            return cached
+        }
         let scene = RoomScene(
-            room: room, 
-            pet: pets.first, 
+            room: room,
+            pet: pets.first,
             mood: currentMood,
             streakCount: player?.currentStreak ?? 0,
             size: CGSize(width: 400, height: 400)
         )
         scene.scaleMode = .aspectFit
         scene.backgroundColor = SKColor.clear
+        sceneCache[room.id] = scene
         self.currentScene = scene
         return scene
     }

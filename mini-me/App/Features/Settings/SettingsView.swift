@@ -13,7 +13,8 @@ struct SettingsView: View {
     @State private var showingResetAlert = false
     @State private var showingScheduleEditor = false
     @State private var showingWeekendScheduleEditor = false
-    @State private var showingPetEditor = false
+    @State private var showingCharacterEditor = false
+    @State private var showingCharacterCard = false
     @State private var showingOutfitView = false
     @State private var showingStatusPicker = false
     @State private var showingCalendarSync = false
@@ -36,6 +37,8 @@ struct SettingsView: View {
                             petRow(pet)
                             Divider()
                             outfitRow(pet)
+                            Divider()
+                            characterCardRow(pet)
                         }
                     }
 
@@ -82,10 +85,15 @@ struct SettingsView: View {
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showingPetEditor) {
+        .sheet(isPresented: $showingCharacterEditor) {
             if let pet = pet {
-                PetEditorSheet(pet: pet)
-                    .presentationDetents([.medium])
+                CharacterEditorView(pet: pet)
+            }
+        }
+        .sheet(isPresented: $showingCharacterCard) {
+            if let pet = pet {
+                CharacterCardView(pet: pet, player: player)
+                    .presentationDetents([.medium, .large])
             }
         }
         .sheet(isPresented: $showingOutfitView) {
@@ -149,28 +157,67 @@ struct SettingsView: View {
     private func petRow(_ pet: Pet) -> some View {
         Button {
             HapticService.light()
-            showingPetEditor = true
+            showingCharacterEditor = true
         } label: {
             HStack(spacing: 12) {
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(petBackgroundColor(pet.color))
-                    .frame(width: 44, height: 44)
-                    .overlay {
-                        Text("🧑")
-                            .font(.system(size: 24))
-                    }
+                // Live pixel art preview instead of emoji
+                ZStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(PixelTheme.primary.opacity(0.1))
+                        .frame(width: 52, height: 52)
+                    MiniMeAvatarView(
+                        hairStyle:   pet.hairStyle,
+                        hairColor:   pet.hairColor,
+                        skinTone:    pet.skinTone,
+                        eyeSize:     pet.eyeSize,
+                        outfitStyle: pet.characterOutfitStyle,
+                        faceShape:   pet.faceShape,
+                        pixelSize:   3
+                    )
+                    .allowsHitTesting(false)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(pet.name)
                         .font(PixelTheme.bodyFont)
                         .foregroundColor(PixelTheme.text)
-                    Text(pet.color.displayName)
+                    Text("Edit Appearance")
                         .font(PixelTheme.captionFont)
                         .foregroundColor(PixelTheme.text.opacity(0.5))
                 }
 
                 Spacer()
 
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(PixelTheme.text.opacity(0.3))
+            }
+            .padding(14)
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Character Card Row
+
+    private func characterCardRow(_ pet: Pet) -> some View {
+        Button {
+            HapticService.light()
+            showingCharacterCard = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title3)
+                    .foregroundColor(PixelTheme.primary)
+                    .frame(width: 44, height: 44)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Share Character Card")
+                        .font(PixelTheme.bodyFont)
+                        .foregroundColor(PixelTheme.text)
+                    Text("Export your Mini Me as an image")
+                        .font(PixelTheme.captionFont)
+                        .foregroundColor(PixelTheme.text.opacity(0.5))
+                }
+                Spacer()
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(PixelTheme.text.opacity(0.3))
@@ -353,6 +400,21 @@ struct SettingsView: View {
                             if granted, let schedule = weekdaySchedule, let pet = pet {
                                 let blocks = schedule.sortedBlocks.map { TimeBlockDTO(from: $0) }
                                 NotificationService.shared.scheduleBlockReminders(blocks: blocks, petName: pet.name)
+                                NotificationService.shared.scheduleMorningGreeting(
+                                    wakeUpHour: schedule.sortedBlocks.first?.startHour ?? 7,
+                                    petName: pet.name
+                                )
+                                NotificationService.shared.scheduleMidDayNudge(
+                                    completedCount: 0,
+                                    totalCount: schedule.blocks.count,
+                                    petName: pet.name
+                                )
+                                if let streak = player?.currentStreak, streak > 0 {
+                                    NotificationService.shared.scheduleStreakWarning(
+                                        currentStreak: streak,
+                                        petName: pet.name
+                                    )
+                                }
                             } else {
                                 notificationsEnabled = false
                             }
@@ -503,110 +565,6 @@ struct SettingsView: View {
         }
     }
 
-    private func petBackgroundColor(_ color: PetColor) -> Color {
-        switch color {
-        case .orangeTabby: Color(hex: "FFD180")
-        case .black: Color(hex: "4A4A4A")
-        case .white: Color(hex: "F5F5F5")
-        }
-    }
-}
-
-// MARK: - Pet Editor Sheet
-
-struct PetEditorSheet: View {
-    @Environment(\.modelContext) private var modelContext
-    @Environment(\.dismiss) private var dismiss
-
-    let pet: Pet
-    @State private var editedName: String = ""
-    @State private var editedColor: PetColor = .orangeTabby
-
-    var body: some View {
-        NavigationStack {
-            ZStack {
-                PixelTheme.background.ignoresSafeArea()
-
-                VStack(spacing: 24) {
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(previewColor)
-                        .frame(width: 100, height: 100)
-                        .overlay { Text("🧑").font(.system(size: 50)) }
-                        .padding(.top, 20)
-
-                    HStack(spacing: 16) {
-                        ForEach(PetColor.allCases) { color in
-                            VStack(spacing: 4) {
-                                Circle()
-                                    .fill(colorFill(color))
-                                    .frame(width: 44, height: 44)
-                                    .overlay {
-                                        Circle().stroke(editedColor == color ? PixelTheme.primary : Color.clear, lineWidth: 3)
-                                    }
-                                Text(color.displayName)
-                                    .font(PixelTheme.captionFont)
-                                    .foregroundColor(PixelTheme.text.opacity(0.7))
-                            }
-                            .onTapGesture {
-                                HapticService.selection()
-                                editedColor = color
-                            }
-                        }
-                    }
-
-                    TextField("Name your Mini Me", text: $editedName)
-                        .font(PixelTheme.bodyFont)
-                        .padding(14)
-                        .background(PixelTheme.cardBackground)
-                        .cornerRadius(12)
-                        .padding(.horizontal, 40)
-                        .multilineTextAlignment(.center)
-
-                    Spacer()
-                }
-            }
-            .navigationTitle("Edit Mini Me")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        savePet()
-                        HapticService.success()
-                        dismiss()
-                    }
-                    .disabled(editedName.trimmingCharacters(in: .whitespaces).isEmpty)
-                }
-            }
-            .onAppear {
-                editedName = pet.name
-                editedColor = pet.color
-            }
-        }
-    }
-
-    private var previewColor: Color {
-        switch editedColor {
-        case .orangeTabby: Color(hex: "FFD180")
-        case .black: Color(hex: "4A4A4A")
-        case .white: Color(hex: "F5F5F5")
-        }
-    }
-
-    private func colorFill(_ color: PetColor) -> Color {
-        switch color {
-        case .orangeTabby: Color(hex: "FFB74D")
-        case .black: Color(hex: "4A4A4A")
-        case .white: Color(hex: "FAFAFA")
-        }
-    }
-
-    private func savePet() {
-        let trimmed = editedName.trimmingCharacters(in: .whitespaces)
-        pet.name = trimmed.isEmpty ? "Pixel" : trimmed
-        pet.color = editedColor
-        try? modelContext.save()
-    }
 }
 
 // MARK: - Schedule Editor Sheet
