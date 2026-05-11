@@ -336,11 +336,86 @@ This aesthetic is the moat. Other habit apps look like productivity tools. Mini 
 
 ---
 
+## Phase 13: The "Stardew Life" Engine & Living Diorama (March–May 2026)
+
+This phase transformed Mini Me from a mood-indicator widget into a **living diorama** — a room that genuinely feels inhabited.
+
+### What Triggered the Pivot
+The v2 room scene had a fatal problem: the avatar stood frozen at the center of the room regardless of time of day or activity. A "working" avatar at 2pm looked identical to a "sleeping" avatar at 2am. The room felt like a screensaver, not a reflection of the user's life.
+
+### The "Stardew Life" Walking Engine
+Inspired by Stardew Valley's character movement, the room gained a full spatial layout:
+- Each `PetActivity` maps to a named location in the room (desk, bed, beanbag, center floor)
+- The avatar **walks** to the correct location with Stardew-style hops and directional flipping
+- Y-sorting creates true isometric depth — items closer to the camera render in front
+- A shadow ellipse tracks the avatar's floor position frame-by-frame
+- `petBaseScale` raised from `0.22` → `0.35` — the character needed to actually read in the room
+
+### The Slacking State
+The most personality-driven feature: if you're supposed to be working or studying but haven't checked off the block, the avatar pulls out a phone. It tilts, bobs the emoji, and periodically puts the phone away — then picks it back up. Honest, a little guilty, and immediately readable.
+
+The detection logic:
+1. Find the current `TimeBlock` by clock time
+2. If category contains "work/study/learn" AND block isn't in `DayLog.completedBlockIDs` → `.slacking`
+3. `.slacking` triggers phone overlay + sitting legs in coffee shop rooms
+
+### The Character System Overhaul (CharacterCompositeNode)
+The old system used a single pre-baked sprite per mood. The new system:
+- `CharacterCompositeNode`: an `SKNode` subclass that renders the avatar as layered SpriteKit nodes
+- `MiniMeAvatarView`: a SwiftUI Canvas that draws the full pixel art character from attributes
+- `ImageRenderer` rasterizes the Canvas into an `SKTexture` at runtime — no sprite assets needed
+- Attributes: `HairStyle`, `HairColor`, `SkinTone`, `EyeSize`, `FaceShape`, `OutfitStyle` (all in `CharacterOptions.swift`)
+- `Pet` model updated from a single color field to 6 raw string fields for each attribute
+- Live character preview in both onboarding (step 6) and Settings via `CharacterEditorView`
+
+### The Widget Snapshot Problem (and Fix)
+The widget was always showing a stale or empty image. Root cause: `takeWidgetSnapshot()` and `WidgetCenter.reloadAllTimelines()` were fully implemented but never called. Fixed by:
+- Calling `takeWidgetSnapshot()` 2s after Room tab opens (scene needs time to settle into pose)
+- Calling it again 1.5s after any activity change
+- Calling `WidgetCenter.shared.reloadAllTimelines()` immediately after any block completion in `DailyScheduleView`
+
+### Activity Wiring (the "Why Isn't It Moving?" Fixes)
+Two separate bugs kept the avatar frozen:
+1. `setupPet()` always called `updateForActivity(.idling)` at init — fixed with `.onAppear` pushing `currentActivity`
+2. `currentActivity` is a computed property — SwiftUI only recomputes it on state changes, not on the clock ticking — fixed with `Timer.publish(every: 300)` forcing a refresh every 5 minutes
+
+### Scope Reduction (v3 Cleanup)
+To ship something coherent, the team cut three systems that added complexity without validating the core loop:
+- **Insights tab removed**: Too early — users need weeks of data before insights are meaningful. Added cognitive load at launch.
+- **Outfits removed from Shop**: 20 outfits × 6 slots × auto-equip logic = a feature bigger than the core app. Removed until post-launch.
+- **Seasonal items removed**: Requires ongoing content production every season. Not a solo-developer-sustainable system.
+
+The Shop simplified to one tab: room furniture only.
+
+### Notification Suite (Finally Wired)
+Three notification methods existed in `NotificationService` since v2 but were never called:
+- `scheduleMorningGreeting()` — now called at end of onboarding completion
+- `scheduleMidDayNudge()` — now called when the notification toggle turns ON in Settings
+- `scheduleStreakWarning()` — same, alongside the nudge
+
+### Key Decisions Made
+| Decision | Rationale |
+|----------|-----------|
+| Cut Insights tab | Data is meaningless in week 1; adds tab clutter |
+| Cut outfits/seasonal | Complexity doesn't serve the core loop — room + avatar + schedule is the game |
+| Keep coffee shop room | Sitting legs animation is too charming to cut |
+| Canvas-rendered avatar over sprites | No artist needed; character customization is a differentiator |
+| 5-minute timer not real-time | Real-time polling kills battery; 5 min is imperceptible to users |
+| Snapshot delay of 2s | SpriteKit needs frames to settle into pose before capture |
+
+---
+
 ## Conversation Metadata
 
-- **Date**: March 2026
+- **Initial date**: March 2026
+- **Last updated**: May 2026
 - **Participants**: User (founder/developer) + Claude (design/dev partner)
-- **Outcome**: Full design spec + 25-file Swift codebase scaffolded and pushed
-- **Branch**: `claude/study-pixel-pals-design-Z7965`
-- **Key pivot**: Pet → Mini Me avatar, Calendar sync → Ideal Day Builder
+- **Outcome**: Full design spec + living diorama engine + character system + activity wiring
+- **Branches**: `claude/study-pixel-pals-design-Z7965` (main), `claude/session-planning` (wiring fixes, PR #1)
+- **Key pivots**:
+  1. Pet → Mini Me avatar
+  2. Calendar sync → Ideal Day Builder
+  3. Single sprite → CharacterCompositeNode layered renderer
+  4. Static room → Stardew Life walking engine
+  5. Feature-rich v2 → focused v3 (cut Insights, Outfits, Seasonal)
 - **Core aesthetic**: Pixel art + lo-fi cozy vibe (NON-NEGOTIABLE)

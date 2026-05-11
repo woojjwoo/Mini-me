@@ -33,79 +33,109 @@ MiniMe/
 ├── App/              # MiniMeApp entry point, ContentView (onboarding gate + MainTabView)
 ├── Features/
 │   ├── Onboarding/   # 6-step onboarding flow (welcome, wake-up, 3x block pickers, avatar setup)
+│   │                 # + MiniMeAvatarView (SwiftUI Canvas pixel art renderer, no sprites needed)
 │   ├── Schedule/     # DailyScheduleView + TimeBlockRow (Today tab)
-│   ├── Room/         # IsometricRoomView + RoomScene (SpriteKit) + slot picker
-│   ├── Shop/         # ShopView (4 tabs: Room Items, Outfits, Seasonal, Rooms)
-│   ├── Outfits/      # OutfitView (equip/unequip per slot, auto-equip triggers)
-│   ├── Insights/     # InsightsView (2-week trend, category breakdown, time-of-day, streaks, fun stats)
-│   ├── Settings/     # SettingsView (pet editor, outfits, status, weekday/weekend schedule,
-│   │                 #   notifications, calendar sync, pro upgrade, data reset)
+│   ├── Room/         # IsometricRoomView + RoomScene (SpriteKit) + CharacterCompositeNode + slot picker
+│   ├── Shop/         # ShopView (1 tab: Room Items only — outfits/seasonal removed for MVP)
+│   ├── Settings/     # SettingsView + CharacterEditorView + CharacterCardView
+│   │                 # (character appearance editor replaced old PetEditorSheet)
 │   │                 # + WeekendScheduleSetupSheet, StatusPickerSheet, CalendarSyncSheet
-│   └── Stats/        # StatsView (streaks, weekly heatmap, lifetime stats) — legacy, replaced by Insights tab
+│   └── Stats/        # StatsView — legacy, Insights tab removed in v3 cleanup
 ├── Models/           # SwiftData models: Player, Pet, Room, RoomSlotAssignment, DailySchedule, TimeBlock, DayLog
-│                     # Enums: BlockCategory, PetMood, PetColor, SlotType, RoomType, ManualStatus
-│                     # Static catalogs: ShopItem + ItemCatalog, OutfitItem + OutfitCatalog, SeasonalItem + SeasonalCatalog
-│                     # OutfitSlot enum (head, face, neck, top, hand, shoes)
-│                     # Season enum (spring, summer, fall, winter, holiday)
+│                     # Enums: BlockCategory, PetMood, SlotType, RoomType, ManualStatus
+│                     # CharacterOptions: HairStyle, HairColor, SkinTone, EyeSize, FaceShape, OutfitStyle
+│                     # Static catalogs: ShopItem + ItemCatalog (furniture only)
 ├── Services/         # CoinService, PetMoodService, StreakService, WidgetDataService,
 │                     # HapticService, SoundService, NotificationService, CalendarSyncService,
 │                     # TimeOfDayService, MilestoneService
 └── Shared/           # PixelTheme (colors, typography, Color hex init)
 
 MiniMeWidget/      # Widget extension (small, medium, lock screen circular/rectangular/inline)
+                   # Reads room_diorama.png from App Group container (written by RoomScene.takeWidgetSnapshot)
 ```
 
 ## Key Models
 - **Player**: coins, ownedItemIDs, streaks, hasCompletedOnboarding, isPremium, manualStatusRaw, manualStatusExpiresAt, unlockedMilestoneIDs
-- **Pet** (= Mini Me avatar): name, color/skin tone, accessoryIDs, equippedOutfitIDs
+- **Pet** (= Mini Me avatar): name, hairStyleRaw, hairColorRaw, skinToneRaw, eyeSizeRaw, faceShapeRaw, outfitStyleRaw, equippedOutfitIDs
 - **DailySchedule**: isWeekday flag, name ("Weekday"/"Weekend"), contains TimeBlocks
 - **TimeBlock**: category, label, startHour/startMinute, durationMinutes, sortOrder
 - **DayLog**: date, completedBlockIDs, coinsEarned, bonusCoinsEarned. One per day.
 - **Room**: wallTheme, floorTheme, roomTypeRaw (RoomType), isActive, 12 RoomSlotAssignment slots
-- **ShopItem**: static catalog (ItemCatalog) — 22 room items, 6 categories
-- **OutfitItem**: 20 avatar outfits across 6 slots (head/face/neck/top/hand/shoes), with schedule auto-equip triggers
-- **SeasonalItem**: 12 limited-time items across 5 seasons (spring/summer/fall/winter/holiday)
+- **ShopItem**: static catalog (ItemCatalog) — furniture room items only
 
-## Current Status (v2.5) — The Living Diorama Update
+## Character System (v3 — CharacterCompositeNode)
+The avatar is no longer a single sprite. It's a layered `SKNode` subclass:
+- `CharacterCompositeNode` renders body + outfit + hair + eyes as separate layers
+- Uses `ImageRenderer` to rasterize `MiniMeAvatarView` (SwiftUI Canvas) into a texture at runtime
+- `apply(pet:mood:)` rebuilds the composite whenever Pet properties change
+- `invalidateCache()` forces a texture refresh (called before `apply` when customization changes)
+- `SkinTone.color` returns a SwiftUI `Color` — use `UIColor($0.skinTone.color)` in SpriteKit contexts (requires `import SwiftUI`)
+- `petBaseScale` is `0.35` (was `0.22` in the old single-sprite version)
+
+## Avatar Activity Logic
+`currentActivity` in `IsometricRoomView` is a computed property that:
+1. Finds the current `TimeBlock` by matching current clock time to block start/end
+2. If the block is work/study/learn type AND not yet completed in `DayLog` → returns `.slacking`
+3. Otherwise delegates to `PetMoodService.currentActivity(for:)`
+
+Activity drives avatar position and pose via `RoomScene.updateForActivity(_:)`:
+- `.working` → walks to desk (squishes slightly in non-cafe rooms, sits in coffee shop)
+- `.sleeping` → walks to bed, squishes flat
+- `.slacking` → phone emoji overlay + character tilt + periodic put-away animation
+- `.reading`, `.idling` in coffee shop → sitting legs with dangle/kick animation
+- All others → center floor
+
+## Current Status (v3) — Wired & Shippable
 ### COMPLETE
-- **Living Diorama Engine**: Dynamic Z-sorting, Shadow projection, and "Walking Engine" (Stardew-style hops/directional flipping).
-- **Dynamic Lighting (Time of Day)**: Screen overlays and glowing electronics that react to real-world hours (Morning, Day, Sunset, Night).
-- **Milestone/Achievement System**: MilestoneService tracks streaks and block completions to unlock persistent room trophies.
-- **Contextual Rituals (Greetings)**: Context-aware thought bubbles for morning greetings and evening reflections.
-- **Soundscape/Haptic Juice**: Soft impact haptics and system sound "ticks" synced to character movement; multi-tone celebratory chimes.
-- **Isometric Depth Sorting (Y-Sorting)**: Continuous per-frame depth calculation based on feet position.
-- **v2: Outfit system** — 20 outfits, 6 slots, equip/unequip, auto-equip triggers
-- **v2: Multiple rooms** — 6 room types, room shop, per-room decoration
+- **Living Diorama Engine**: Dynamic Z-sorting, shadow projection, "Walking Engine" (Stardew-style hops/directional flipping)
+- **CharacterCompositeNode**: Layered avatar renderer with live customization — hair, skin tone, eye size, face shape, outfit style
+- **Character editor**: Full appearance customization in Settings (CharacterEditorView) and during onboarding (PetSetupStep)
+- **Slacking state**: Phone overlay + character tilt when in incomplete work/study/learn block
+- **Sitting legs**: Dangling pixel legs with swing + kick animations for coffee shop seating
+- **Activity wiring**: Avatar reacts immediately on Room tab open (`.onAppear`) and refreshes every 5 min via timer
+- **Widget snapshot**: `takeWidgetSnapshot()` fires on appear + after activity changes; `WidgetCenter.reloadAllTimelines()` fires after block completion
+- **Full notification suite**: Morning greeting (onboarding), mid-day nudge + streak warning (Settings toggle), block reminders
+- **Scene caching**: `[UUID: RoomScene]` prevents recreation on every SwiftUI re-render
+- **Dynamic Lighting (Time of Day)**: Screen overlays and glowing electronics react to real-world hours
+- **Milestone/Achievement System**: MilestoneService unlocks persistent room trophies
+- **Contextual Rituals**: Context-aware thought bubbles for morning greetings and evening reflections
+- **Soundscape/Haptic Juice**: Soft impact haptics and system sound "ticks" synced to movement
+- **v2: Multiple rooms** — 6 room types, per-room decoration
 - **v2: Notifications** — block reminders, streak warnings, morning greeting, mid-day nudge
 - **v2: Weekend schedule** — separate weekend schedule creation and editing
-- **v2: Habit insights** — 2-week trend, category breakdown, time-of-day analysis, streak history, fun stats
 - **v2: Lock screen widget** — circular, rectangular, and inline widget families
 - **v2: Sick day / manual status** — 4 statuses with mood override and auto-expiry
-- **v2: Seasonal items** — 12 items across 5 seasons, availability logic
 - **v2: Calendar sync** — EventKit integration, import calendar events as blocks
-- **v2: Premium/Pro gating** — upgrade flow in settings (StoreKit integration placeholder)
+- **v2: Premium/Pro gating** — upgrade flow in settings (StoreKit placeholder)
 
-### MISSING
-- Handcrafted production art (currently using optimized emoji/placeholder sprites)
+### REMOVED IN v3 CLEANUP
+- Insights tab (removed — too early, not enough data to be meaningful)
+- Outfits system (removed from Shop — complexity not worth it at MVP scale)
+- Seasonal items (removed — requires ongoing content work)
+
+### STILL MISSING
+- Handcrafted production art (currently using Canvas-rendered pixel art via MiniMeAvatarView)
 - StoreKit purchase flow (logic exists, UI/UX refinement needed)
 - Unit tests
 
 ## Important Notes
-- **Physical Foundation**: For proper isometric depth, `visualNode.anchorPoint` MUST be `(0.5, 0)`.
+- **Character anchor**: `compositeNode` (the `CharacterCompositeNode` inside `petNode`) uses anchor point `(0.5, 0)` — feet on floor.
 - **Y-Sorting**: `RoomScene` update loop sets `zPosition = -position.y` for all world objects. Do not set manual Z-layers for floor-based items.
-- **Uniform Scaling**: To avoid "crunching" pixel art, always scale X and Y proportionally or keep variations under 2%.
-- SwiftData can't store enums directly — models use raw String values
-- Widget shares data via App Groups (UserDefaults suiteName: `group.com.woojjwoo.pixieme.shared`)
+- **Uniform Scaling**: To avoid pixel art "crunching", always scale X and Y proportionally or keep variations under 2%.
+- **SwiftUI in SpriteKit**: `RoomScene.swift` imports both `SpriteKit` and `SwiftUI` — needed for `UIColor(Color)` initializer (`SkinTone.color` returns SwiftUI `Color`).
+- SwiftData can't store enums directly — models use raw String values (`hairStyleRaw`, `skinToneRaw`, etc.)
+- Widget shares data via App Groups: `group.com.woojjwoo.pixieme.shared`
+- App Bundle ID: `com.woojjwoo.pixieme`
 - Room uses 12 fixed SlotType positions with hardcoded isometric coordinates
 - Player.hasCompletedOnboarding gates the entire app (ContentView checks this)
 - The `Pet` model is named "Pet" internally but represents the Mini Me avatar — do NOT refer to it as a pet in UI
-- PetColor cases are skin tones: .orangeTabby = "Warm Tone", .black = "Dark Tone", .white = "Light Tone"
 - ManualStatus auto-expires at end of day (manualStatusExpiresAt)
-- Seasonal items use Season.isCurrentlyAvailable computed property based on current month
-- OutfitItem.scheduleTrigger links outfits to BlockCategory rawValues for auto-equip
 - CalendarSyncService.guessCategory does best-effort category mapping from event titles
 
+## Branch Strategy
+- `claude/study-pixel-pals-design-Z7965` — main branch (Living Diorama engine, character system)
+- `claude/session-planning` — activity wiring, slacking animations, notification suite (open PR #1)
+
 ## Project Documents
-- `DESIGN_SPEC.md` — Full design specification (features, monetization, architecture, art direction)
 - `docs/DESIGN_CONVERSATION.md` — Complete design conversation log (every critique, pivot, decision, and rationale)
 - `docs/REFERENCES.md` — Art style references, competitor links, inspiration sources
